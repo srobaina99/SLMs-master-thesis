@@ -1,0 +1,40 @@
+{
+  "text_statistics": {
+    "sentence_count": 2,
+    "word_count": 39,
+    "character_count": 284,
+    "syllable_count": 93,
+    "polysyllable_count": 19,
+    "monosyllable_count": 13,
+    "difficult_words": 26
+  },
+  "grade_level_indices": {
+    "flesch_kincaid_grade": 20.15,
+    "gunning_fog": 27.29,
+    "smog_index": 20.74,
+    "automated_readability_index": 22.62,
+    "coleman_liau_index": 24.62,
+    "dale_chall_readability_score": 19.99
+  },
+  "readability_scores": {
+    "flesch_reading_ease": -14.7,
+    "linsear_write_formula": 19.25,
+    "spache_readability": 9.32,
+    "mcalpine_eflaw": 25.5
+  },
+  "reading_time": {
+    "reading_time_seconds": 4.17,
+    "reading_time_minutes": 0.07
+  },
+  "spanish_scores": {
+    "fernandez_huerta": 43.87,
+    "szigriszt_pazos": 38.77,
+    "gutierrez_polini": 18.24,
+    "crawford": 7.23
+  },
+  "metadata": {
+    "text_preview": "\n    La inteligencia artificial está transformando múltiples industrias a través de \n    algoritmos ...",
+    "analysis_type": "comprehensive_readability",
+    "spanish_included": true
+  }
+}

@@ -1,0 +1,41 @@
+experiment_id,timestamp,config_name,prompt,system_prompt,response,model_id,weighted_words_enabled,weight_factor,enable_thinking,temperature,response_time_seconds,flesch_kincaid_grade,gunning_fog,smog_index,automated_readability_index,coleman_liau_index,dale_chall_readability_score,flesch_reading_ease,linsear_write_formula,spache_readability,mcalpine_eflaw,sentence_count,word_count,character_count,syllable_count,polysyllable_count,monosyllable_count,difficult_words,reading_time_seconds,reading_time_minutes,response_appropriateness,vocabulary_level,notes
+d666f00c-62cb-4d19-b242-62aa68bee64d,2025-09-04T21:14:29.085203,quick_test_prompt_1,What does the word 'library' mean?,You are an English teacher helping a beginner student. Use simple words and short sentences. Be patient and encouraging.,"<think>
+
+</think>
+
+The word 'library' means a place where books are stored and read. It's like a big bookcase that people use to find and read books!",unsloth/Qwen3-0.6B,False,1.0,False,0.7,5.368730068206787,3.22,5.4,7.17,6.43,5.85,6.06,96.0,6.25,2.74,18.5,2,27,121,31,1,24,0,1.78,0.03,,,
+03ffdf86-f961-4381-90bd-825a1f0aa05b,2025-09-04T21:14:34.756990,quick_test_prompt_2,When do I use 'a' and when do I use 'an'?,You are an English teacher helping a beginner student. Use simple words and short sentences. Be patient and encouraging.,"<think>
+
+</think>
+
+A and an are used for **sounding like a** singular noun, while **a** is for **sounding like a** plural noun. For example:  
+- ""I like apples"" → ""I like a apple""  
+- ""They are students"" → ""They are an students""  
+
+Always check if the noun is singular or plural to use the correct article. 😊",unsloth/Qwen3-0.6B,False,1.0,False,0.7,5.670484304428101,10.43,13.48,11.21,11.65,6.37,9.18,66.56,15.0,6.32,38.0,2,52,243,70,4,38,7,3.57,0.06,,,
+7b7a5ad3-d6bb-4e33-a8e3-26f158d1cc61,2025-09-04T21:14:37.600433,quick_test_prompt_3,How do I introduce myself to someone new?,You are an English teacher helping a beginner student. Use simple words and short sentences. Be patient and encouraging.,"<think>
+
+</think>
+
+Sure! Here's how you can introduce yourself to someone new:  
+""Hi, I'm [Your Name], and I'm [Your Age or Job]. I enjoy [something like reading or learning].""",unsloth/Qwen3-0.6B,False,1.0,False,0.7,2.8356270790100098,3.24,5.25,6.43,6.79,5.54,6.84,89.09,4.17,2.8,14.33,3,29,144,37,1,22,2,2.12,0.04,,,
+fabafd4f-a7c7-4701-90c5-955881fdbe66,2025-09-04T21:14:40.246762,quick_test_prompt_4,What are some common greetings in English-speaking countries?,You are an English teacher helping a beginner student. Use simple words and short sentences. Be patient and encouraging.,"<think>
+
+</think>
+
+Sure! Here are some common greetings in English-speaking countries:
+
+- Hello  
+- Hi  
+- Good morning  
+- Good afternoon  
+- Hello there  
+- Nice to meet you  
+- Have a great day  
+
+Try smiling and greeting people in your own country! 😊",unsloth/Qwen3-0.6B,False,1.0,False,0.7,2.638190984725952,8.47,8.31,8.84,8.23,10.91,7.6,66.37,9.0,4.81,23.5,2,36,193,52,2,24,6,2.84,0.05,,,
+bb5df409-86ff-4bdc-a0df-84ec16be6015,2025-09-04T21:14:41.533773,quick_test_prompt_5,I am very good in English. Is this sentence correct?,You are an English teacher helping a beginner student. Use simple words and short sentences. Be patient and encouraging.,"<think>
+
+</think>
+
+Yes, that sentence is correct! You're doing great! Keep up the good work! 😊",unsloth/Qwen3-0.6B,False,1.0,False,0.7,1.280423879623413,0.52,2.0,3.13,3.74,3.8,4.94,100.24,1.5,2.12,6.33,3,15,77,18,0,12,1,1.13,0.02,,,

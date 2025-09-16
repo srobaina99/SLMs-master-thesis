@@ -1,0 +1,10 @@
+# Additional dependencies for TinyLlama scripts
+
+# For transformers approach
+torch>=2.0.0
+transformers>=4.30.0
+sentencepiece>=0.1.99
+accelerate>=0.20.0
+
+# For llama.cpp approach
+llama-cpp-python>=0.1.77 

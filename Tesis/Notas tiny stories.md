@@ -1,0 +1,2 @@
+- Entrenaron modelos de lenguaje chiquitos en base a data sintética generada por los modelos polenta. 2.12M rows
+- Se podría pensar en generar bastante data sintética que emule conversaciones con típicos errores de estudiantes (hechos por profesores) y correcciones. Y entrenar modelos chicos que puedan correr en maquinas locales,

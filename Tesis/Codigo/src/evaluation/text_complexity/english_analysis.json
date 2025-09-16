@@ -1,0 +1,34 @@
+{
+  "text_statistics": {
+    "sentence_count": 4,
+    "word_count": 52,
+    "character_count": 343,
+    "syllable_count": 115,
+    "polysyllable_count": 18,
+    "monosyllable_count": 23,
+    "difficult_words": 21
+  },
+  "grade_level_indices": {
+    "flesch_kincaid_grade": 15.58,
+    "gunning_fog": 17.51,
+    "smog_index": 15.25,
+    "automated_readability_index": 16.14,
+    "coleman_liau_index": 19.62,
+    "dale_chall_readability_score": 11.27
+  },
+  "readability_scores": {
+    "flesch_reading_ease": 6.54,
+    "linsear_write_formula": 11.0,
+    "spache_readability": 6.15,
+    "mcalpine_eflaw": 16.25
+  },
+  "reading_time": {
+    "reading_time_seconds": 5.04,
+    "reading_time_minutes": 0.08
+  },
+  "metadata": {
+    "text_preview": "\n    The quick brown fox jumps over the lazy dog. This is a simple sentence that contains \n    every...",
+    "analysis_type": "comprehensive_readability",
+    "spanish_included": false
+  }
+}

@@ -1,0 +1,24 @@
+# Core ML and NLP dependencies
+torch>=2.0.0
+transformers>=4.36.0
+accelerate>=0.25.0
+sentencepiece>=0.1.99
+safetensors>=0.4.0
+
+# Text analysis and evaluation
+textstat>=0.7.3
+pandas>=1.5.0
+pyarrow>=10.0.0
+
+# Jupyter and interactive features
+IPython>=8.0.0
+jupyter>=1.0.0
+
+# Utility and display
+Markdown>=3.4.0
+
+# Optional: For quantized models (TinyLama)
+ctransformers>=0.2.24
+
+# Development and typing (optional)
+# typing-extensions>=4.0.0

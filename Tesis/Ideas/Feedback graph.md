@@ -1,0 +1,5 @@
+An important thing in the learning process of the student is knowing where it fails. Which concepts, ideas or procedures are hard for them. When thinking in involving an AI tutor in the learning process one of the natural concerns of teachers is how to know what the students are using the assistant for, is it relevant for the class content? Is it useful for the student? And also, what difficulties is the student having?
+
+It could be interesting to incorporate a system that shows the teacher in a easy to read style the conversations of the student is having and also a report of the student difficulties. For this kind of easy to understand visual feedback the LLM could generate in parallel a graph off contents discussed in chats and also a graph of difficulties of each one of them. 
+
+A graph involving the curriculum could capture the main topics of the course and it could be used to understand how much the student understands the concepts

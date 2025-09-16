@@ -1,0 +1,219 @@
+{
+  "main": {
+    "id": "8aceb625483b1141",
+    "type": "split",
+    "children": [
+      {
+        "id": "e732a69703b95abc",
+        "type": "tabs",
+        "children": [
+          {
+            "id": "7c6078376433ea24",
+            "type": "leaf",
+            "state": {
+              "type": "pdf",
+              "state": {
+                "file": "Ruiz-Noel-Tesis-final.pdf"
+              },
+              "icon": "lucide-file-text",
+              "title": "Ruiz-Noel-Tesis-final"
+            }
+          }
+        ]
+      }
+    ],
+    "direction": "vertical"
+  },
+  "left": {
+    "id": "5ba71c33390ffbff",
+    "type": "split",
+    "children": [
+      {
+        "id": "2103fa8350289f96",
+        "type": "tabs",
+        "children": [
+          {
+            "id": "6d81ca15faf07764",
+            "type": "leaf",
+            "state": {
+              "type": "file-explorer",
+              "state": {
+                "sortOrder": "alphabetical",
+                "autoReveal": false
+              },
+              "icon": "lucide-folder-closed",
+              "title": "Files"
+            }
+          },
+          {
+            "id": "cadb4ea55d4aec76",
+            "type": "leaf",
+            "state": {
+              "type": "search",
+              "state": {
+                "query": "",
+                "matchingCase": false,
+                "explainSearch": false,
+                "collapseAll": false,
+                "extraContext": false,
+                "sortOrder": "alphabetical"
+              },
+              "icon": "lucide-search",
+              "title": "Search"
+            }
+          },
+          {
+            "id": "d50139109a10611c",
+            "type": "leaf",
+            "state": {
+              "type": "bookmarks",
+              "state": {},
+              "icon": "lucide-bookmark",
+              "title": "Bookmarks"
+            }
+          }
+        ]
+      }
+    ],
+    "direction": "horizontal",
+    "width": 300,
+    "collapsed": true
+  },
+  "right": {
+    "id": "46a2f90e0b797812",
+    "type": "split",
+    "children": [
+      {
+        "id": "be34414c9853f7f6",
+        "type": "tabs",
+        "children": [
+          {
+            "id": "a9a3504a87e269be",
+            "type": "leaf",
+            "state": {
+              "type": "backlink",
+              "state": {
+                "file": "Presentación grupo fing ceibal/Notes for SLM presentation.md",
+                "collapseAll": false,
+                "extraContext": false,
+                "sortOrder": "alphabetical",
+                "showSearch": false,
+                "searchQuery": "",
+                "backlinkCollapsed": false,
+                "unlinkedCollapsed": true
+              },
+              "icon": "links-coming-in",
+              "title": "Backlinks for Notes for SLM presentation"
+            }
+          },
+          {
+            "id": "8dec7b73c9ce0a31",
+            "type": "leaf",
+            "state": {
+              "type": "outgoing-link",
+              "state": {
+                "file": "Presentación grupo fing ceibal/Notes for SLM presentation.md",
+                "linksCollapsed": false,
+                "unlinkedCollapsed": true
+              },
+              "icon": "links-going-out",
+              "title": "Outgoing links from Notes for SLM presentation"
+            }
+          },
+          {
+            "id": "adfdceb15c655053",
+            "type": "leaf",
+            "state": {
+              "type": "tag",
+              "state": {
+                "sortOrder": "frequency",
+                "useHierarchy": true,
+                "showSearch": false,
+                "searchQuery": ""
+              },
+              "icon": "lucide-tags",
+              "title": "Tags"
+            }
+          },
+          {
+            "id": "5e16a2650d9c8c46",
+            "type": "leaf",
+            "state": {
+              "type": "outline",
+              "state": {
+                "file": "Presentación grupo fing ceibal/Notes for SLM presentation.md",
+                "followCursor": false,
+                "showSearch": false,
+                "searchQuery": ""
+              },
+              "icon": "lucide-list",
+              "title": "Outline of Notes for SLM presentation"
+            }
+          }
+        ]
+      }
+    ],
+    "direction": "horizontal",
+    "width": 300,
+    "collapsed": true
+  },
+  "left-ribbon": {
+    "hiddenItems": {
+      "switcher:Open quick switcher": false,
+      "graph:Open graph view": false,
+      "canvas:Create new canvas": false,
+      "daily-notes:Open today's daily note": false,
+      "templates:Insert template": false,
+      "command-palette:Open command palette": false
+    }
+  },
+  "active": "7c6078376433ea24",
+  "lastOpenFiles": [
+    "Codigo/complexity_evaluation/obsidian_logger.py",
+    "Codigo/complexity_evaluation/spanish_analysis.json",
+    "Codigo/complexity_evaluation/english_analysis.json",
+    "Codigo/complexity_evaluation/text_evaluator.py",
+    "Codigo/complexity_evaluation/smog_index.py",
+    "Codigo/complexity_evaluation",
+    "Primeros pasos tesis.md",
+    "Bibliografía/Bibliografía índice.md",
+    "SLM Agents.md",
+    "Presentación grupo fing ceibal/Notes for SLM presentation.md",
+    "Presentación grupo fing ceibal/SizeSLM.png",
+    "Notas tiny stories.md",
+    "Codigo/llm_tesis/lib/python3.10/site-packages/torch/include/torch/csrc/api/include/torch/nn/modules/container/sequential.h",
+    "Codigo/llm_tesis/lib/python3.10/site-packages/torch/include/torch/csrc/api/include/torch/nn/modules/container/parameterlist.h",
+    "Codigo/llm_tesis/lib/python3.10/site-packages/torch/include/torch/csrc/api/include/torch/nn/modules/container/parameterdict.h",
+    "Codigo/llm_tesis/lib/python3.10/site-packages/torch/include/torch/csrc/api/include/torch/nn/modules/container/named_any.h",
+    "Codigo/llm_tesis/lib/python3.10/site-packages/torch/include/torch/csrc/api/include/torch/nn/modules/container/modulelist.h",
+    "Codigo/llm_tesis/lib/python3.10/site-packages/debugpy/_vendored/pydevd/pydevd_plugins/extensions/README.md",
+    "Codigo/llm_tesis/lib/python3.10/site-packages/networkx/drawing/tests/baseline/test_house_with_colors.png",
+    "Codigo/llm_tesis/lib/python3.10/site-packages/zmq/backend/cffi/README.md",
+    "Codigo/llm_tesis/lib/python3.10/site-packages/torchgen/packaged/autograd/README.md",
+    "Codigo/llm_tesis/lib/python3.10/site-packages/sympy/plotting/tests/test_region_xor.png",
+    "Codigo/llm_tesis/lib/python3.10/site-packages/sympy/plotting/tests/test_region_or.png",
+    "Codigo/llm_tesis/lib/python3.10/site-packages/sympy/plotting/tests/test_region_not.png",
+    "Codigo/llm_tesis/lib/python3.10/site-packages/sympy/plotting/tests/test_region_and.png",
+    "Codigo/llm_tesis/lib/python3.10/site-packages/IPython/core/tests/2x2.png",
+    "Codigo/llm_tesis/lib/python3.10/site-packages/IPython/core/tests/2x2.jpg",
+    "Codigo/llm_tesis/lib/python3.10/site-packages/pyzmq-26.4.0.dist-info/licenses/LICENSE.md",
+    "Codigo/llm_tesis/lib/python3.10/site-packages/numpy/random/LICENSE.md",
+    "Codigo/llm_tesis/lib/python3.10/site-packages/ipykernel/resources/logo-svg.svg",
+    "Codigo/llm_tesis/lib/python3.10/site-packages/ipykernel/resources/logo-64x64.png",
+    "Codigo/llm_tesis/lib/python3.10/site-packages/huggingface_hub/templates/modelcard_template.md",
+    "Codigo/llm_tesis/lib/python3.10/site-packages/huggingface_hub/templates/datasetcard_template.md",
+    "Codigo/llm_tesis/lib/python3.10/site-packages/idna-3.10.dist-info/LICENSE.md",
+    "Codigo/llm_tesis/lib/python3.10/site-packages/bitsandbytes-0.41.1.dist-info/NOTICE.md",
+    "Codigo/llm_tesis/lib/python3.10/site-packages/Markdown-3.4.1.dist-info/LICENSE.md",
+    "Codigo/TinyLama/tinyllama_README.md",
+    "Codigo/qwen2_mac/README.md",
+    "Codigo/README.md",
+    "Presentación grupo fing ceibal/Esquema presentación SLMs.md",
+    "Welcome.md",
+    "Presentación grupo fing ceibal/Notas survey SLM.md",
+    "Presentación grupo fing ceibal/Notas AI aplications in EFL.md",
+    "Presentación grupo fing ceibal/Guía de estudio SLM.md",
+    "Ideas/Open world idea.md",
+    "Ideas/Need for synthetic data.md"
+  ]
+}

@@ -1,0 +1,1 @@
+"*These workshops highlighted current challenges in education: learners struggle with time management, cognitive overload, and demotivation when they perceive their learning materials as irrelevant; while educators struggle to provide personalised attention and feedback in classroom settings.*"
