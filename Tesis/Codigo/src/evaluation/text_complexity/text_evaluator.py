@@ -68,31 +68,7 @@ class TextEvaluator:
             'spache_readability': round(textstat.spache_readability(text), 2),
             'mcalpine_eflaw': round(textstat.mcalpine_eflaw(text), 2)
         }
-    
-    def get_spanish_readability_scores(self, text: str) -> Dict[str, float]:
-        """
-        Calculate Spanish-specific readability scores for the given text.
-        
-        Args:
-            text (str): Spanish text to analyze
-            
-        Returns:
-            Dict[str, float]: Dictionary containing Spanish readability scores
-        """
-        if not text or not text.strip():
-            return {
-                'fernandez_huerta': 0.0,
-                'szigriszt_pazos': 0.0,
-                'gutierrez_polini': 0.0,
-                'crawford': 0.0
-            }
-        
-        return {
-            'fernandez_huerta': round(textstat.fernandez_huerta(text), 2),
-            'szigriszt_pazos': round(textstat.szigriszt_pazos(text), 2),
-            'gutierrez_polini': round(textstat.gutierrez_polini(text), 2),
-            'crawford': round(textstat.crawford(text), 2)
-        }
+
     
     def get_text_statistics(self, text: str) -> Dict[str, int]:
         """
@@ -165,7 +141,6 @@ class TextEvaluator:
                 'grade_level_indices': self.get_grade_level_indices(text),
                 'readability_scores': self.get_readability_scores(text),
                 'reading_time': self.get_reading_time(text),
-                'spanish_scores': self.get_spanish_readability_scores(text) if include_spanish else None
             }
         
         analysis = {
@@ -174,9 +149,6 @@ class TextEvaluator:
             'readability_scores': self.get_readability_scores(text),
             'reading_time': self.get_reading_time(text)
         }
-        
-        if include_spanish:
-            analysis['spanish_scores'] = self.get_spanish_readability_scores(text)
         
         return analysis
     
