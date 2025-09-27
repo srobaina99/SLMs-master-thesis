@@ -9,7 +9,7 @@ from transformers.generation import LogitsProcessorList
 
 # Add parent directory to path to import ProbabilityWeightingLogitsProcessor
 sys.path.append(os.path.dirname(os.path.dirname(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))))
-from src.models.qwen.shared.probability_processor import ProbabilityWeightingLogitsProcessor
+from src.models.probability_processor import ProbabilityWeightingLogitsProcessor
 
 # Enable MPS fallback for operations not supported on MPS
 os.environ["PYTORCH_ENABLE_MPS_FALLBACK"] = "1"

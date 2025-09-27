@@ -17,6 +17,7 @@ sys.path.append(project_root)
 from .data_models import ExperimentConfig, ExperimentResult, ExperimentDataManager
 from ..utils.qwen3_wrapper import Qwen3ExperimentWrapper
 from ..prompts.english_learning_prompts import EnglishLearningPrompts, STANDARD_EXPERIMENT_CONFIGS
+from ..experiments.factorial_experiment import FactorialExperiment
 
 
 class ExperimentRunner:
@@ -37,6 +38,9 @@ class ExperimentRunner:
         self.results_dir = results_dir
         self.data_manager = ExperimentDataManager()
         self.model_wrapper = Qwen3ExperimentWrapper()
+        
+        # Initialize factorial experiment runner
+        self.factorial_experiment = FactorialExperiment(results_dir)
         
         # Create results directory if it doesn't exist
         os.makedirs(self.results_dir, exist_ok=True)
@@ -346,6 +350,58 @@ def run_weighted_comparison() -> str:
     print(f"  Average Flesch-Kincaid Grade: {summary.get('flesch_kincaid_grade', {}).get('mean', 0):.2f}")
     
     return results_file
+
+    def run_factorial_experiment(self, 
+                                prompts: Optional[List[str]] = None,
+                                experiment_name: str = "factorial_experiment"):
+        """
+        Run the complete factorial experiment using the new framework.
+        
+        Args:
+            prompts: List of prompts to test (uses standard prompts if None)
+            experiment_name: Name for this experiment run
+            
+        Returns:
+            Path to saved results file
+        """
+        print(f"🚀 Starting factorial experiment via ExperimentRunner...")
+        
+        # Run the factorial experiment
+        df = self.factorial_experiment.run_full_experiment(prompts, experiment_name)
+        
+        # Save results
+        files = self.factorial_experiment.save_results(experiment_name)
+        
+        print(f"✅ Factorial experiment completed!")
+        print(f"📊 Generated {len(df)} results")
+        
+        return files['specification_csv']
+    
+    def run_single_model_factorial(self, 
+                                  model_name: str,
+                                  prompts: Optional[List[str]] = None):
+        """
+        Run factorial experiment for a single model.
+        
+        Args:
+            model_name: Name of model to test
+            prompts: List of prompts to test
+            
+        Returns:
+            Path to saved results file
+        """
+        print(f"🚀 Starting single model factorial experiment: {model_name}")
+        
+        df = self.factorial_experiment.run_single_model_experiment(model_name, prompts)
+        files = self.factorial_experiment.save_results(f"{model_name}_factorial")
+        
+        print(f"✅ Single model factorial experiment completed for {model_name}!")
+        
+        return files['specification_csv']
+    
+    def get_model_status(self):
+        """Get status of all available models."""
+        return self.factorial_experiment.get_model_status()
 
 
 if __name__ == "__main__":

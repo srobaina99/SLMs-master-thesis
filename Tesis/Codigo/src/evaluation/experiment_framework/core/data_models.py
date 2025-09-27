@@ -14,13 +14,23 @@ import uuid
 class ExperimentConfig:
     """Configuration for a single experiment run."""
     
-    # Model parameters
-    model_id: str = "unsloth/Qwen3-0.6B"
+    # Model parameters - updated for specification compliance
+    model_name: str = "Qwen3"  # "Qwen2", "Qwen3", "TinyLlama", "TinyStories"
+    model_id: str = "unsloth/Qwen3-0.6B"  # Actual model path/identifier
     system_prompt: str = "You are a helpful English teacher for beginner students."
+    
+    # Intervention flags - specification format
+    config_weighting: bool = False  # Probability weighting intervention
+    config_prompting: bool = False  # Context prompting intervention
+    
+    # Legacy fields for backward compatibility
     weighted_words_enabled: bool = False
     weight_factor: float = 1.0
     enable_thinking: bool = False
     verbose: bool = False
+    
+    # Experiment tracking
+    prompt_id: str = ""  # Identifier for the specific prompt used
     
     # Generation parameters
     temperature: float = 0.7
@@ -52,7 +62,13 @@ class ExperimentResult:
     response: str
     
     # Model parameters (flattened for easy analysis)
-    model_id: str
+    model: str  # Model name from specification
+    model_id: str  # Actual model path
+    config_weighting: bool  # Specification format
+    config_prompting: bool  # Specification format
+    prompt_id: str  # Prompt identifier
+    
+    # Legacy fields for backward compatibility
     weighted_words_enabled: bool
     weight_factor: float
     enable_thinking: bool
@@ -119,7 +135,15 @@ class ExperimentResult:
             system_prompt=config.system_prompt,
             response=response,
             cleaned_response=cleaned_response,
+            
+            # Specification format fields
+            model=config.model_name,
             model_id=config.model_id,
+            config_weighting=config.config_weighting,
+            config_prompting=config.config_prompting,
+            prompt_id=config.prompt_id,
+            
+            # Legacy fields for backward compatibility
             weighted_words_enabled=config.weighted_words_enabled,
             weight_factor=config.weight_factor,
             enable_thinking=config.enable_thinking,
@@ -203,6 +227,37 @@ class ExperimentDataManager:
         
         df.to_csv(filename, index=False)
         print(f"Saved {len(self.results)} results to {filename}")
+    
+    def export_to_csv_specification_format(self, filename: str):
+        """Export in exact format from ExperimentSpecification.md"""
+        df = self.to_dataframe()
+        if df.empty:
+            print("No results to save.")
+            return
+        
+        # Rename columns to match specification
+        df_spec = df.copy()
+        df_spec['time_spent'] = df_spec['response_time_seconds']
+        df_spec['answer'] = df_spec['response']
+        
+        # Select columns for specification format
+        spec_columns = [
+            'model', 'config_weighting', 'config_prompting', 'prompt_id',
+            'answer', 'time_spent', 'flesch_kincaid_grade', 'gunning_fog', 
+            'smog_index', 'automated_readability_index', 'coleman_liau_index',
+            'dale_chall_readability_score', 'flesch_reading_ease', 
+            'linsear_write_formula', 'spache_readability', 'mcalpine_eflaw',
+            'sentence_count', 'word_count', 'character_count', 'syllable_count',
+            'polysyllable_count', 'monosyllable_count', 'difficult_words',
+            'reading_time_seconds', 'reading_time_minutes'
+        ]
+        
+        # Filter to available columns
+        available_columns = [col for col in spec_columns if col in df_spec.columns]
+        df_export = df_spec[available_columns]
+        
+        df_export.to_csv(filename, index=False)
+        print(f"Saved {len(self.results)} results in specification format to {filename}")
     
     def get_summary_stats(self) -> Dict[str, Any]:
         """Get summary statistics of all experiments."""
