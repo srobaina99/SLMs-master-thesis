@@ -19,7 +19,7 @@ model_id = "unsloth/Qwen3-0.6B"  # Using unsloth's version which is publicly ava
 pipe = pipeline(
     "text-generation",
     model=model_id,
-    torch_dtype=torch.float16,
+    dtype=torch.float16,
     device_map="auto"  # This will use MPS if available
 )
 

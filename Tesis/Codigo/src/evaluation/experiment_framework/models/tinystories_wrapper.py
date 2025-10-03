@@ -186,7 +186,7 @@ class TinyStoriesWrapper(BaseModelWrapper):
         
         return generated_text.strip()
     
-    def generate_response(self, prompt: str, config: ExperimentConfig) -> Dict[str, Any]:
+    def _generate_response_impl(self, prompt: str, config: ExperimentConfig) -> Dict[str, Any]:
         """
         Generate response using TinyStories with the given configuration.
         

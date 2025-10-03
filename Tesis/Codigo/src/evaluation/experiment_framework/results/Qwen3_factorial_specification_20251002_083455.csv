@@ -1,0 +1,156 @@
+model,config_weighting,config_prompting,prompt_id,answer,time_spent,flesch_kincaid_grade,gunning_fog,smog_index,automated_readability_index,coleman_liau_index,dale_chall_readability_score,flesch_reading_ease,linsear_write_formula,spache_readability,mcalpine_eflaw,sentence_count,word_count,character_count,syllable_count,polysyllable_count,monosyllable_count,difficult_words,reading_time_seconds,reading_time_minutes
+Qwen3,False,False,P1,"<think>
+
+</think>
+
+The word **""library""** means a place where books are stored, often for reading, learning, or research. It can also refer to a place where people gather to study, read, or share information. Some specific uses include:
+
+- A **library school** (a school that provides access to books).
+- A **library house** (a place where books are stored).
+- A **library of books** (a physical collection of books).
+
+In simpler terms, a **library** is a place where you can find and read books.","7,8","6,43","7,87","10,5","7,13","7,79","8,4","73,02","7,42","4,02","18,17",6,81,389,115,10,58,12,"5,71","0,1"
+Qwen3,True,False,P1,"<think>
+
+</think>
+
+The word **'library'** means a place where people gather to read books, and it is often used in schools or bookstores. It can also refer to a general place where books are stored or studied.","13,0","6,93","7,4","8,84","9,08","7,21","7,54","78,31","10,25","4,14","25,5",2,37,167,48,2,28,3,"2,45","0,04"
+Qwen3,False,True,P1,"<think>
+
+</think>
+
+What does a library mean? It's a place where you can read books and learn.","1,1","0,91","3,4","7,17","3,6","3,58","4,99","103,65","3,75","2,04","11,5",2,17,75,19,1,16,0,"1,1","0,02"
+Qwen3,True,True,P1,"<think>
+
+</think>
+
+What does a library mean? It's a place where people can read books and borrow them from.","5,6","2,4","3,8","7,17","4,89","5,2","4,94","94,78","4,25","2,18","12,0",2,19,87,23,1,16,0,"1,28","0,02"
+Qwen3,False,False,P2,"<think>
+
+</think>
+
+Sure! Here's a simple way to introduce yourself in English:
+
+**""Hi, I'm [Your Name]. I'm a student here. I like [something], and I'm looking forward to learning more.""**
+
+Let me know if you'd like help with a specific topic!","2,0","3,15","5,23","6,74","5,07","4,78","7,89","87,09","3,5","3,25","11,4",5,41,195,54,2,30,6,"2,86","0,05"
+Qwen3,True,False,P2,"<think>
+
+</think>
+
+Sure! Here's how you can introduce yourself in English:
+
+**""Hi, my name is [Your Name], and I'm [Your Age/Experience] in [Your Field]. I enjoy [interests or skills] and would love to learn more from you!""**
+
+Let me know if you'd like help with a specific topic!","18,4","4,09","7,3","8,08","6,65","5,78","6,86","87,14","5,75","3,43","16,75",4,48,225,61,3,40,5,"3,31","0,06"
+Qwen3,False,True,P2,"<think>
+
+</think>
+
+How do I introduce myself in English?  
+I can say something like, ""Hi, I'm [Name].""","1,0","3,0","5,75","7,17","5,54","3,92","6,84","88,73","3,75","2,54","13,0",2,17,82,22,1,13,1,"1,2","0,02"
+Qwen3,True,True,P2,"<think>
+
+</think>
+
+How do I introduce myself in English?  
+I can say, ""Hi! I’m [Name].""","5,7","2,28","5,67","7,17","3,99","1,52","7,17","92,06","3,25","2,47","12,0",2,15,69,19,1,12,1,"1,01","0,02"
+Qwen3,False,False,P3,"<think>
+
+</think>
+
+A dog is a mammal, and it belongs to the family Canidae. Dogs are known for their loyalty, love, and ability to form strong bonds with humans. They are often used in various roles such as companions, pets, and even in special events like parades. Dogs have a wide range of characteristics, including their fur, ability to bark, and their playful nature.","3,6","7,98","10,78","11,21","9,16","8,63","9,86","66,34","9,0","5,11","21,5",4,64,307,94,8,46,14,"4,51","0,08"
+Qwen3,True,False,P3,"<think>
+
+</think>
+
+A dog is a domesticated animal of the Canidae family. Dogs are mammals with hair, a nose, and a tail. They are often kept as pets or companions. Dogs have four legs, and they are known for their loyalty and companionship.","15,2","5,07","8,02","10,13","5,41","6,27","7,84","77,88","5,88","3,35","15,0",4,43,196,60,6,35,5,"2,88","0,05"
+Qwen3,False,True,P3,"<think>
+
+</think>
+
+What a dog is?","0,3","-1,45","2,4","3,13","1,98","-1,4","0,3","116,15","2,0","1,68","9,0",1,6,26,6,0,6,0,"0,38","0,01"
+Qwen3,True,True,P3,"<think>
+
+</think>
+
+What a dog is! 🐾","2,8","-1,45","2,4","3,13","1,98","-1,4","0,3","116,15","2,0","1,68","9,0",1,6,26,6,0,6,0,"0,38","0,01"
+Qwen3,False,False,P4,"<think>
+
+</think>
+
+Certainly! ""Breakfast"" is a meal that you eat **before going to school** or **work**. It usually includes **breakfast bread**, **milk**, **eggs**, **compost**, and **water**. It's a simple and satisfying meal that helps you start your day properly.","2,6","5,46","6,98","8,84","7,48","8,38","6,95","73,29","4,88","3,32","13,0",4,39,199,57,4,27,5,"2,92","0,05"
+Qwen3,True,False,P4,"<think>
+
+</think>
+
+Absolutely! ""Breakfast"" is a meal that happens in the morning. It's a time when you get up and eat something to start the day. It's not just about food—it's about being healthy, being happy, and starting the day with energy! 🌟","15,2","5,08","6,1","7,17","6,25","6,65","6,04","77,33","4,75","3,34","15,25",4,42,200,59,2,28,5,"2,94","0,05"
+Qwen3,False,True,P4,"<think>
+
+</think>
+
+Sure! Let's see... ""Breakfast"" is when you get up early and eat your first meal of the day. It's like a special time to start eating.","1,3","1,54","3,73","3,13","3,93","3,4","5,23","100,68","3,67","2,77","13,67",3,28,123,32,0,24,2,"1,81","0,03"
+Qwen3,True,True,P4,"<think>
+
+</think>
+
+Sure! Breakfast is when you eat something like bread, eggs, and juice before school.","5,8","1,54","3,2","3,13","7,89","8,41","5,02","98,25","3,0","1,97","10,0",2,16,86,19,0,13,0,"1,26","0,02"
+Qwen3,False,False,P5,"<think>
+
+</think>
+
+The difference between **""big""** and **""large""** is that:
+
+- **""Big""** means **larger** in size, shape, or quantity. It can be used to describe something that is not just big, but **also big enough**.  
+- **""Large""** is a more **general** or **common** term that can describe something that is big or large in size, but it can sometimes be used to mean **not quite big enough**.  
+
+### Example:
+- *He’s *big* in height.*  
+  (He’s tall.)
+
+- *She’s *large* in size.*  
+  (She’s not really big.)
+
+So, ""big"" is more about **""size""** and can be used in more contexts, while ""large"" is a **general** term.","7,6","4,59","6,47","7,96","5,9","5,31","5,77","87,37","6,79","3,27","20,86",7,99,443,123,5,80,5,"6,51","0,11"
+Qwen3,True,False,P5,"<think>
+
+</think>
+
+Great question! The word **""big""** and **""large""** are both used to describe **size**, but they have different meanings and are often used differently depending on the context.
+
+### 1. **""Big""**:
+- **Meaning**: ""Large in size or size, but not as big as the other.""  
+  - Example: ""He's big for his age.""  
+  - This is more about **how big** someone is in size, but not necessarily the **larger** size.
+
+- **Usage**: Often used in general descriptions of size, not necessarily in comparisons to others.  
+  - Example: ""I'm big for my height.""
+
+### 2. **""Large""**:
+- **Meaning**: ""Big in size or size, but not as big as the other.""  
+  - This is a more general or comparative way to describe how big something is.  
+  - Example: ""The house is large.""  
+  - This can be used in comparisons to other things or to describe a place's size.
+
+- **Usage**: Often used in comparisons, especially when comparing to other things.  
+  - Example: ""She's larger than me.""  
+  - ""The room is large.""  
+  - ""This building is large.""
+
+### Summary:
+| Word | Meaning | Use |
+|------|---------|------|
+| **Big** | ""Large in size, but not as big as the other."" | General description of size, not a comparison. |
+| **Large** | ""Big in size, but not as big as the other."" | Comparing to others or describing a place. |
+
+Let me know if you'd like examples or further clarification! 😊","104,1","5,54","8,39","9,64","4,5","6,43","7,1","73,98","6,5","3,71","15,55",20,209,1033,302,26,153,23,"15,17","0,25"
+Qwen3,False,True,P5,"<think>
+
+</think>
+
+Big and large are both used to describe size. Big means it's big, like a big toy. Large means it's big, like a big tree. They're similar, but big is more like a big toy, while large is more like a big tree.","3,2","1,38","5,39","5,99","2,93","2,58","0,91","105,18","4,88","2,62","17,0",4,45,179,48,1,43,1,"2,63","0,04"
+Qwen3,True,True,P5,"<think>
+
+</think>
+
+The difference between ""big"" and ""large"" is that ""big"" is a bit smaller than ""large."" For example, a big toy is small, but a large book is bigger.","11,7","4,81","7,33","8,84","7,11","4,85","5,43","87,27","7,5","3,53","23,0",2,30,134,37,2,25,2,"1,97","0,03"

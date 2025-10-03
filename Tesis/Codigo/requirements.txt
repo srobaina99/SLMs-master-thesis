@@ -10,6 +10,10 @@ textstat>=0.7.3
 pandas>=1.5.0
 pyarrow>=10.0.0
 
+# Visualization
+matplotlib>=3.5.0
+seaborn>=0.12.0
+
 # Jupyter and interactive features
 IPython>=8.0.0
 jupyter>=1.0.0
@@ -17,8 +21,9 @@ jupyter>=1.0.0
 # Utility and display
 Markdown>=3.4.0
 
-# Optional: For quantized models (TinyLama)
+# Optional: For quantized models (TinyLlama)
 ctransformers>=0.2.24
+llama-cpp-python>=0.2.0
 
 # Development and typing (optional)
 # typing-extensions>=4.0.0

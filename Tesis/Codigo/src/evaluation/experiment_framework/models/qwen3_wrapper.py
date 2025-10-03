@@ -57,7 +57,7 @@ class Qwen3Wrapper(BaseModelWrapper):
         except:
             return False
     
-    def generate_response(self, prompt: str, config: ExperimentConfig) -> Dict[str, Any]:
+    def _generate_response_impl(self, prompt: str, config: ExperimentConfig) -> Dict[str, Any]:
         """
         Generate response using Qwen3 with the given configuration.
         

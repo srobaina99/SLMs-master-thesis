@@ -1,8 +1,8 @@
-# Thesis Code: Small Language Model Evaluation Framework
+# Small Language Model Evaluation Framework
 
 A comprehensive framework for evaluating small language models in English teaching scenarios, with focus on conversation quality and text complexity analysis.
 
-## 📁 Project Structure
+## Project Structure
 
 ```
 thesis_code/
@@ -14,7 +14,7 @@ thesis_code/
 │   │   │   ├── qwen3/            # Qwen3 implementation (main)
 │   │   │   └── shared/           # Shared utilities (probability_processor)
 │   │   └── small_models/         # Other small models
-│   │       ├── tinylama/         # TinyLama implementation
+│   │       ├── tinyllama/        # TinyLlama implementation
 │   │       └── tinystories/      # TinyStories implementation
 │   ├── evaluation/               # Evaluation frameworks
 │   │   ├── text_complexity/      # Text readability analysis
@@ -32,7 +32,7 @@ thesis_code/
 └── README.md                     # This file
 ```
 
-## 🚀 Quick Start
+## Quick Start
 
 ### 1. Environment Setup
 
@@ -70,16 +70,16 @@ python scripts/run_experiment.py --experiment weighted_comparison
 python scripts/run_experiment.py --experiment demo
 ```
 
-## 🧪 Experiment Framework
+## Experiment Framework
 
 The experiment framework provides comprehensive evaluation of LLM responses:
 
 ### Features
-- **Text Complexity Analysis**: Flesch-Kincaid, Gunning Fog, SMOG, and more
+- **Text Complexity Analysis**: Flesch-Kincaid, Gunning Fog, SMOG, and additional metrics
 - **Readability Metrics**: Reading ease, vocabulary difficulty, sentence complexity
 - **Performance Tracking**: Response time, generation success rates
 - **Parameter Sweeps**: Systematic testing of model configurations
-- **Data Export**: Parquet files for Google Sheets analysis
+- **Data Export**: Parquet and CSV files for statistical analysis
 
 ### Usage Example
 
@@ -109,7 +109,7 @@ results = runner.run_batch_experiment(
 runner.save_results("my_experiment")
 ```
 
-## 📊 Text Complexity Evaluation
+## Text Complexity Evaluation
 
 The text evaluator provides comprehensive readability analysis:
 
@@ -126,7 +126,7 @@ print(f"Grade level: {analysis['grade_level_indices']['flesch_kincaid_grade']}")
 print(f"Reading ease: {analysis['readability_scores']['flesch_reading_ease']}")
 ```
 
-## 🤖 Model Implementations
+## Model Implementations
 
 ### Qwen3 (Primary Model)
 - **Location**: `src/models/qwen/qwen3/`
@@ -137,11 +137,11 @@ print(f"Reading ease: {analysis['readability_scores']['flesch_reading_ease']}")
 - **Location**: `src/models/qwen/qwen2/`
 - **Features**: Basic chat interface, MPS optimization
 
-### TinyLama & TinyStories
+### TinyLlama & TinyStories
 - **Location**: `src/models/small_models/`
 - **Features**: Lightweight models for comparison studies
 
-## 📝 English Learning Prompts
+## English Learning Prompts
 
 The framework includes 50+ standardized prompts across categories:
 
@@ -151,7 +151,7 @@ The framework includes 50+ standardized prompts across categories:
 - **Cultural Questions**: Social context and norms
 - **Error Correction**: Common ESL mistakes
 
-## 📈 Data Analysis
+## Data Analysis
 
 Results are exported in multiple formats:
 - **Parquet**: Optimized for Google Sheets import
@@ -164,7 +164,7 @@ Results are exported in multiple formats:
 - Vocabulary difficulty and sentence structure
 - Word count, syllable count, reading time
 
-## 🛠️ Development
+## Development
 
 ### Adding New Models
 1. Create directory under `src/models/`
@@ -181,7 +181,7 @@ Results are exported in multiple formats:
 2. Add to appropriate category
 3. Update standard experiment configurations
 
-## 🔧 Configuration
+## Configuration
 
 ### Virtual Environment
 - **Python**: 3.10
@@ -193,7 +193,7 @@ Results are exported in multiple formats:
 - **Generation**: Temperature 0.7, top-k 50, top-p 0.95
 - **Max Tokens**: 1024
 
-## 📋 Experiment Types
+## Experiment Types
 
 ### Standard Experiments
 - **quick_test**: 5 diverse prompts, basic evaluation
@@ -203,23 +203,12 @@ Results are exported in multiple formats:
 - **weighted_comparison**: Parameter sweep analysis
 
 ### Custom Experiments
-Create your own experiments using the `ExperimentRunner` class with custom configurations and prompt sets.
+Custom experiments can be created using the `ExperimentRunner` class with custom configurations and prompt sets.
 
-## 🤝 Contributing
-
-1. Follow the established folder structure
-2. Add comprehensive docstrings
-3. Update relevant README files
-4. Test with the experiment framework
-
-## 📚 Research Context
+## Research Context
 
 This codebase supports thesis research on:
 - Small language model evaluation in educational contexts
 - Text complexity analysis for English learning
 - Parameter optimization for teaching-focused LLMs
 - Comparative analysis of model architectures
-
----
-
-**Happy Researching! 🎓**

@@ -1,261 +1,138 @@
-# English Learning Conversation Experiment Framework
+# Factorial Experiment Framework
 
-A comprehensive framework for evaluating small language models in English teaching scenarios. Integrates with existing Qwen3 implementation and provides automated text complexity evaluation.
+A clean, focused framework for running factorial experiments with small language models, implementing the 4×4×N experimental design from `ExperimentSpecification.md`.
 
-## 📁 Folder Structure
+## Purpose
+
+Evaluate the effectiveness of two interventions on small language model outputs:
+1. **Probability Weighting**: Boost vocabulary from beginner English word lists
+2. **Context Prompting**: Add simplification instructions to prompts
+
+## Structure
 
 ```
 experiment_framework/
 ├── core/                          # Core framework components
-│   ├── __init__.py
-│   ├── data_models.py            # Data structures and Parquet export
-│   └── experiment_runner.py      # Main experiment orchestration
-├── data/                         # Data storage (auto-created)
-├── prompts/                      # Prompt templates and scenarios
-│   ├── __init__.py
-│   └── english_learning_prompts.py
-├── results/                      # Experiment results (auto-created)
-├── utils/                        # Utility functions
-│   ├── __init__.py
-│   └── qwen3_wrapper.py         # Qwen3 model integration
-├── demo_experiment.py           # Demo script to test framework
-├── __init__.py
-└── README.md                    # This file
+│   ├── data_models.py            # Data structures and CSV export
+│   └── experiment_runner.py      # Main experiment interface
+├── experiments/                   # Experiment logic
+│   ├── factorial_experiment.py   # 4×4×N factorial design
+│   └── experiment_configs.py     # Standard configurations and prompts
+├── models/                        # Model wrappers
+│   ├── base_model.py            # Abstract base class
+│   ├── qwen2_wrapper.py         # Qwen2 integration
+│   ├── qwen3_wrapper.py         # Qwen3 integration
+│   ├── tinyllama_wrapper.py     # TinyLlama integration
+│   └── tinystories_wrapper.py   # TinyStories integration
+├── demo_factorial_experiment.py  # Interactive demo
+└── README.md                     # This file
 ```
 
-## 🚀 Quick Start
+## Quick Start
 
-### 1. Prerequisites
-
-Make sure you have your Qwen3 model loaded:
-
-```bash
-cd /Users/santiago/Documents/Personal/Tesis/Codigo
-python -c "from qwen3_mps.qwen3_weighted import *"
-```
-
-### 2. Run Demo
-
-```bash
-cd experiment_framework
-python demo_experiment.py
-```
-
-### 3. Run Quick Test
+### Basic Usage
 
 ```python
 from experiment_framework import ExperimentRunner
 
-# Run a quick test experiment
-runner = ExperimentRunner()
-runner.run_standard_experiment("quick_test")
-results_file = runner.save_results("my_test")
-print(f"Results saved to: {results_file}")
-```
-
-## 📊 Usage Examples
-
-### Single Experiment
-
-```python
-from experiment_framework.core.experiment_runner import ExperimentRunner
-from experiment_framework.core.data_models import ExperimentConfig
-
+# Initialize runner
 runner = ExperimentRunner()
 
-config = ExperimentConfig(
-    system_prompt="You are an English teacher for beginner students.",
-    weighted_words_enabled=True,
-    weight_factor=2.0
-)
+# Run complete factorial experiment (4 models × 4 configs × 10 prompts = 160 experiments)
+results_file = runner.run_factorial_experiment()
 
-result = runner.run_single_experiment(
-    prompt="What does the word 'library' mean?",
-    config=config
-)
+# Run experiment for single model only
+results_file = runner.run_single_model_experiment("Qwen3")
 
-print(f"Response: {result.response}")
-print(f"Grade level: {result.flesch_kincaid_grade}")
+# Check which models are loaded
+status = runner.get_model_status()
+print(status)
 ```
 
-### Batch Experiments
+### Quick Tests
 
 ```python
-prompts = [
-    "What does the word 'library' mean?",
-    "How do I introduce myself?",
-    "When do I use 'a' vs 'an'?"
-]
+from experiment_framework import run_quick_factorial_test, run_single_model_test
 
-results = runner.run_batch_experiment(
-    prompts=prompts,
-    config=config,
-    experiment_name="vocabulary_test"
-)
+# Quick test with 3 prompts (48 total experiments)
+results_file = run_quick_factorial_test()
+
+# Test single model with 2 prompts (8 experiments)
+results_file = run_single_model_test("TinyStories")
 ```
 
-### Parameter Sweep
+### Interactive Demo
 
-```python
-base_config = ExperimentConfig(
-    system_prompt="You are an English teacher."
-)
-
-parameter_variations = {
-    'weighted_words_enabled': [False, True],
-    'weight_factor': [1.0, 1.5, 2.0],
-    'temperature': [0.5, 0.7, 0.9]
-}
-
-results = runner.run_parameter_sweep(
-    prompts=prompts,
-    base_config=base_config,
-    parameter_variations=parameter_variations
-)
-```
-
-### Standard Experiments
-
-```python
-# Available: 'basic_teaching', 'grammar_focus', 'conversation_practice', 
-#           'error_correction', 'quick_test'
-
-runner.run_standard_experiment("grammar_focus")
-runner.save_results("grammar_experiment")
-```
-
-## 📈 Data Export
-
-Results are automatically saved in multiple formats:
-
-- **Parquet**: Optimized for Google Sheets import
-- **CSV**: Human-readable backup
-- **JSON Summary**: Statistical overview
-
-```python
-# Save results
-results_file = runner.save_results("my_experiment")
-
-# Get summary statistics
-summary = runner.get_results_summary()
-print(f"Total experiments: {summary['total_experiments']}")
-print(f"Average grade level: {summary['flesch_kincaid_grade']['mean']}")
-```
-
-## 🔧 Configuration Options
-
-### ExperimentConfig Parameters
-
-- **model_id**: Model identifier (default: "unsloth/Qwen3-0.6B")
-- **system_prompt**: System prompt for the model
-- **weighted_words_enabled**: Boolean flag for word weighting
-- **weight_factor**: Multiplier for word weights (>1 increases probability)
-- **enable_thinking**: Enable Qwen3's thinking mode
-- **temperature**: Generation temperature (0.1-1.0)
-- **top_k**: Top-k sampling parameter
-- **top_p**: Top-p (nucleus) sampling parameter
-
-### Collected Metrics
-
-**Text Complexity:**
-- Flesch-Kincaid Grade Level
-- Gunning Fog Index
-- SMOG Index
-- Automated Readability Index
-- Coleman-Liau Index
-- Dale-Chall Readability Score
-
-**Readability Scores:**
-- Flesch Reading Ease
-- Linsear Write Formula
-- Spache Readability
-- McAlpine EFLAW
-
-**Text Statistics:**
-- Word count, sentence count, character count
-- Syllable count, polysyllable count
-- Difficult words count
-- Reading time estimates
-
-**Performance:**
-- Response time in seconds
-- Generation success/failure status
-
-## 🎯 English Learning Prompts
-
-The framework includes 50+ standardized prompts across categories:
-
-- **Vocabulary Questions**: Basic word definitions and usage
-- **Grammar Questions**: Grammar rules and usage patterns
-- **Conversation Scenarios**: Real-world communication situations
-- **Cultural Questions**: Cultural context and social norms
-- **Error Correction**: Common ESL mistakes for correction
-
-## 📋 System Prompt Variations
-
-- **basic_teacher**: Simple, encouraging responses
-- **detailed_teacher**: Thorough explanations with examples
-- **conversational_teacher**: Natural dialogue approach
-- **grammar_focused**: Grammar-centric teaching
-- **vocabulary_focused**: Vocabulary building emphasis
-
-## 🔍 Analysis and Visualization
-
-After running experiments:
-
-1. **Upload Parquet files to Google Sheets**
-2. **Create pivot tables** to analyze parameter effects
-3. **Visualize trends** in response complexity and quality
-4. **Compare configurations** across different metrics
-
-## 🛠️ Troubleshooting
-
-### Model Not Loaded Error
-```
-❌ ERROR: Qwen3 model not loaded!
-```
-**Solution**: Load Qwen3 first:
 ```bash
-python -c "from qwen3_mps.qwen3_weighted import *"
+cd experiment_framework
+python demo_factorial_experiment.py
 ```
 
-### Import Errors
-Make sure you're running from the project root directory and all dependencies are installed.
+## Experimental Design
 
-### Memory Issues
-For large parameter sweeps, consider:
-- Reducing batch sizes
-- Running experiments in smaller chunks
-- Clearing results periodically with `runner.clear_results()`
+### Models (4)
+- **Qwen2**: Qwen2.5-0.5B-Instruct
+- **Qwen3**: Qwen3-0.6B  
+- **TinyLlama**: TinyLlama-1.1B-Chat-v1.0
+- **TinyStories**: TinyStories-33M
 
-## 📝 Example Output
+### Interventions (4 combinations)
+1. **Control**: No interventions
+2. **Weighting Only**: Boost probability of simple vocabulary
+3. **Prompting Only**: Add simplification context
+4. **Both**: Weighting + Prompting
 
+### Standard Prompts (10)
+- Basic English learning questions
+- Vocabulary explanations
+- Grammar usage
+- Conversational scenarios
+
+## Output Format
+
+Results are saved in the exact format specified in `ExperimentSpecification.md`:
+
+| model | config_weighting | config_prompting | prompt_id | answer | time_spent | flesch_kincaid_grade | ... |
+|-------|------------------|------------------|-----------|--------|------------|---------------------|-----|
+| Qwen2 | True | False | P1 | "Hello there!" | 2.3 | 4.2 | ... |
+| Qwen3 | False | True | P1 | "Hi friend!" | 1.8 | 3.8 | ... |
+
+## Configuration
+
+All configurations are automatically generated:
+
+```python
+from experiment_framework import create_factorial_configs, STANDARD_PROMPTS
+
+# Get all 16 configurations (4 models × 4 intervention combinations)
+configs = create_factorial_configs()
+
+# Get standard prompts
+prompts = STANDARD_PROMPTS
 ```
-Running experiment: vocabulary_test
-Prompt: What does the word 'library' mean?...
 
-Generating response...
-Response time: 3.45 seconds
+## Requirements
 
-Result Summary:
-  Response: A library is a place where you can borrow books...
-  Response time: 3.45 seconds
-  Word count: 42
-  Flesch-Kincaid Grade: 6.2
-  Reading ease: 78.5
+- Python 3.8+
+- PyTorch 2.0+
+- Transformers 4.36+
+- All dependencies from `requirements.txt`
 
-Results saved to: experiment_framework/results/vocabulary_test_20240115_143022.parquet
+## Model Status
+
+Check which models are available:
+
+```python
+runner = ExperimentRunner()
+status = runner.get_model_status()
+
+for model_name, info in status.items():
+    print(f"{model_name}: {'✅ LOADED' if info['loaded'] else '❌ NOT LOADED'}")
 ```
 
-## 🤝 Contributing
+## Notes
 
-To extend the framework:
-
-1. **Add new prompts** in `prompts/english_learning_prompts.py`
-2. **Create new metrics** by extending `TextEvaluator`
-3. **Add experiment types** in `STANDARD_EXPERIMENT_CONFIGS`
-4. **Customize data models** in `core/data_models.py`
-
----
-
-**Happy Experimenting! 🎉**
+- Models are loaded on-demand when first used
+- Results are automatically saved in multiple formats (CSV, Parquet, JSON)
+- All text complexity metrics are calculated using the `textstat` library
+- Vocabulary weighting uses words from `data/vocabularies/filtered_starters_vocab.txt`

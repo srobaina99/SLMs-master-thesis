@@ -9,18 +9,19 @@ import time
 from typing import List, Dict, Any, Optional
 import pandas as pd
 from datetime import datetime
+from tqdm import tqdm
 
 # Add project root to path for imports
 current_dir = os.path.dirname(os.path.abspath(__file__))
-project_root = os.path.dirname(os.path.dirname(os.path.dirname(os.path.dirname(os.path.dirname(current_dir)))))
+project_root = os.path.dirname(os.path.dirname(os.path.dirname(os.path.dirname(current_dir))))
 sys.path.append(project_root)
 
 from src.evaluation.experiment_framework.core.data_models import ExperimentConfig, ExperimentResult, ExperimentDataManager
 from src.evaluation.experiment_framework.models import (
-    Qwen2Wrapper, Qwen3Wrapper, TinyLlamaWrapper, TinyStoriesWrapper
+    BaseModelWrapper, Qwen2Wrapper, Qwen3Wrapper, TinyLlamaWrapper, TinyStoriesWrapper
 )
 from src.evaluation.text_complexity.text_evaluator import TextEvaluator
-from .experiment_configs import create_factorial_configs, STANDARD_PROMPTS
+from src.evaluation.experiment_framework.experiments.experiment_configs import create_factorial_configs, STANDARD_PROMPTS
 
 
 class FactorialExperiment:
@@ -33,7 +34,7 @@ class FactorialExperiment:
     - N prompts: configurable set of test prompts
     """
     
-    def __init__(self, results_dir: str = "experiment_framework/results"):
+    def __init__(self, results_dir: str = "src/evaluation/experiment_framework/results"):
         """
         Initialize the factorial experiment runner.
         
@@ -44,19 +45,19 @@ class FactorialExperiment:
         self.data_manager = ExperimentDataManager()
         self.text_evaluator = TextEvaluator()
         
-        # Initialize model wrappers
-        self.models = {
-            "Qwen2": Qwen2Wrapper(),
-            "Qwen3": Qwen3Wrapper(),
-            "TinyLlama": TinyLlamaWrapper(),
-            "TinyStories": TinyStoriesWrapper()
+        # Model wrappers - lazily initialized
+        self._models = {}
+        self._model_classes = {
+            "Qwen2": Qwen2Wrapper,
+            "Qwen3": Qwen3Wrapper,
+            "TinyLlama": TinyLlamaWrapper,
+            "TinyStories": TinyStoriesWrapper
         }
         
         # Create results directory if it doesn't exist
         os.makedirs(self.results_dir, exist_ok=True)
         
         print(f"FactorialExperiment initialized. Results will be saved to: {self.results_dir}")
-        print(f"Loaded {len(self.models)} model wrappers")
     
     def run_full_experiment(self, 
                           prompts: Optional[List[str]] = None,
@@ -76,77 +77,97 @@ class FactorialExperiment:
         
         print(f"\n🚀 Starting factorial experiment: {experiment_name}")
         print(f"📝 Testing {len(prompts)} prompts")
-        print(f"🤖 Using {len(self.models)} models")
+        print(f"🤖 Using {len(self._model_classes)} models")
         print(f"⚙️  Testing 4 intervention combinations per model")
-        print(f"📊 Total experiments: {len(prompts)} × {len(self.models)} × 4 = {len(prompts) * len(self.models) * 4}")
+        print(f"📊 Total experiments: {len(prompts)} × {len(self._model_classes)} × 4 = {len(prompts) * len(self._model_classes) * 4}")
         
         configs = create_factorial_configs()
         results = []
         
         total_experiments = len(prompts) * len(configs)
-        current_experiment = 0
-        
         start_time = time.time()
         
-        for prompt_idx, prompt in enumerate(prompts):
-            prompt_id = f"P{prompt_idx + 1}"
+        # Create progress bar
+        with tqdm(total=total_experiments, desc="🧪 Factorial Experiment", 
+                  unit="exp", ncols=100, colour="green") as pbar:
             
-            print(f"\n📝 Processing prompt {prompt_idx + 1}/{len(prompts)}: {prompt[:50]}...")
-            
-            for config in configs:
-                current_experiment += 1
+            for prompt_idx, prompt in enumerate(prompts):
+                prompt_id = f"P{prompt_idx + 1}"
                 
-                print(f"  🤖 [{current_experiment}/{total_experiments}] {config.experiment_name}")
+                # Update progress bar description with current prompt
+                pbar.set_description(f"📝 P{prompt_idx + 1}/{len(prompts)}: {prompt[:30]}...")
                 
-                # Update config with prompt ID
-                config.prompt_id = prompt_id
-                
-                # Get the appropriate model wrapper
-                model_wrapper = self.models[config.model_name]
-                
-                # Generate response
-                response_data = model_wrapper.generate_response(prompt, config)
-                
-                if response_data['generation_successful']:
-                    # Calculate text metrics
-                    text_metrics = self.text_evaluator.evaluate_text_comprehensive(
-                        response_data['cleaned_response']
-                    )
+                for config in configs:
+                    # Update progress bar with current model
+                    pbar.set_postfix(model=config.model_name, 
+                                   config=f"W:{config.config_weighting} P:{config.config_prompting}")
                     
-                    # Create experiment result
-                    result = ExperimentResult.create_from_response(
-                        prompt=prompt,
-                        response=response_data['response'],
-                        config=config,
-                        response_time=response_data['time_spent'],
-                        text_metrics=text_metrics,
-                        experiment_name=config.experiment_name,
-                        cleaned_response=response_data['cleaned_response']
-                    )
+                    # Update config with prompt ID
+                    config.prompt_id = prompt_id
                     
-                    print(f"    ✅ Success ({response_data['time_spent']:.2f}s)")
+                    # Get the appropriate model wrapper (lazy initialization)
+                    model_wrapper = self._get_model(config.model_name)
                     
-                else:
-                    # Create result for failed generation
-                    empty_metrics = self.text_evaluator.evaluate_text_comprehensive("")
+                    # Generate response
+                    response_data = model_wrapper.generate_response(prompt, config)
                     
-                    result = ExperimentResult.create_from_response(
-                        prompt=prompt,
-                        response="",
-                        config=config,
-                        response_time=response_data['time_spent'],
-                        text_metrics=empty_metrics,
-                        experiment_name=config.experiment_name,
-                        cleaned_response=""
-                    )
+                    if response_data['generation_successful']:
+                        # Calculate text metrics
+                        text_metrics = self.text_evaluator.evaluate_text_comprehensive(
+                            response_data['cleaned_response']
+                        )
+                        
+                        # Create experiment result
+                        result = ExperimentResult.create_from_response(
+                            prompt=prompt,
+                            response=response_data['response'],
+                            config=config,
+                            response_time=response_data['time_spent'],
+                            text_metrics=text_metrics,
+                            experiment_name=config.experiment_name,
+                            cleaned_response=response_data['cleaned_response']
+                        )
+                        
+                        # Update progress bar with success
+                        pbar.set_postfix(model=config.model_name, 
+                                       status="✅", 
+                                       time=f"{response_data['time_spent']:.1f}s")
+                        
+                    else:
+                        # Create result for failed/timeout generation
+                        empty_metrics = self.text_evaluator.evaluate_text_comprehensive("")
+                        
+                        # Use None for response if it was a timeout or failure
+                        response_value = response_data['response'] if response_data['response'] is not None else None
+                        
+                        result = ExperimentResult.create_from_response(
+                            prompt=prompt,
+                            response=response_value,
+                            config=config,
+                            response_time=response_data['time_spent'],
+                            text_metrics=empty_metrics,
+                            experiment_name=config.experiment_name,
+                            cleaned_response=response_data['cleaned_response']
+                        )
+                        
+                        # Update progress bar with failure/timeout
+                        if "timed out" in response_data['error_message'].lower():
+                            pbar.set_postfix(model=config.model_name, 
+                                           status="⏰", 
+                                           time=f"{response_data['time_spent']:.0f}s")
+                        else:
+                            pbar.set_postfix(model=config.model_name, 
+                                           status="❌", 
+                                           error="Failed")
                     
-                    print(f"    ❌ Failed: {response_data['error_message']}")
-                
-                results.append(result)
-                self.data_manager.add_result(result)
-                
-                # Brief pause between experiments
-                time.sleep(0.1)
+                    results.append(result)
+                    self.data_manager.add_result(result)
+                    
+                    # Update progress bar
+                    pbar.update(1)
+                    
+                    # Brief pause between experiments
+                    time.sleep(0.1)
         
         end_time = time.time()
         total_time = end_time - start_time
@@ -173,8 +194,8 @@ class FactorialExperiment:
         Returns:
             DataFrame with results for the specified model
         """
-        if model_name not in self.models:
-            raise ValueError(f"Model '{model_name}' not available. Choose from: {list(self.models.keys())}")
+        if model_name not in self._model_classes:
+            raise ValueError(f"Model '{model_name}' not available. Choose from: {list(self._model_classes.keys())}")
         
         if prompts is None:
             prompts = STANDARD_PROMPTS
@@ -186,55 +207,81 @@ class FactorialExperiment:
         model_configs = [c for c in all_configs if c.model_name == model_name]
         
         results = []
-        model_wrapper = self.models[model_name]
+        model_wrapper = self._get_model(model_name)
         
-        for prompt_idx, prompt in enumerate(prompts):
-            prompt_id = f"P{prompt_idx + 1}"
+        total_experiments = len(prompts) * len(model_configs)
+        
+        # Create progress bar for single model experiment
+        with tqdm(total=total_experiments, desc=f"🤖 {model_name} Experiment", 
+                  unit="exp", ncols=100, colour="blue") as pbar:
             
-            print(f"\n📝 Processing prompt {prompt_idx + 1}/{len(prompts)}: {prompt[:50]}...")
-            
-            for config in model_configs:
-                config.prompt_id = prompt_id
+            for prompt_idx, prompt in enumerate(prompts):
+                prompt_id = f"P{prompt_idx + 1}"
                 
-                print(f"  ⚙️  {config.experiment_name}")
+                # Update progress bar description with current prompt
+                pbar.set_description(f"🤖 {model_name} - P{prompt_idx + 1}/{len(prompts)}: {prompt[:25]}...")
                 
-                # Generate response
-                response_data = model_wrapper.generate_response(prompt, config)
-                
-                if response_data['generation_successful']:
-                    text_metrics = self.text_evaluator.evaluate_text_comprehensive(
-                        response_data['cleaned_response']
-                    )
+                for config in model_configs:
+                    config.prompt_id = prompt_id
                     
-                    result = ExperimentResult.create_from_response(
-                        prompt=prompt,
-                        response=response_data['response'],
-                        config=config,
-                        response_time=response_data['time_spent'],
-                        text_metrics=text_metrics,
-                        experiment_name=config.experiment_name,
-                        cleaned_response=response_data['cleaned_response']
-                    )
+                    # Update progress bar with current config
+                    config_short = f"W:{config.config_weighting} P:{config.config_prompting}"
+                    pbar.set_postfix(config=config_short)
                     
-                    print(f"    ✅ Success ({response_data['time_spent']:.2f}s)")
+                    # Generate response
+                    response_data = model_wrapper.generate_response(prompt, config)
                     
-                else:
-                    empty_metrics = self.text_evaluator.evaluate_text_comprehensive("")
+                    if response_data['generation_successful']:
+                        text_metrics = self.text_evaluator.evaluate_text_comprehensive(
+                            response_data['cleaned_response']
+                        )
+                        
+                        result = ExperimentResult.create_from_response(
+                            prompt=prompt,
+                            response=response_data['response'],
+                            config=config,
+                            response_time=response_data['time_spent'],
+                            text_metrics=text_metrics,
+                            experiment_name=config.experiment_name,
+                            cleaned_response=response_data['cleaned_response']
+                        )
+                        
+                        # Update progress bar with success
+                        pbar.set_postfix(config=config_short, 
+                                       status="✅", 
+                                       time=f"{response_data['time_spent']:.1f}s")
+                        
+                    else:
+                        empty_metrics = self.text_evaluator.evaluate_text_comprehensive("")
+                        
+                        # Use None for response if it was a timeout or failure
+                        response_value = response_data['response'] if response_data['response'] is not None else None
+                        
+                        result = ExperimentResult.create_from_response(
+                            prompt=prompt,
+                            response=response_value,
+                            config=config,
+                            response_time=response_data['time_spent'],
+                            text_metrics=empty_metrics,
+                            experiment_name=config.experiment_name,
+                            cleaned_response=response_data['cleaned_response']
+                        )
+                        
+                        # Update progress bar with failure/timeout
+                        if "timed out" in response_data['error_message'].lower():
+                            pbar.set_postfix(config=config_short, 
+                                           status="⏰", 
+                                           time=f"{response_data['time_spent']:.0f}s")
+                        else:
+                            pbar.set_postfix(config=config_short, 
+                                           status="❌", 
+                                           error="Failed")
                     
-                    result = ExperimentResult.create_from_response(
-                        prompt=prompt,
-                        response="",
-                        config=config,
-                        response_time=response_data['time_spent'],
-                        text_metrics=empty_metrics,
-                        experiment_name=config.experiment_name,
-                        cleaned_response=""
-                    )
+                    results.append(result)
+                    self.data_manager.add_result(result)
                     
-                    print(f"    ❌ Failed: {response_data['error_message']}")
-                
-                results.append(result)
-                self.data_manager.add_result(result)
+                    # Update progress bar
+                    pbar.update(1)
         
         print(f"\n🎉 Single model experiment completed for {model_name}!")
         print(f"📊 Generated {len(results)} results")
@@ -255,22 +302,21 @@ class FactorialExperiment:
         
         files = {}
         
-        # Save in specification format (CSV)
+        # Create full_data subdirectory
+        full_data_dir = os.path.join(self.results_dir, "full_data")
+        os.makedirs(full_data_dir, exist_ok=True)
+        
+        # Save in specification format (CSV) - main results directory
         spec_csv_path = os.path.join(self.results_dir, f"{filename_prefix}_specification_{timestamp}.csv")
         self.data_manager.export_to_csv_specification_format(spec_csv_path)
         files['specification_csv'] = spec_csv_path
         
-        # Save full data (Parquet)
-        parquet_path = os.path.join(self.results_dir, f"{filename_prefix}_full_{timestamp}.parquet")
-        self.data_manager.save_to_parquet(parquet_path)
-        files['full_parquet'] = parquet_path
-        
-        # Save full data (CSV backup)
-        full_csv_path = os.path.join(self.results_dir, f"{filename_prefix}_full_{timestamp}.csv")
+        # Save full data (CSV backup) - full_data subdirectory
+        full_csv_path = os.path.join(full_data_dir, f"{filename_prefix}_full_{timestamp}.csv")
         self.data_manager.save_to_csv(full_csv_path)
         files['full_csv'] = full_csv_path
         
-        # Save summary statistics (JSON)
+        # Save summary statistics (JSON) - main results directory
         summary = self.data_manager.get_summary_stats()
         summary_path = os.path.join(self.results_dir, f"{filename_prefix}_summary_{timestamp}.json")
         
@@ -285,6 +331,21 @@ class FactorialExperiment:
         
         return files
     
+    def _get_model(self, model_name: str) -> BaseModelWrapper:
+        """
+        Get or lazily initialize a model wrapper.
+        
+        Args:
+            model_name: Name of the model to get
+            
+        Returns:
+            The model wrapper instance
+        """
+        if model_name not in self._models:
+            print(f"Loading {model_name} model...")
+            self._models[model_name] = self._model_classes[model_name]()
+        return self._models[model_name]
+    
     def get_model_status(self) -> Dict[str, Dict[str, Any]]:
         """
         Get status information for all model wrappers.
@@ -294,7 +355,8 @@ class FactorialExperiment:
         """
         status = {}
         
-        for model_name, wrapper in self.models.items():
+        for model_name in self._model_classes.keys():
+            wrapper = self._get_model(model_name)
             model_info = wrapper.get_model_info()
             
             # Test if model is actually loaded by trying a simple generation

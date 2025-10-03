@@ -18,12 +18,10 @@ from src.evaluation.experiment_framework.core.data_models import ExperimentConfi
 STANDARD_PROMPTS = [
     "What does the word 'library' mean?",
     "How do I introduce myself in English?",
-    "When do I use 'a' vs 'an'?",
+    "What is a dog?",
     "Can you explain what 'breakfast' is?",
-    "How do I ask for directions to the park?",
     "What is the difference between 'big' and 'large'?",
     "Can you tell me about your favorite animal?",
-    "How do I say 'thank you' politely?",
     "What colors do you see in a rainbow?",
     "Can you describe what happens in the morning?"
 ]

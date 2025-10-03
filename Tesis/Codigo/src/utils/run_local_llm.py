@@ -276,7 +276,7 @@ def load_model(model_name, use_4bit=True, use_gpu=True):
             model = Qwen2ForCausalLM.from_pretrained(
                 model_id,
                 device_map=device,
-                torch_dtype=torch.float16 if device == "mps" else torch.float32,
+                dtype=torch.float16 if device == "mps" else torch.float32,
                 quantization_config=BitsAndBytesConfig(
                     load_in_4bit=True,
                     bnb_4bit_compute_dtype=torch.float16 if device == "mps" else torch.float32
@@ -286,7 +286,7 @@ def load_model(model_name, use_4bit=True, use_gpu=True):
             model = Qwen2ForCausalLM.from_pretrained(
                 model_id,
                 device_map=device,
-                torch_dtype=torch.float16 if device == "mps" else torch.float32
+                dtype=torch.float16 if device == "mps" else torch.float32
             )
     # Special case for T5 models
     elif "t5" in model_id.lower():
@@ -294,7 +294,7 @@ def load_model(model_name, use_4bit=True, use_gpu=True):
         model = AutoModelForCausalLM.from_pretrained(
             model_id,
             device_map=device,
-            torch_dtype=torch.float16 if device == "mps" else torch.float32
+            dtype=torch.float16 if device == "mps" else torch.float32
         )
     else:
         # For other models, use 4-bit quantization if requested
@@ -307,7 +307,7 @@ def load_model(model_name, use_4bit=True, use_gpu=True):
         model = AutoModelForCausalLM.from_pretrained(
             model_id,
             device_map=device,
-            torch_dtype=torch.float16 if device == "mps" else torch.float32,
+            dtype=torch.float16 if device == "mps" else torch.float32,
             quantization_config=quantization_config
         )
     

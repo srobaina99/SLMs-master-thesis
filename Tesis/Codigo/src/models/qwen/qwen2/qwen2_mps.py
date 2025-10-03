@@ -19,7 +19,7 @@ model_id = "Qwen/Qwen2.5-0.5B-Instruct"
 pipe = pipeline(
     "text-generation",
     model=model_id,
-    torch_dtype=torch.float16,
+    dtype=torch.float16,
     device_map="auto"  # This will use MPS if available
 )
 

@@ -1,0 +1,478 @@
+{
+  "overall": {
+    "flesch_kincaid_grade": {
+      "mean": 5.250500000000001,
+      "std": 3.5480792564789767,
+      "min": -1.45,
+      "max": 15.84
+    },
+    "gunning_fog": {
+      "mean": 7.569749999999999,
+      "std": 3.5056909685063036,
+      "min": 2.4,
+      "max": 18.49
+    },
+    "flesch_reading_ease": {
+      "mean": 81.2115,
+      "std": 19.309806403310557,
+      "min": 21.28,
+      "max": 116.15
+    },
+    "response_time_seconds": {
+      "mean": 23.167604440450667,
+      "std": 30.625523696921135,
+      "min": 0.3273019790649414,
+      "max": 131.80693697929382
+    },
+    "word_count": {
+      "mean": 59.95,
+      "std": 51.22246602459732,
+      "min": 6.0,
+      "max": 258.0
+    },
+    "difficult_words": {
+      "mean": 8.175,
+      "std": 11.297577457590473,
+      "min": 0.0,
+      "max": 58.0
+    }
+  },
+  "by_config": {
+    "Control": {
+      "n": 10,
+      "models": {
+        "Qwen2": 5,
+        "Qwen3": 5
+      },
+      "flesch_kincaid_grade": {
+        "mean": 7.489999999999999,
+        "std": 2.6127252693946477
+      },
+      "gunning_fog": {
+        "mean": 9.953,
+        "std": 3.3277020766756014
+      },
+      "flesch_reading_ease": {
+        "mean": 67.081,
+        "std": 13.905824079619784
+      },
+      "response_time_seconds": {
+        "mean": 10.216868233680724,
+        "std": 7.524024313653982
+      },
+      "word_count": {
+        "mean": 76.5,
+        "std": 32.24644683268737
+      },
+      "difficult_words": {
+        "mean": 13.5,
+        "std": 8.289886743630593
+      }
+    },
+    "Weighting Only": {
+      "n": 10,
+      "models": {
+        "Qwen2": 5,
+        "Qwen3": 5
+      },
+      "flesch_kincaid_grade": {
+        "mean": 7.659000000000001,
+        "std": 3.3715458043916753
+      },
+      "gunning_fog": {
+        "mean": 9.623000000000001,
+        "std": 3.446657156659994
+      },
+      "flesch_reading_ease": {
+        "mean": 67.77600000000001,
+        "std": 18.447767224126487
+      },
+      "response_time_seconds": {
+        "mean": 52.188977003097534,
+        "std": 46.14262647429778
+      },
+      "word_count": {
+        "mean": 98.3,
+        "std": 77.59159461923409
+      },
+      "difficult_words": {
+        "mean": 16.1,
+        "std": 16.769350348511153
+      }
+    },
+    "Prompting Only": {
+      "n": 10,
+      "models": {
+        "Qwen2": 5,
+        "Qwen3": 5
+      },
+      "flesch_kincaid_grade": {
+        "mean": 3.047,
+        "std": 2.6371324915100067
+      },
+      "gunning_fog": {
+        "mean": 5.686,
+        "std": 2.1912462207611445
+      },
+      "flesch_reading_ease": {
+        "mean": 94.848,
+        "std": 11.406646990047319
+      },
+      "response_time_seconds": {
+        "mean": 7.954735207557678,
+        "std": 7.397672700195455
+      },
+      "word_count": {
+        "mean": 36.7,
+        "std": 20.505012937219902
+      },
+      "difficult_words": {
+        "mean": 1.7,
+        "std": 1.494434118097326
+      }
+    },
+    "Both": {
+      "n": 10,
+      "models": {
+        "Qwen2": 5,
+        "Qwen3": 5
+      },
+      "flesch_kincaid_grade": {
+        "mean": 2.806,
+        "std": 2.3132574435198516
+      },
+      "gunning_fog": {
+        "mean": 5.017,
+        "std": 1.822873494726877
+      },
+      "flesch_reading_ease": {
+        "mean": 95.141,
+        "std": 10.359941494901303
+      },
+      "response_time_seconds": {
+        "mean": 22.309837317466737,
+        "std": 21.064428022974358
+      },
+      "word_count": {
+        "mean": 28.3,
+        "std": 15.384335467538978
+      },
+      "difficult_words": {
+        "mean": 1.4,
+        "std": 1.4298407059684812
+      }
+    }
+  },
+  "by_model_and_config": {
+    "Qwen2": {
+      "Control": {
+        "n": 5,
+        "flesch_kincaid_grade": {
+          "mean": 9.458,
+          "std": 1.5282081010124238
+        },
+        "gunning_fog": {
+          "mean": 12.440000000000001,
+          "std": 2.2603650147708447
+        },
+        "flesch_reading_ease": {
+          "mean": 56.739999999999995,
+          "std": 8.934343848319246
+        },
+        "response_time_seconds": {
+          "mean": 15.723884582519531,
+          "std": 6.618270676571022
+        },
+        "word_count": {
+          "mean": 88.2,
+          "std": 36.48561360317242
+        },
+        "difficult_words": {
+          "mean": 18.6,
+          "std": 8.44393273303382
+        }
+      },
+      "Weighting Only": {
+        "n": 5,
+        "flesch_kincaid_grade": {
+          "mean": 9.975999999999999,
+          "std": 3.3297867799605427
+        },
+        "gunning_fog": {
+          "mean": 11.804,
+          "std": 3.751390408901744
+        },
+        "flesch_reading_ease": {
+          "mean": 56.624,
+          "std": 20.756062487861225
+        },
+        "response_time_seconds": {
+          "mean": 71.18580389022827,
+          "std": 48.082210347545995
+        },
+        "word_count": {
+          "mean": 120.8,
+          "std": 81.97987557931519
+        },
+        "difficult_words": {
+          "mean": 24.0,
+          "std": 20.18662923818635
+        }
+      },
+      "Prompting Only": {
+        "n": 5,
+        "flesch_kincaid_grade": {
+          "mean": 5.018000000000001,
+          "std": 1.8251082159696725
+        },
+        "gunning_fog": {
+          "mean": 7.2379999999999995,
+          "std": 1.67550589375269
+        },
+        "flesch_reading_ease": {
+          "mean": 86.818,
+          "std": 5.898242958712362
+        },
+        "response_time_seconds": {
+          "mean": 14.543785572052002,
+          "std": 3.670438304786965
+        },
+        "word_count": {
+          "mean": 50.8,
+          "std": 15.22169504358828
+        },
+        "difficult_words": {
+          "mean": 2.6,
+          "std": 1.5165750888103102
+        }
+      },
+      "Both": {
+        "n": 5,
+        "flesch_kincaid_grade": {
+          "mean": 3.696,
+          "std": 2.237527653460399
+        },
+        "gunning_fog": {
+          "mean": 5.554,
+          "std": 1.6625522548178748
+        },
+        "flesch_reading_ease": {
+          "mean": 92.58,
+          "std": 10.130922958941108
+        },
+        "response_time_seconds": {
+          "mean": 38.27946329116821,
+          "std": 18.711787490117064
+        },
+        "word_count": {
+          "mean": 39.4,
+          "std": 12.239281024635394
+        },
+        "difficult_words": {
+          "mean": 2.2,
+          "std": 1.4832396974191326
+        }
+      }
+    },
+    "Qwen3": {
+      "Control": {
+        "n": 5,
+        "flesch_kincaid_grade": {
+          "mean": 5.522,
+          "std": 1.827914111767837
+        },
+        "gunning_fog": {
+          "mean": 7.466000000000001,
+          "std": 2.0840897293542806
+        },
+        "flesch_reading_ease": {
+          "mean": 77.422,
+          "std": 9.376762234374935
+        },
+        "response_time_seconds": {
+          "mean": 4.709851884841919,
+          "std": 2.7847872088764696
+        },
+        "word_count": {
+          "mean": 64.8,
+          "std": 25.810850431553007
+        },
+        "difficult_words": {
+          "mean": 8.4,
+          "std": 4.277849927241488
+        }
+      },
+      "Weighting Only": {
+        "n": 5,
+        "flesch_kincaid_grade": {
+          "mean": 5.3420000000000005,
+          "std": 1.0333295698856195
+        },
+        "gunning_fog": {
+          "mean": 7.442,
+          "std": 0.8740251712622471
+        },
+        "flesch_reading_ease": {
+          "mean": 78.928,
+          "std": 4.897792359829069
+        },
+        "response_time_seconds": {
+          "mean": 33.1921501159668,
+          "std": 39.704809771929156
+        },
+        "word_count": {
+          "mean": 75.8,
+          "std": 74.56339584541465
+        },
+        "difficult_words": {
+          "mean": 8.2,
+          "std": 8.318653737234168
+        }
+      },
+      "Prompting Only": {
+        "n": 5,
+        "flesch_kincaid_grade": {
+          "mean": 1.076,
+          "std": 1.6138246497064046
+        },
+        "gunning_fog": {
+          "mean": 4.134,
+          "std": 1.4051441207221413
+        },
+        "flesch_reading_ease": {
+          "mean": 102.878,
+          "std": 9.836644244863185
+        },
+        "response_time_seconds": {
+          "mean": 1.3656848430633546,
+          "std": 1.0589778040092197
+        },
+        "word_count": {
+          "mean": 22.6,
+          "std": 14.741099009232657
+        },
+        "difficult_words": {
+          "mean": 0.8,
+          "std": 0.8366600265340756
+        }
+      },
+      "Both": {
+        "n": 5,
+        "flesch_kincaid_grade": {
+          "mean": 1.9159999999999997,
+          "std": 2.247961298599244
+        },
+        "gunning_fog": {
+          "mean": 4.4799999999999995,
+          "std": 1.9978613565510495
+        },
+        "flesch_reading_ease": {
+          "mean": 97.702,
+          "std": 11.06600515091151
+        },
+        "response_time_seconds": {
+          "mean": 6.340211343765259,
+          "std": 3.2625775743724756
+        },
+        "word_count": {
+          "mean": 17.2,
+          "std": 8.64291617453276
+        },
+        "difficult_words": {
+          "mean": 0.6,
+          "std": 0.8944271909999159
+        }
+      }
+    }
+  },
+  "effect_sizes": {
+    "Qwen2": {
+      "Weighting Only": {
+        "flesch_kincaid_grade": {
+          "control_mean": 9.458,
+          "intervention_mean": 9.975999999999999,
+          "percent_change": 5.476844998942682,
+          "cohens_d": 0.19995007907173581
+        },
+        "flesch_reading_ease": {
+          "control_mean": 56.739999999999995,
+          "intervention_mean": 56.624,
+          "percent_change": -0.20444131124425902,
+          "cohens_d": -0.007259672086761713
+        }
+      },
+      "Prompting Only": {
+        "flesch_kincaid_grade": {
+          "control_mean": 9.458,
+          "intervention_mean": 5.018000000000001,
+          "percent_change": -46.944385705223084,
+          "cohens_d": -2.6378058111336546
+        },
+        "flesch_reading_ease": {
+          "control_mean": 56.739999999999995,
+          "intervention_mean": 86.818,
+          "percent_change": 53.01022206556222,
+          "cohens_d": 3.9732815722082164
+        }
+      },
+      "Both": {
+        "flesch_kincaid_grade": {
+          "control_mean": 9.458,
+          "intervention_mean": 3.696,
+          "percent_change": -60.92197081835483,
+          "cohens_d": -3.0073400672571005
+        },
+        "flesch_reading_ease": {
+          "control_mean": 56.739999999999995,
+          "intervention_mean": 92.58,
+          "percent_change": 63.16531547409237,
+          "cohens_d": 3.7523334491724407
+        }
+      }
+    },
+    "Qwen3": {
+      "Weighting Only": {
+        "flesch_kincaid_grade": {
+          "control_mean": 5.522,
+          "intervention_mean": 5.3420000000000005,
+          "percent_change": -3.259688518652657,
+          "cohens_d": -0.12123150132990383
+        },
+        "flesch_reading_ease": {
+          "control_mean": 77.422,
+          "intervention_mean": 78.928,
+          "percent_change": 1.9451835395623986,
+          "cohens_d": 0.20132678740336057
+        }
+      },
+      "Prompting Only": {
+        "flesch_kincaid_grade": {
+          "control_mean": 5.522,
+          "intervention_mean": 1.076,
+          "percent_change": -80.51430641072075,
+          "cohens_d": -2.5785939537554206
+        },
+        "flesch_reading_ease": {
+          "control_mean": 77.422,
+          "intervention_mean": 102.878,
+          "percent_change": 32.87954328227119,
+          "cohens_d": 2.6490576982674208
+        }
+      },
+      "Both": {
+        "flesch_kincaid_grade": {
+          "control_mean": 5.522,
+          "intervention_mean": 1.9159999999999997,
+          "percent_change": -65.30242665700834,
+          "cohens_d": -1.7601136733032443
+        },
+        "flesch_reading_ease": {
+          "control_mean": 77.422,
+          "intervention_mean": 97.702,
+          "percent_change": 26.19410503474465,
+          "cohens_d": 1.9773364792903274
+        }
+      }
+    }
+  }
+}

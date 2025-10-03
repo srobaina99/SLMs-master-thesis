@@ -64,7 +64,7 @@ class Qwen2Wrapper(BaseModelWrapper):
             self.tokenizer = AutoTokenizer.from_pretrained(model_id)
             self.model = AutoModelForCausalLM.from_pretrained(
                 model_id,
-                torch_dtype=torch.float16,
+                dtype=torch.float16,
                 device_map="auto"
             )
             
@@ -72,7 +72,7 @@ class Qwen2Wrapper(BaseModelWrapper):
             self.pipe = pipeline(
                 "text-generation",
                 model=model_id,
-                torch_dtype=torch.float16,
+                dtype=torch.float16,
                 device_map="auto"
             )
             
@@ -84,15 +84,16 @@ class Qwen2Wrapper(BaseModelWrapper):
             self.tokenizer = None
             self.pipe = None
     
-    def _create_logits_processor(self, target_words: List[str], weight_factor: float) -> LogitsProcessorList:
+    def _create_logits_processor(self, target_words: List[str], weight_factor: float, verbose: bool = False) -> LogitsProcessorList:
         """Create logits processor for probability weighting."""
         if not target_words or not self.tokenizer:
             return LogitsProcessorList()
         
         processor = ProbabilityWeightingLogitsProcessor(
             tokenizer=self.tokenizer,
-            target_words=target_words,
-            weight_factor=weight_factor
+            words_to_weight=target_words,
+            weight_factor=weight_factor,
+            verbose=verbose
         )
         return LogitsProcessorList([processor])
     
@@ -109,7 +110,8 @@ class Qwen2Wrapper(BaseModelWrapper):
         # Create logits processor for weighting
         logits_processor = self._create_logits_processor(
             self.target_vocabulary, 
-            config.weight_factor
+            config.weight_factor,
+            config.verbose
         )
         
         # Generate with custom logits processor
@@ -125,13 +127,11 @@ class Qwen2Wrapper(BaseModelWrapper):
                 pad_token_id=self.tokenizer.eos_token_id
             )
         
-        # Decode response
-        response = self.tokenizer.decode(outputs[0], skip_special_tokens=True)
+        # Decode response (keep special tokens for ChatML parsing)
+        response = self.tokenizer.decode(outputs[0], skip_special_tokens=False)
         
-        # Extract just the generated part (remove input prompt)
-        generated_text = response[len(self.tokenizer.decode(inputs['input_ids'][0], skip_special_tokens=True)):]
-        
-        return generated_text.strip()
+        # Extract assistant response from ChatML format (same as Qwen3)
+        return response.split("<|im_start|>assistant\n")[-1].split("<|im_end|>")[0].strip()
     
     def _generate_simple(self, prompt: str, config: ExperimentConfig) -> str:
         """Generate response without weighting using pipeline."""
@@ -164,7 +164,7 @@ class Qwen2Wrapper(BaseModelWrapper):
         
         return response.strip()
     
-    def generate_response(self, prompt: str, config: ExperimentConfig) -> Dict[str, Any]:
+    def _generate_response_impl(self, prompt: str, config: ExperimentConfig) -> Dict[str, Any]:
         """
         Generate response using Qwen2 with the given configuration.
         

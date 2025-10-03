@@ -1,370 +1,74 @@
 """
-Main experiment runner that orchestrates the entire experiment framework.
-Handles configuration, execution, and data collection for LLM evaluation experiments.
+Factorial Experiment Runner - Simplified interface for running factorial experiments.
+Implements the 4×4×N experimental design from ExperimentSpecification.md.
 """
 
 import os
 import sys
-from typing import Dict, Any, List, Optional
-from datetime import datetime
-import json
+from typing import List, Optional, Dict, Any
 
 # Add project root to path
 current_dir = os.path.dirname(os.path.abspath(__file__))
 project_root = os.path.dirname(os.path.dirname(os.path.dirname(os.path.dirname(current_dir))))
 sys.path.append(project_root)
 
-from .data_models import ExperimentConfig, ExperimentResult, ExperimentDataManager
-from ..utils.qwen3_wrapper import Qwen3ExperimentWrapper
-from ..prompts.english_learning_prompts import EnglishLearningPrompts, STANDARD_EXPERIMENT_CONFIGS
-from ..experiments.factorial_experiment import FactorialExperiment
+from src.evaluation.experiment_framework.core.data_models import ExperimentConfig, ExperimentResult, ExperimentDataManager
+from src.evaluation.experiment_framework.experiments.factorial_experiment import FactorialExperiment
+from src.evaluation.experiment_framework.experiments.experiment_configs import STANDARD_PROMPTS
 
 
 class ExperimentRunner:
     """
-    Main class for running and managing LLM evaluation experiments.
+    Simplified experiment runner focused on factorial experiments.
     
-    Coordinates between model wrapper, prompt templates, and data collection
-    to provide a complete experiment framework.
+    Provides a clean interface to run the 4×4×N factorial design:
+    - 4 models: Qwen2, Qwen3, TinyLlama, TinyStories
+    - 4 intervention combinations: control, weighting, prompting, both
+    - N prompts: configurable set of test prompts
     """
     
-    def __init__(self, results_dir: str = "experiment_framework/results"):
+    def __init__(self, results_dir: Optional[str] = None):
         """
-        Initialize the experiment runner.
+        Initialize the factorial experiment runner.
         
         Args:
-            results_dir: Directory to save experiment results
+            results_dir: Directory to save experiment results (defaults to framework results dir)
         """
-        self.results_dir = results_dir
-        self.data_manager = ExperimentDataManager()
-        self.model_wrapper = Qwen3ExperimentWrapper()
+        # Use absolute path to results directory
+        if results_dir is None:
+            framework_dir = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
+            results_dir = os.path.join(framework_dir, "results")
         
-        # Initialize factorial experiment runner
-        self.factorial_experiment = FactorialExperiment(results_dir)
+        self.results_dir = os.path.abspath(results_dir)
+        self.factorial_experiment = FactorialExperiment(self.results_dir)
         
         # Create results directory if it doesn't exist
         os.makedirs(self.results_dir, exist_ok=True)
         
-        print(f"ExperimentRunner initialized. Results will be saved to: {self.results_dir}")
+        print(f"✅ ExperimentRunner initialized for factorial experiments")
+        print(f"📁 Results directory: {self.results_dir}")
     
-    def run_single_experiment(self, 
-                            prompt: str,
-                            config: ExperimentConfig,
-                            experiment_name: str = "single_experiment") -> ExperimentResult:
-        """
-        Run a single prompt-response experiment.
-        
-        Args:
-            prompt: The input prompt for the model
-            config: Experiment configuration
-            experiment_name: Name for this experiment
-            
-        Returns:
-            ExperimentResult containing all data and metrics
-        """
-        
-        print(f"Running experiment: {experiment_name}")
-        print(f"Prompt: {prompt[:100]}...")
-        
-        # Generate response with metrics
-        result_data = self.model_wrapper.generate_response_with_metrics(
-            user_input=prompt,
-            system_prompt=config.system_prompt,
-            enable_thinking=config.enable_thinking,
-            weighted_words=[] if not config.weighted_words_enabled else [".", ",", "<|im_end|>"],
-            weight_factor=config.weight_factor,
-            verbose=config.verbose
-        )
-        
-        if not result_data['generation_successful']:
-            print(f"Generation failed: {result_data['error_message']}")
-            # Still create result object for failed generations
-        
-        # Create structured result
-        experiment_result = ExperimentResult.create_from_response(
-            prompt=prompt,
-            response=result_data['response'],
-            config=config,
-            response_time=result_data['response_time_seconds'],
-            text_metrics=result_data['text_metrics'],
-            experiment_name=experiment_name,
-            cleaned_response=result_data.get('cleaned_response', '')
-        )
-        
-        # Add to data manager
-        self.data_manager.add_result(experiment_result)
-        
-        print(f"Experiment completed. Response time: {result_data['response_time_seconds']:.2f}s")
-        
-        return experiment_result
-    
-    def run_batch_experiment(self,
-                           prompts: List[str],
-                           config: ExperimentConfig,
-                           experiment_name: str = "batch_experiment") -> List[ExperimentResult]:
-        """
-        Run multiple prompts with the same configuration.
-        
-        Args:
-            prompts: List of prompts to test
-            config: Experiment configuration
-            experiment_name: Name for this batch experiment
-            
-        Returns:
-            List of ExperimentResult objects
-        """
-        
-        print(f"Running batch experiment: {experiment_name}")
-        print(f"Processing {len(prompts)} prompts with config: {config.experiment_name}")
-        
-        results = []
-        
-        for i, prompt in enumerate(prompts):
-            print(f"\n--- Prompt {i+1}/{len(prompts)} ---")
-            
-            # Create unique name for each prompt in the batch
-            prompt_experiment_name = f"{experiment_name}_prompt_{i+1}"
-            
-            result = self.run_single_experiment(
-                prompt=prompt,
-                config=config,
-                experiment_name=prompt_experiment_name
-            )
-            
-            results.append(result)
-        
-        print(f"\nBatch experiment completed. Processed {len(results)} prompts.")
-        return results
-    
-    def run_parameter_sweep(self,
-                          prompts: List[str],
-                          base_config: ExperimentConfig,
-                          parameter_variations: Dict[str, List[Any]],
-                          experiment_name: str = "parameter_sweep") -> List[ExperimentResult]:
-        """
-        Run experiments with different parameter combinations.
-        
-        Args:
-            prompts: List of prompts to test
-            base_config: Base configuration to modify
-            parameter_variations: Dict of parameter names to lists of values to test
-            experiment_name: Name for this parameter sweep
-            
-        Returns:
-            List of all ExperimentResult objects
-        """
-        
-        print(f"Running parameter sweep: {experiment_name}")
-        print(f"Parameters to vary: {list(parameter_variations.keys())}")
-        
-        all_results = []
-        
-        # Generate all parameter combinations
-        param_names = list(parameter_variations.keys())
-        param_values = list(parameter_variations.values())
-        
-        # Simple cartesian product for parameter combinations
-        def generate_combinations(values_lists):
-            if not values_lists:
-                return [[]]
-            
-            first_values = values_lists[0]
-            rest_combinations = generate_combinations(values_lists[1:])
-            
-            combinations = []
-            for value in first_values:
-                for rest_combo in rest_combinations:
-                    combinations.append([value] + rest_combo)
-            
-            return combinations
-        
-        param_combinations = generate_combinations(param_values)
-        
-        print(f"Testing {len(param_combinations)} parameter combinations with {len(prompts)} prompts each")
-        print(f"Total experiments: {len(param_combinations) * len(prompts)}")
-        
-        for combo_idx, param_combo in enumerate(param_combinations):
-            print(f"\n=== Parameter Combination {combo_idx + 1}/{len(param_combinations)} ===")
-            
-            # Create modified config
-            modified_config = ExperimentConfig(**base_config.to_dict())
-            
-            # Apply parameter modifications
-            combo_description = []
-            for param_name, param_value in zip(param_names, param_combo):
-                setattr(modified_config, param_name, param_value)
-                combo_description.append(f"{param_name}={param_value}")
-            
-            combo_name = f"{experiment_name}_" + "_".join(combo_description)
-            modified_config.experiment_name = combo_name
-            
-            print(f"Configuration: {', '.join(combo_description)}")
-            
-            # Run batch with this configuration
-            batch_results = self.run_batch_experiment(
-                prompts=prompts,
-                config=modified_config,
-                experiment_name=combo_name
-            )
-            
-            all_results.extend(batch_results)
-        
-        print(f"\nParameter sweep completed. Total results: {len(all_results)}")
-        return all_results
-    
-    def run_standard_experiment(self, experiment_type: str = "quick_test") -> List[ExperimentResult]:
-        """
-        Run one of the predefined standard experiments.
-        
-        Args:
-            experiment_type: Type of standard experiment to run
-            
-        Returns:
-            List of ExperimentResult objects
-        """
-        
-        if experiment_type not in STANDARD_EXPERIMENT_CONFIGS:
-            available_types = list(STANDARD_EXPERIMENT_CONFIGS.keys())
-            raise ValueError(f"Unknown experiment type: {experiment_type}. Available: {available_types}")
-        
-        experiment_config = STANDARD_EXPERIMENT_CONFIGS[experiment_type]
-        
-        # Create configuration
-        config = ExperimentConfig(
-            system_prompt=experiment_config['system_prompt'],
-            experiment_name=experiment_type,
-            description=experiment_config['description']
-        )
-        
-        print(f"Running standard experiment: {experiment_type}")
-        print(f"Description: {experiment_config['description']}")
-        
-        return self.run_batch_experiment(
-            prompts=experiment_config['prompts'],
-            config=config,
-            experiment_name=experiment_type
-        )
-    
-    def save_results(self, filename_prefix: str = None) -> str:
-        """
-        Save all collected results to Parquet file.
-        
-        Args:
-            filename_prefix: Optional prefix for the filename
-            
-        Returns:
-            Path to the saved file
-        """
-        
-        if not filename_prefix:
-            timestamp = datetime.now().strftime("%Y%m%d_%H%M%S")
-            filename_prefix = f"experiment_results_{timestamp}"
-        
-        parquet_path = os.path.join(self.results_dir, f"{filename_prefix}.parquet")
-        csv_path = os.path.join(self.results_dir, f"{filename_prefix}.csv")
-        
-        # Save in both formats
-        self.data_manager.save_to_parquet(parquet_path)
-        self.data_manager.save_to_csv(csv_path)
-        
-        # Also save summary statistics
-        summary = self.data_manager.get_summary_stats()
-        summary_path = os.path.join(self.results_dir, f"{filename_prefix}_summary.json")
-        
-        with open(summary_path, 'w') as f:
-            json.dump(summary, f, indent=2, default=str)
-        
-        print(f"Results saved:")
-        print(f"  Parquet: {parquet_path}")
-        print(f"  CSV: {csv_path}")
-        print(f"  Summary: {summary_path}")
-        
-        return parquet_path
-    
-    def get_results_summary(self) -> Dict[str, Any]:
-        """Get summary statistics of all collected results."""
-        return self.data_manager.get_summary_stats()
-    
-    def clear_results(self):
-        """Clear all stored results."""
-        self.data_manager.clear()
-        print("All results cleared.")
-    
-    def list_available_experiments(self) -> List[str]:
-        """List all available standard experiment types."""
-        return list(STANDARD_EXPERIMENT_CONFIGS.keys())
-
-
-# Convenience functions for quick usage
-def run_quick_test() -> str:
-    """Run a quick test experiment and save results."""
-    runner = ExperimentRunner()
-    
-    print("Running quick test experiment...")
-    runner.run_standard_experiment("quick_test")
-    
-    results_file = runner.save_results("quick_test")
-    
-    # Print summary
-    summary = runner.get_results_summary()
-    print(f"\nExperiment Summary:")
-    print(f"  Total experiments: {summary.get('total_experiments', 0)}")
-    print(f"  Unique prompts: {summary.get('unique_prompts', 0)}")
-    print(f"  Average response time: {summary.get('response_time_seconds', {}).get('mean', 0):.2f}s")
-    
-    return results_file
-
-
-def run_weighted_comparison() -> str:
-    """Compare performance with and without weighted words."""
-    runner = ExperimentRunner()
-    
-    # Base configuration
-    base_config = ExperimentConfig(
-        system_prompt=EnglishLearningPrompts.SYSTEM_PROMPTS['basic_teacher'],
-        experiment_name="weighted_comparison"
-    )
-    
-    # Test with weighted words on/off
-    parameter_variations = {
-        'weighted_words_enabled': [False, True],
-        'weight_factor': [1.0, 1.5, 2.0]
-    }
-    
-    prompts = EnglishLearningPrompts.get_basic_test_set()
-    
-    print("Running weighted words comparison experiment...")
-    runner.run_parameter_sweep(
-        prompts=prompts,
-        base_config=base_config,
-        parameter_variations=parameter_variations,
-        experiment_name="weighted_comparison"
-    )
-    
-    results_file = runner.save_results("weighted_comparison")
-    
-    # Print summary
-    summary = runner.get_results_summary()
-    print(f"\nExperiment Summary:")
-    print(f"  Total experiments: {summary.get('total_experiments', 0)}")
-    print(f"  Average Flesch-Kincaid Grade: {summary.get('flesch_kincaid_grade', {}).get('mean', 0):.2f}")
-    
-    return results_file
-
     def run_factorial_experiment(self, 
                                 prompts: Optional[List[str]] = None,
-                                experiment_name: str = "factorial_experiment"):
+                                experiment_name: str = "factorial_experiment") -> str:
         """
-        Run the complete factorial experiment using the new framework.
+        Run the complete factorial experiment.
         
         Args:
-            prompts: List of prompts to test (uses standard prompts if None)
+            prompts: List of prompts to test (uses STANDARD_PROMPTS if None)
             experiment_name: Name for this experiment run
             
         Returns:
-            Path to saved results file
+            Path to saved results file in specification format
         """
-        print(f"🚀 Starting factorial experiment via ExperimentRunner...")
+        print(f"🚀 Starting factorial experiment: {experiment_name}")
+        
+        # Use standard prompts if none provided
+        if prompts is None:
+            prompts = STANDARD_PROMPTS
+            print(f"📝 Using {len(prompts)} standard prompts")
+        else:
+            print(f"📝 Using {len(prompts)} custom prompts")
         
         # Run the factorial experiment
         df = self.factorial_experiment.run_full_experiment(prompts, experiment_name)
@@ -374,39 +78,115 @@ def run_weighted_comparison() -> str:
         
         print(f"✅ Factorial experiment completed!")
         print(f"📊 Generated {len(df)} results")
+        print(f"💾 Specification CSV: {files['specification_csv']}")
         
         return files['specification_csv']
     
-    def run_single_model_factorial(self, 
-                                  model_name: str,
-                                  prompts: Optional[List[str]] = None):
+    def run_single_model_experiment(self, 
+                                   model_name: str,
+                                   prompts: Optional[List[str]] = None,
+                                   experiment_name: Optional[str] = None) -> str:
         """
-        Run factorial experiment for a single model.
+        Run factorial experiment for a single model only.
         
         Args:
-            model_name: Name of model to test
-            prompts: List of prompts to test
+            model_name: Name of model to test ("Qwen2", "Qwen3", "TinyLlama", "TinyStories")
+            prompts: List of prompts to test (uses STANDARD_PROMPTS if None)
+            experiment_name: Name for experiment (auto-generated if None)
             
         Returns:
-            Path to saved results file
+            Path to saved results file in specification format
         """
+        if experiment_name is None:
+            experiment_name = f"{model_name}_factorial"
+        
         print(f"🚀 Starting single model factorial experiment: {model_name}")
         
-        df = self.factorial_experiment.run_single_model_experiment(model_name, prompts)
-        files = self.factorial_experiment.save_results(f"{model_name}_factorial")
+        # Use standard prompts if none provided
+        if prompts is None:
+            prompts = STANDARD_PROMPTS
+            print(f"📝 Using {len(prompts)} standard prompts")
         
-        print(f"✅ Single model factorial experiment completed for {model_name}!")
+        # Run single model experiment
+        df = self.factorial_experiment.run_single_model_experiment(model_name, prompts)
+        
+        # Save results
+        files = self.factorial_experiment.save_results(experiment_name)
+        
+        print(f"✅ Single model experiment completed for {model_name}!")
+        print(f"📊 Generated {len(df)} results")
+        print(f"💾 Specification CSV: {files['specification_csv']}")
         
         return files['specification_csv']
     
-    def get_model_status(self):
-        """Get status of all available models."""
+    def get_model_status(self) -> Dict[str, Dict[str, Any]]:
+        """
+        Get status of all available models.
+        
+        Returns:
+            Dictionary with model status information
+        """
         return self.factorial_experiment.get_model_status()
+    
+    def get_available_prompts(self) -> List[str]:
+        """
+        Get the list of standard prompts.
+        
+        Returns:
+            List of standard prompts for experiments
+        """
+        return STANDARD_PROMPTS.copy()
+    
+    def clear_results(self):
+        """Clear all stored results."""
+        self.factorial_experiment.clear_results()
+        print("🗑️  All results cleared")
+
+
+# Convenience functions for quick usage
+def run_quick_factorial_test(prompts: Optional[List[str]] = None) -> str:
+    """
+    Run a quick factorial experiment test.
+    
+    Args:
+        prompts: List of prompts to test (uses first 3 standard prompts if None)
+        
+    Returns:
+        Path to results file
+    """
+    runner = ExperimentRunner()
+    
+    # Use subset of prompts for quick test
+    if prompts is None:
+        prompts = STANDARD_PROMPTS[:3]  # First 3 prompts only
+    
+    print(f"🧪 Running quick factorial test with {len(prompts)} prompts")
+    return runner.run_factorial_experiment(prompts, "quick_factorial_test")
+
+
+def run_single_model_test(model_name: str, prompts: Optional[List[str]] = None) -> str:
+    """
+    Run a quick test for a single model.
+    
+    Args:
+        model_name: Name of model to test
+        prompts: List of prompts to test (uses first 5 standard prompts if None)
+        
+    Returns:
+        Path to results file
+    """
+    runner = ExperimentRunner()
+    
+    # Use subset of prompts for quick test
+    if prompts is None:
+        prompts = STANDARD_PROMPTS[:5]  # First 5 prompts only
+    
+    print(f"🧪 Running quick test for {model_name} with {len(prompts)} prompts")
+    return runner.run_single_model_experiment(model_name, prompts)
 
 
 if __name__ == "__main__":
     # Run quick test when executed directly
-    print("Running quick test experiment...")
-    results_file = run_quick_test()
-    print(f"\nResults saved to: {results_file}")
-    print("You can now upload the Parquet file to Google Sheets for analysis.")
+    print("🧪 Running quick factorial test...")
+    results_file = run_quick_factorial_test()
+    print(f"✅ Results saved to: {results_file}")

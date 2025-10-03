@@ -1,35 +1,35 @@
 # Context
 
-This project lays is the scope of a research group with the goal of evaluating the fesability of using language models to assist students learn english as foreign language.
+This project lies within the scope of a research group with the goal of evaluating the feasibility of using language models to assist students learning English as a foreign language.
 
-# Goal of the project
+# Goal of the Project
 
-In particular the aim of this work is to evaluate the difficulty of the answers provided by small language models (SLMs). For this goal 4 models are set:
+In particular, the aim of this work is to evaluate the difficulty of the answers provided by small language models (SLMs). For this goal, 4 models are evaluated:
 
 * Qwen 2
 * Qwen 3
 * TinyLlama
 * TinyStories
 
-The ideas to control the difficulty of the output are two and a control:
+Two intervention methods are employed to control the difficulty of the output, plus a control:
 
 * **Tamper with the decoding process of the models**
 
-Give a higher probability to those words included in the vocabulary of the students that are target of this research (non english speakers with little to no experience with the language). In particular using the vocab in `Tesis/Codigo/data/vocabularies/filtered_starters_vocab.txt`. 
+This intervention gives higher probability to words included in the vocabulary of the target students (non-English speakers with little to no experience with the language). Specifically, the vocabulary in `Tesis/Codigo/data/vocabularies/filtered_starters_vocab.txt` is used.
 
-The altering of the weights is done by the class `ProbabilityWeightingLogitsProcessor` found in `probability_processor.py` 
+The altering of the weights is performed by the class `ProbabilityWeightingLogitsProcessor` found in `probability_processor.py`.
 
-* **Prompt the models with the propper context**
+* **Prompt the models with the proper context**
 
-Prompting the model to use simple words so a young non english speaking student can follow the conversation and interact propperly. To the existing prompt a block of `# Context` will be added describing all the ways in wich the model should answer/
+The model is prompted to use simple words so a young non-English speaking student can follow the conversation and interact properly. To the existing prompt, a block of context is added describing the ways in which the model should answer.
 
 - **A control group with no intervention at all**
 
 ## 1. Experiment
 
-The first experiment to run has the goal to compare the answers of the different models with the multiple approaches measuring difficulty metrics defined in the class `TextEvaluator` found in  `text_evaluator.py`.
+The first experiment aims to compare the answers of the different models using the multiple approaches while measuring difficulty metrics defined in the class `TextEvaluator` found in `text_evaluator.py`.
 
-The experiment will be done for multiple prompts and every model (with the multiple variations) will generate an output. The data will be structured in a flat CSV format with one observation per row for easy statistical analysis:
+The experiment will be conducted for multiple prompts, and each model (with its multiple variations) will generate an output. The data will be structured in a flat CSV format with one observation per row for easy statistical analysis:
 
 **CSV Structure:**
 - **model**: Name of the base model (Qwen2, Qwen3, TinyLlama, TinyStories)
@@ -55,4 +55,4 @@ This structure enables:
 - Visual comparison through boxplots, heatmaps, and faceted plots
 - Factorial analysis to understand interaction effects between interventions
 
-The goal of the experiments is to compare how the models perform under common prompts to determin if the configs have an impact on the difficulty metrics
+The goal of the experiments is to compare how the models perform under common prompts to determine if the configurations have an impact on the difficulty metrics.

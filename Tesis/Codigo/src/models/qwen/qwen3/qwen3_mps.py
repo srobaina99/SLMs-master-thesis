@@ -19,7 +19,7 @@ model_id = "Qwen/Qwen3-4B"  # Using the standard 4B model which is the next size
 pipe = pipeline(
     "text-generation",
     model=model_id,
-    torch_dtype=torch.float16,
+    dtype=torch.float16,
     device_map="auto"  # This will use MPS if available
 )
 

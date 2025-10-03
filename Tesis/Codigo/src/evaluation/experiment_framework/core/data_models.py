@@ -237,7 +237,8 @@ class ExperimentDataManager:
         
         # Rename columns to match specification
         df_spec = df.copy()
-        df_spec['time_spent'] = df_spec['response_time_seconds']
+        # Round time_spent to 1 decimal place (tenths of seconds)
+        df_spec['time_spent'] = df_spec['response_time_seconds'].round(1)
         df_spec['answer'] = df_spec['response']
         
         # Select columns for specification format
@@ -256,7 +257,8 @@ class ExperimentDataManager:
         available_columns = [col for col in spec_columns if col in df_spec.columns]
         df_export = df_spec[available_columns]
         
-        df_export.to_csv(filename, index=False)
+        # Save with comma as decimal separator (European format)
+        df_export.to_csv(filename, index=False, decimal=',')
         print(f"Saved {len(self.results)} results in specification format to {filename}")
     
     def get_summary_stats(self) -> Dict[str, Any]:
@@ -272,19 +274,60 @@ class ExperimentDataManager:
             'flesch_reading_ease', 'word_count', 'sentence_count'
         ]
         
-        summary = {}
+        # Overall summary
+        summary = {
+            'overall': {},
+            'by_config': {},
+            'metadata': {}
+        }
+        
+        # Overall stats
         for col in numeric_columns:
             if col in df.columns:
-                summary[col] = {
+                summary['overall'][col] = {
                     'mean': df[col].mean(),
                     'std': df[col].std(),
                     'min': df[col].min(),
                     'max': df[col].max()
                 }
         
-        summary['total_experiments'] = len(self.results)
-        summary['unique_prompts'] = df['prompt'].nunique()
-        summary['configs_tested'] = df['config_name'].nunique()
+        # Stats by intervention configuration
+        if 'config_weighting' in df.columns and 'config_prompting' in df.columns:
+            # Create intervention labels
+            def get_config_label(row):
+                if row['config_weighting'] and row['config_prompting']:
+                    return 'both'
+                elif row['config_weighting']:
+                    return 'weighting_only'
+                elif row['config_prompting']:
+                    return 'prompting_only'
+                else:
+                    return 'control'
+            
+            df['intervention_config'] = df.apply(get_config_label, axis=1)
+            
+            # Calculate stats for each configuration
+            for config in ['control', 'weighting_only', 'prompting_only', 'both']:
+                config_df = df[df['intervention_config'] == config]
+                if len(config_df) > 0:
+                    summary['by_config'][config] = {
+                        'count': len(config_df)
+                    }
+                    for col in numeric_columns:
+                        if col in config_df.columns:
+                            summary['by_config'][config][col] = {
+                                'mean': config_df[col].mean(),
+                                'std': config_df[col].std(),
+                                'min': config_df[col].min(),
+                                'max': config_df[col].max()
+                            }
+        
+        # Metadata
+        summary['metadata']['total_experiments'] = len(self.results)
+        summary['metadata']['unique_prompts'] = df['prompt'].nunique()
+        summary['metadata']['configs_tested'] = df['config_name'].nunique()
+        if 'model' in df.columns:
+            summary['metadata']['models_tested'] = df['model'].unique().tolist()
         
         return summary
     

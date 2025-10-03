@@ -61,7 +61,7 @@ class TinyLlamaWrapper(BaseModelWrapper):
                 self.tokenizer = AutoTokenizer.from_pretrained(model_id)
                 self.model = AutoModelForCausalLM.from_pretrained(
                     model_id,
-                    torch_dtype=torch.float16,
+                    dtype=torch.float16,
                     device_map="auto"
                 )
                 
@@ -192,7 +192,7 @@ class TinyLlamaWrapper(BaseModelWrapper):
         else:
             raise RuntimeError("No TinyLlama model available")
     
-    def generate_response(self, prompt: str, config: ExperimentConfig) -> Dict[str, Any]:
+    def _generate_response_impl(self, prompt: str, config: ExperimentConfig) -> Dict[str, Any]:
         """
         Generate response using TinyLlama with the given configuration.
         
