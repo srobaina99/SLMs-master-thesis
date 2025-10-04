@@ -59,7 +59,7 @@ def create_factorial_configs() -> List[ExperimentConfig]:
     configs = []
     
     # Base system prompt for English learning
-    system_prompt = "You are a helpful English teacher for beginner students."
+    system_prompt = "You are a helpful English teacher for beginner students. Answer with a paragraph only with plain text"
     
     # Intervention combinations: (weighting, prompting)
     interventions = [

@@ -692,3 +692,4 @@ A: We don't measure it yet—limitation. Simplification might sacrifice complete
 *Generated: October 3, 2025*
 *Models: Qwen2 (0.5B), Qwen3 (0.6B)*
 *Total Observations: 40 (20 per model)*
+

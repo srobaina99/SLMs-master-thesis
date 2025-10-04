@@ -298,16 +298,24 @@ class FactorialExperiment:
         Returns:
             Dictionary with paths to saved files
         """
-        timestamp = datetime.now().strftime("%Y%m%d_%H%M%S")
+        timestamp = datetime.now().strftime("%m%d_%H%M")
         
         files = {}
         
-        # Create full_data subdirectory
-        full_data_dir = os.path.join(self.results_dir, "full_data")
+        # Extract model name from filename_prefix for folder organization
+        # Expected format: "ModelName_factorial" or similar
+        model_name = filename_prefix.split('_')[0] if '_' in filename_prefix else filename_prefix
+        
+        # Create model-specific directory
+        model_dir = os.path.join(self.results_dir, model_name)
+        os.makedirs(model_dir, exist_ok=True)
+        
+        # Create full_data subdirectory within model directory
+        full_data_dir = os.path.join(model_dir, "full_data")
         os.makedirs(full_data_dir, exist_ok=True)
         
-        # Save in specification format (CSV) - main results directory
-        spec_csv_path = os.path.join(self.results_dir, f"{filename_prefix}_specification_{timestamp}.csv")
+        # Save in specification format (CSV) - model directory
+        spec_csv_path = os.path.join(model_dir, f"{filename_prefix}_specification_{timestamp}.csv")
         self.data_manager.export_to_csv_specification_format(spec_csv_path)
         files['specification_csv'] = spec_csv_path
         
@@ -316,9 +324,9 @@ class FactorialExperiment:
         self.data_manager.save_to_csv(full_csv_path)
         files['full_csv'] = full_csv_path
         
-        # Save summary statistics (JSON) - main results directory
+        # Save summary statistics (JSON) - model directory
         summary = self.data_manager.get_summary_stats()
-        summary_path = os.path.join(self.results_dir, f"{filename_prefix}_summary_{timestamp}.json")
+        summary_path = os.path.join(model_dir, f"{filename_prefix}_summary_{timestamp}.json")
         
         import json
         with open(summary_path, 'w') as f:
