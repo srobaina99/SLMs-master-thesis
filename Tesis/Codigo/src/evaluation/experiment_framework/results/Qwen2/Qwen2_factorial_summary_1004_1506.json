@@ -1,0 +1,206 @@
+{
+  "overall": {
+    "response_time_seconds": {
+      "mean": 22.287431728839874,
+      "std": 17.694952949677592,
+      "min": 3.1474781036376953,
+      "max": 71.32194781303406
+    },
+    "flesch_kincaid_grade": {
+      "mean": 10.4385,
+      "std": 4.5757349424062905,
+      "min": 3.66,
+      "max": 21.3
+    },
+    "gunning_fog": {
+      "mean": 12.473999999999998,
+      "std": 4.796686795124976,
+      "min": 5.09,
+      "max": 24.42
+    },
+    "flesch_reading_ease": {
+      "mean": 55.281000000000006,
+      "std": 21.06113479723655,
+      "min": 16.13,
+      "max": 88.05
+    },
+    "word_count": {
+      "mean": 73.25,
+      "std": 24.672326282913136,
+      "min": "29",
+      "max": "118"
+    },
+    "sentence_count": {
+      "mean": 4.3,
+      "std": 1.8945906376340316,
+      "min": "1",
+      "max": "8"
+    }
+  },
+  "by_config": {
+    "control": {
+      "count": 5,
+      "response_time_seconds": {
+        "mean": 10.234037017822265,
+        "std": 6.122866632158145,
+        "min": 3.1857829093933105,
+        "max": 16.93535804748535
+      },
+      "flesch_kincaid_grade": {
+        "mean": 13.11,
+        "std": 5.600410699225549,
+        "min": 6.33,
+        "max": 21.3
+      },
+      "gunning_fog": {
+        "mean": 15.278,
+        "std": 5.982789483175888,
+        "min": 8.65,
+        "max": 24.42
+      },
+      "flesch_reading_ease": {
+        "mean": 40.071999999999996,
+        "std": 20.800368265970675,
+        "min": 17.16,
+        "max": 68.08
+      },
+      "word_count": {
+        "mean": 74.4,
+        "std": 28.29840984931839,
+        "min": "42",
+        "max": "118"
+      },
+      "sentence_count": {
+        "mean": 4.2,
+        "std": 2.04939015319192,
+        "min": "1",
+        "max": "6"
+      }
+    },
+    "weighting_only": {
+      "count": 5,
+      "response_time_seconds": {
+        "mean": 39.4199718952179,
+        "std": 20.004624581556175,
+        "min": 19.48508882522583,
+        "max": 71.32194781303406
+      },
+      "flesch_kincaid_grade": {
+        "mean": 11.672,
+        "std": 4.585021264945234,
+        "min": 5.53,
+        "max": 18.09
+      },
+      "gunning_fog": {
+        "mean": 14.14,
+        "std": 4.3801483993125165,
+        "min": 8.57,
+        "max": 19.82
+      },
+      "flesch_reading_ease": {
+        "mean": 47.596,
+        "std": 21.448949391520323,
+        "min": 16.13,
+        "max": 75.74
+      },
+      "word_count": {
+        "mean": 84.2,
+        "std": 16.991174179555692,
+        "min": "57",
+        "max": "99"
+      },
+      "sentence_count": {
+        "mean": 4.6,
+        "std": 1.816590212458495,
+        "min": "2",
+        "max": "7"
+      }
+    },
+    "prompting_only": {
+      "count": 5,
+      "response_time_seconds": {
+        "mean": 10.908006191253662,
+        "std": 7.643926409941856,
+        "min": 3.1474781036376953,
+        "max": 20.48194694519043
+      },
+      "flesch_kincaid_grade": {
+        "mean": 7.9239999999999995,
+        "std": 2.64265586106099,
+        "min": 3.66,
+        "max": 10.82
+      },
+      "gunning_fog": {
+        "mean": 9.402,
+        "std": 2.6903196836063925,
+        "min": 5.09,
+        "max": 11.98
+      },
+      "flesch_reading_ease": {
+        "mean": 66.48400000000001,
+        "std": 10.973118517540948,
+        "min": 56.64,
+        "max": 81.29
+      },
+      "word_count": {
+        "mean": 75.8,
+        "std": 30.865838721797275,
+        "min": "35",
+        "max": "117"
+      },
+      "sentence_count": {
+        "mean": 5.0,
+        "std": 1.8708286933869707,
+        "min": "3",
+        "max": "8"
+      }
+    },
+    "both": {
+      "count": 5,
+      "response_time_seconds": {
+        "mean": 28.587711811065674,
+        "std": 15.204718312542287,
+        "min": 14.137161016464233,
+        "max": 53.57041597366333
+      },
+      "flesch_kincaid_grade": {
+        "mean": 9.047999999999998,
+        "std": 4.351835245043176,
+        "min": 4.25,
+        "max": 13.44
+      },
+      "gunning_fog": {
+        "mean": 11.075999999999999,
+        "std": 4.419811081935517,
+        "min": 6.18,
+        "max": 16.27
+      },
+      "flesch_reading_ease": {
+        "mean": 66.972,
+        "std": 20.07841054466214,
+        "min": 41.48,
+        "max": 88.05
+      },
+      "word_count": {
+        "mean": 58.6,
+        "std": 20.525593779474445,
+        "min": "29",
+        "max": "82"
+      },
+      "sentence_count": {
+        "mean": 3.4,
+        "std": 2.0736441353327724,
+        "min": "1",
+        "max": "6"
+      }
+    }
+  },
+  "metadata": {
+    "total_experiments": 20,
+    "unique_prompts": 5,
+    "configs_tested": 4,
+    "models_tested": [
+      "Qwen2"
+    ]
+  }
+}

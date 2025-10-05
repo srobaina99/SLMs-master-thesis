@@ -1,18 +1,26 @@
 """
 Model wrapper layer for experiment framework.
 Provides standardized interfaces for all supported models.
+
+All primary models now use llama.cpp GGUF backend for optimal performance.
 """
 
 from .base_model import BaseModelWrapper
-from .qwen2_wrapper import Qwen2Wrapper
-from .qwen3_wrapper import Qwen3Wrapper
-from .tinyllama_wrapper import TinyLlamaWrapper
+from .llamacpp_base import LlamaCppBaseWrapper
+from .phi3_llamacpp_wrapper import Phi3LlamaCppWrapper
+from .qwen2_llamacpp_wrapper import Qwen2LlamaCppWrapper
+from .qwen3_llamacpp_wrapper import Qwen3LlamaCppWrapper
+from .smollm_llamacpp_wrapper import SmolLMLlamaCppWrapper
+from .tinyllama_llamacpp_wrapper import TinyLlamaLlamaCppWrapper
 from .tinystories_wrapper import TinyStoriesWrapper
 
 __all__ = [
     'BaseModelWrapper',
-    'Qwen2Wrapper', 
-    'Qwen3Wrapper',
-    'TinyLlamaWrapper',
+    'LlamaCppBaseWrapper',
+    'Phi3LlamaCppWrapper',
+    'Qwen2LlamaCppWrapper',
+    'Qwen3LlamaCppWrapper',
+    'SmolLMLlamaCppWrapper',
+    'TinyLlamaLlamaCppWrapper',
     'TinyStoriesWrapper'
 ]

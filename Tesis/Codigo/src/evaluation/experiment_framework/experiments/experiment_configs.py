@@ -28,17 +28,25 @@ STANDARD_PROMPTS = [
 
 # Model configurations for factorial experiment
 MODEL_CONFIGS = {
+    "Phi3": {
+        "model_name": "Phi3",
+        "model_id": "microsoft/Phi-3-mini-4k-instruct-gguf"  # Using llama.cpp GGUF (3.8B reasoning model)
+    },
     "Qwen2": {
         "model_name": "Qwen2",
-        "model_id": "Qwen/Qwen2.5-0.5B-Instruct"
+        "model_id": "Qwen/Qwen2.5-0.5B-Instruct-GGUF"  # Using llama.cpp GGUF (4x faster)
     },
     "Qwen3": {
         "model_name": "Qwen3", 
-        "model_id": "unsloth/Qwen3-0.6B"
+        "model_id": "ggml-org/Qwen3-0.6B-GGUF"  # Using llama.cpp GGUF (4.4x faster)
+    },
+    "SmolLM": {
+        "model_name": "SmolLM",
+        "model_id": "MaziyarPanahi/SmolLM-1.7B-Instruct-GGUF"  # Using llama.cpp GGUF (efficient architecture)
     },
     "TinyLlama": {
         "model_name": "TinyLlama",
-        "model_id": "TinyLlama/TinyLlama-1.1B-Chat-v1.0"
+        "model_id": "TheBloke/TinyLlama-1.1B-Chat-v1.0-GGUF"  # Using llama.cpp GGUF
     },
     "TinyStories": {
         "model_name": "TinyStories",

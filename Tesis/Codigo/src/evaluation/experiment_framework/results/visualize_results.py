@@ -2,6 +2,29 @@
 """
 Visualization script for factorial experiment results.
 Creates boxplots for each metric grouped by intervention configurations.
+
+Works with the new model-based folder structure:
+    results/
+    ├── Qwen2/
+    │   ├── *_specification_*.csv
+    │   └── plots/  (generated)
+    ├── Qwen3/
+    ├── SmolLM/
+    └── TinyLlama/
+
+Usage:
+    # Visualize all models
+    python visualize_results.py
+    
+    # Visualize specific model
+    python visualize_results.py --model SmolLM
+    python visualize_results.py --model all
+    
+    # Visualize specific CSV file
+    python visualize_results.py path/to/file.csv
+    
+    # Visualize by model name shorthand
+    python visualize_results.py SmolLM
 """
 
 import pandas as pd
@@ -60,8 +83,10 @@ def create_single_metric_subplot(df: pd.DataFrame, metric: str, ax, config_order
         data=df,
         x='config_label',
         y=metric,
+        hue='config_label',
         order=config_order,
         palette='Set2',
+        legend=False,
         ax=ax
     )
     
@@ -104,19 +129,22 @@ def plot_all_metrics(csv_path: str, output_subdir: str = 'plots',
     df = load_results(csv_path)
     print(f"   Loaded {len(df)} rows")
     
-    # Extract model name and timestamp from filename
-    model_name = csv_path.stem.split('_')[0] if '_' in csv_path.stem else 'Model'
+    # Extract model name from parent directory or filename
+    if csv_path.parent.name in ['Qwen2', 'Qwen3', 'SmolLM', 'TinyLlama', 'TinyStories']:
+        model_name = csv_path.parent.name
+    else:
+        model_name = csv_path.stem.split('_')[0] if '_' in csv_path.stem else 'Model'
     
     # Create configuration labels
     df['config_label'] = df.apply(create_config_label, axis=1)
     config_order = ['Control', 'Weighting', 'Prompting', 'Both']
     config_order = [c for c in config_order if c in df['config_label'].values]
     
-    # Create output directory
+    # Create output directory in the same model folder
     output_dir = csv_path.parent / output_subdir
     output_dir.mkdir(exist_ok=True)
     
-    print(f"📁 Saving plots to: {output_subdir}/")
+    print(f"📁 Saving plots to: {csv_path.parent.name}/{output_subdir}/")
     
     # Define default metrics if not specified
     if metrics is None:
@@ -203,7 +231,7 @@ def main():
     parser.add_argument(
         'csv_file',
         nargs='?',
-        help='Path to CSV file (if not provided, will process all CSVs in results/)'
+        help='Path to CSV file or model name (if not provided, will process all CSVs in results/)'
     )
     parser.add_argument(
         '--metrics',
@@ -212,35 +240,86 @@ def main():
     )
     parser.add_argument(
         '--output-dir',
-        help='Output directory name for plots'
+        default='plots',
+        help='Output directory name for plots (default: plots)'
+    )
+    parser.add_argument(
+        '--model',
+        choices=['Qwen2', 'Qwen3', 'SmolLM', 'TinyLlama', 'TinyStories', 'all'],
+        help='Process all CSVs for specific model'
     )
     
     args = parser.parse_args()
     
+    results_base_dir = Path(__file__).parent
+    
     if args.csv_file:
-        # Process single file
-        plot_all_metrics(args.csv_file, args.output_dir, args.metrics)
-    else:
-        # Process all specification CSVs in current directory
-        results_dir = Path(__file__).parent
-        csv_files = list(results_dir.glob('*_specification_*.csv'))
+        # Check if it's a direct file path
+        csv_path = Path(args.csv_file)
+        if csv_path.exists():
+            plot_all_metrics(str(csv_path), args.output_dir, args.metrics)
+        # Check if it's a model name
+        elif (results_base_dir / args.csv_file).exists():
+            model_dir = results_base_dir / args.csv_file
+            csv_files = list(model_dir.glob('*_specification_*.csv'))
+            if not csv_files:
+                print(f"❌ No specification CSV files found in {args.csv_file}/")
+                return
+            print(f"📊 Processing {len(csv_files)} files for {args.csv_file}")
+            for csv_file in csv_files:
+                plot_all_metrics(str(csv_file), args.output_dir, args.metrics)
+        else:
+            print(f"❌ File or model directory not found: {args.csv_file}")
+            return
+    elif args.model:
+        # Process specific model or all models
+        if args.model == 'all':
+            model_dirs = [d for d in results_base_dir.iterdir() 
+                         if d.is_dir() and d.name in ['Qwen2', 'Qwen3', 'SmolLM', 'TinyLlama', 'TinyStories']]
+        else:
+            model_dirs = [results_base_dir / args.model]
         
-        if not csv_files:
-            print("❌ No specification CSV files found in results directory")
+        if not model_dirs:
+            print("❌ No model directories found")
             return
         
-        print(f"Found {len(csv_files)} CSV files to process")
+        total_processed = 0
+        for model_dir in model_dirs:
+            csv_files = list(model_dir.glob('*_specification_*.csv'))
+            if csv_files:
+                print(f"\n📊 Processing {model_dir.name}: {len(csv_files)} files")
+                for csv_file in csv_files:
+                    try:
+                        plot_all_metrics(str(csv_file), args.output_dir, args.metrics)
+                        total_processed += 1
+                    except Exception as e:
+                        print(f"❌ Error processing {csv_file.name}: {e}")
         
-        for csv_file in csv_files:
-            try:
-                output_dir = args.output_dir if args.output_dir else 'plots'
-                plot_all_metrics(str(csv_file), output_dir, args.metrics)
-            except Exception as e:
-                print(f"❌ Error processing {csv_file.name}: {e}")
-                import traceback
-                traceback.print_exc()
+        print(f"\n✅ Processed {total_processed} visualizations!")
+    else:
+        # Process all specification CSVs in all model directories
+        model_dirs = [d for d in results_base_dir.iterdir() 
+                     if d.is_dir() and d.name in ['Qwen2', 'Qwen3', 'SmolLM', 'TinyLlama', 'TinyStories']]
         
-        print("\n✅ All visualizations complete!")
+        if not model_dirs:
+            print("❌ No model directories found in results/")
+            return
+        
+        total_processed = 0
+        for model_dir in model_dirs:
+            csv_files = list(model_dir.glob('*_specification_*.csv'))
+            if csv_files:
+                print(f"\n📊 Processing {model_dir.name}: {len(csv_files)} files")
+                for csv_file in csv_files:
+                    try:
+                        plot_all_metrics(str(csv_file), args.output_dir, args.metrics)
+                        total_processed += 1
+                    except Exception as e:
+                        print(f"❌ Error processing {csv_file.name}: {e}")
+                        import traceback
+                        traceback.print_exc()
+        
+        print(f"\n✅ All visualizations complete! Processed {total_processed} files.")
 
 
 if __name__ == "__main__":

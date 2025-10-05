@@ -1,0 +1,101 @@
+experiment_id,timestamp,config_name,prompt,system_prompt,response,model,model_id,config_weighting,config_prompting,prompt_id,weighted_words_enabled,weight_factor,enable_thinking,temperature,response_time_seconds,flesch_kincaid_grade,gunning_fog,smog_index,automated_readability_index,coleman_liau_index,dale_chall_readability_score,flesch_reading_ease,linsear_write_formula,spache_readability,mcalpine_eflaw,sentence_count,word_count,character_count,syllable_count,polysyllable_count,monosyllable_count,difficult_words,reading_time_seconds,reading_time_minutes,cleaned_response,response_appropriateness,vocabulary_level,notes
+1414b2ff-4e76-4a7a-a8f9-4c579d1b7bdb,2025-10-04T12:15:46.835516,Qwen3_control,What does the word 'library' mean?,You are a helpful English teacher for beginner students. Answer with a paragraph only with plain text,"<think>
+
+</think>
+
+The word ""library"" means a place where books are stored and accessed for reading, study, and information. It can also refer to a collection of books or documents organized in a specific way for easy access.",Qwen3,unsloth/Qwen3-0.6B,False,False,P1,False,2.0,False,0.7,2.196610689163208,9.83,12.86,13.02,11.12,9.35,9.15,58.42,12.5,5.33,27.0,2,38,186,58,6,25,8,2.73,0.05,"<think> </think> The word ""library"" means a place where books are stored and accessed for reading, study, and information. It can also refer to a collection of books or documents organized in a specific way for easy access.",,,
+54fa5d19-4f0f-4801-a5d8-33e32676f0a3,2025-10-04T12:15:53.551834,Qwen3_weighted,What does the word 'library' mean?,You are a helpful English teacher for beginner students. Answer with a paragraph only with plain text,"<think>
+
+</think>
+
+The word ""library"" means a place where books are stored and read. It can be a physical space or a symbolic representation of knowledge.",Qwen3,unsloth/Qwen3-0.6B,True,False,P1,True,2.0,False,0.7,6.714991092681885,6.27,9.82,11.21,8.08,8.25,7.93,73.25,7.5,4.0,18.5,2,26,127,37,4,21,4,1.87,0.03,"<think> </think> The word ""library"" means a place where books are stored and read. It can be a physical space or a symbolic representation of knowledge.",,,
+84028550-a072-498d-b417-77a6e0946e6b,2025-10-04T12:15:54.732751,Qwen3_prompted,What does the word 'library' mean?,You are a helpful English teacher for beginner students. Answer with a paragraph only with plain text,"<think>
+
+</think>
+
+What does the word ""library"" mean? It's a place where you can read books and maybe learn new things.",Qwen3,unsloth/Qwen3-0.6B,False,True,P1,False,2.0,False,0.7,1.174834966659546,1.99,4.2,7.17,5.58,5.41,5.66,99.49,4.75,2.32,14.0,2,21,97,24,1,19,0,1.42,0.02,"<think> </think> What does the word ""library"" mean? It's a place where you can read books and maybe learn new things.",,,
+008b4350-695b-4954-ac0c-782b8a2fca48,2025-10-04T12:16:01.298005,Qwen3_weighted_prompted,What does the word 'library' mean?,You are a helpful English teacher for beginner students. Answer with a paragraph only with plain text,"<think>
+
+</think>
+
+What's a library? It's like a big room where you can read books. You can go there to learn and play.",Qwen3,unsloth/Qwen3-0.6B,True,True,P1,True,2.0,False,0.7,6.563807010650635,0.23,3.07,6.43,1.86,1.77,1.07,107.1,3.17,1.92,11.33,3,23,95,25,1,22,0,1.4,0.02,<think> </think> What's a library? It's like a big room where you can read books. You can go there to learn and play.,,,
+4bd24314-01ec-4872-8db8-e0363a84ffa2,2025-10-04T12:16:03.473894,Qwen3_control,How do I introduce myself in English?,You are a helpful English teacher for beginner students. Answer with a paragraph only with plain text,"<think>
+
+</think>
+
+To introduce yourself in English, start with a greeting like ""Hi!"" or ""Hello!"". Then mention your name, and briefly explain what you do or what you are known for. Keep it friendly and concise. For example, ""Hi! My name is [Your Name], and I'm a [Your Profession/interest].""",Qwen3,unsloth/Qwen3-0.6B,False,False,P2,False,2.0,False,0.7,2.1735050678253174,4.37,6.37,7.55,6.73,6.51,7.35,81.21,4.5,3.45,14.0,5,49,242,67,3,37,7,3.55,0.06,"<think> </think> To introduce yourself in English, start with a greeting like ""Hi!"" or ""Hello!"". Then mention your name, and briefly explain what you do or what you are known for. Keep it friendly and concise. For example, ""Hi! My name is [Your Name], and I'm a [Your Profession/interest].""",,,
+ec7497ed-cfbc-4f04-b85f-0620105ab4b7,2025-10-04T12:16:17.349435,Qwen3_weighted,How do I introduce myself in English?,You are a helpful English teacher for beginner students. Answer with a paragraph only with plain text,"<think>
+
+</think>
+
+To introduce yourself in English, you can say something like, ""Hi, I'm [Your Name]. I'm [Your Age] and I like [something like 'reading' or 'gaming']."" You can also add a bit more about your interests or what you do.",Qwen3,unsloth/Qwen3-0.6B,True,False,P2,True,2.0,False,0.7,13.872942924499512,4.71,6.44,6.43,7.46,5.66,7.01,85.67,6.17,3.61,20.33,3,41,192,52,1,31,4,2.82,0.05,"<think> </think> To introduce yourself in English, you can say something like, ""Hi, I'm [Your Name]. I'm [Your Age] and I like [something like 'reading' or 'gaming']."" You can also add a bit more about your interests or what you do.",,,
+81013794-59b2-4c03-aaf8-c0d4d8cfffc0,2025-10-04T12:16:18.437239,Qwen3_prompted,How do I introduce myself in English?,You are a helpful English teacher for beginner students. Answer with a paragraph only with plain text,"<think>
+
+</think>
+
+To introduce yourself in English, you can say something like: ""Hi, I'm [Your Name]. I'm here to learn English.""",Qwen3,unsloth/Qwen3-0.6B,False,True,P2,False,2.0,False,0.7,1.0864567756652832,3.68,6.1,7.17,8.04,6.79,7.16,87.41,4.75,2.73,15.0,2,21,108,27,1,16,1,1.59,0.03,"<think> </think> To introduce yourself in English, you can say something like: ""Hi, I'm [Your Name]. I'm here to learn English.""",,,
+ad6d3308-833c-4f7e-83eb-c7801b30ef49,2025-10-04T12:16:25.594176,Qwen3_weighted_prompted,How do I introduce myself in English?,You are a helpful English teacher for beginner students. Answer with a paragraph only with plain text,"<think>
+
+</think>
+
+To introduce yourself in English, you can say something like, ""Hi! My name is [Your Name]. I am [something about yourself].""",Qwen3,unsloth/Qwen3-0.6B,True,True,P2,True,2.0,False,0.7,7.155581951141357,3.3,4.81,6.43,6.77,6.31,5.39,85.03,3.17,2.29,11.0,3,23,119,31,1,16,1,1.75,0.03,"<think> </think> To introduce yourself in English, you can say something like, ""Hi! My name is [Your Name]. I am [something about yourself].""",,,
+283bd303-f1fd-40b9-917d-81a7fb949c37,2025-10-04T12:16:31.060551,Qwen3_control,What is a dog?,You are a helpful English teacher for beginner students. Answer with a paragraph only with plain text,"<think>
+
+</think>
+
+A dog is a domesticated animal of the canid family. Dogs are known for their loyalty, companionship, and ability to understand human emotions. They are often considered the closest to humans in terms of companionship and social interaction. Dogs can be playful, affectionate, or loyal, depending on their breed and personality. Dogs are also important in many cultures and communities, where they serve as pets, family companions, and even as therapy animals. In addition to their role as pets, dogs can also be trained as service animals or therapy animals, depending on their specific needs. In summary, a dog is a versatile and beloved creature that plays an important role in both daily life and human interactions.",Qwen3,unsloth/Qwen3-0.6B,False,False,P3,False,2.0,False,0.7,5.4624598026275635,11.57,14.87,14.96,11.53,11.46,10.85,42.42,11.0,5.69,23.29,7,119,618,207,30,72,28,9.08,0.15,"<think> </think> A dog is a domesticated animal of the canid family. Dogs are known for their loyalty, companionship, and ability to understand human emotions. They are often considered the closest to humans in terms of companionship and social interaction. Dogs can be playful, affectionate, or loyal, depending on their breed and personality. Dogs are also important in many cultures and communities, where they serve as pets, family companions, and even as therapy animals. In addition to their role as pets, dogs can also be trained as service animals or therapy animals, depending on their specific needs. In summary, a dog is a versatile and beloved creature that plays an important role in both daily life and human interactions.",,,
+1b2d5002-013c-47a3-82c1-c03231c21da4,2025-10-04T12:16:50.795639,Qwen3_weighted,What is a dog?,You are a helpful English teacher for beginner students. Answer with a paragraph only with plain text,"<think>
+
+</think>
+
+A dog is a mammal that lives in the wild, and it's a good friend to humans. Dogs have a special sense of smell and can be loyal and affectionate. They are often used for various purposes, such as companionship, work, or even as pets. Dogs have many different types, from small puppies to large dogs, and they can be friendly or not.",Qwen3,unsloth/Qwen3-0.6B,True,False,P3,True,2.0,False,0.7,19.72857904434204,6.36,8.96,9.52,7.35,6.38,7.84,78.41,8.38,4.32,23.0,4,65,285,86,5,51,9,4.19,0.07,"<think> </think> A dog is a mammal that lives in the wild, and it's a good friend to humans. Dogs have a special sense of smell and can be loyal and affectionate. They are often used for various purposes, such as companionship, work, or even as pets. Dogs have many different types, from small puppies to large dogs, and they can be friendly or not.",,,
+7a501f44-d03c-4c46-a777-b1a94334fd85,2025-10-04T12:16:52.257068,Qwen3_prompted,What is a dog?,You are a helpful English teacher for beginner students. Answer with a paragraph only with plain text,"<think>
+
+</think>
+
+What a dog is? A dog is a kind of animal that lives with people. Dogs have big ears, and they usually bark when they hear people. They can run and play.",Qwen3,unsloth/Qwen3-0.6B,False,True,P3,False,2.0,False,0.7,1.4573261737823486,1.95,4.58,7.17,1.66,2.21,5.45,96.19,3.75,2.29,11.75,4,34,136,41,2,30,1,2.0,0.03,"<think> </think> What a dog is? A dog is a kind of animal that lives with people. Dogs have big ears, and they usually bark when they hear people. They can run and play.",,,
+b2937596-e7ac-4e0b-9784-f75e342fbd26,2025-10-04T12:16:53.681157,Qwen3_weighted_prompted,What is a dog?,You are a helpful English teacher for beginner students. Answer with a paragraph only with plain text,"<think>
+
+</think>
+
+What a dog is?",Qwen3,unsloth/Qwen3-0.6B,True,True,P3,True,2.0,False,0.7,1.423382043838501,-1.45,2.4,3.13,1.98,-1.4,0.3,116.15,2.0,1.68,9.0,1,6,26,6,0,6,0,0.38,0.01,<think> </think> What a dog is?,,,
+52629b85-b1b9-405d-872e-a06fca31332b,2025-10-04T12:16:56.200481,Qwen3_control,Can you explain what 'breakfast' is?,You are a helpful English teacher for beginner students. Answer with a paragraph only with plain text,"<think>
+
+</think>
+
+Certainly! ""Breakfast"" refers to the first meal of the day, which is usually eaten in the morning. It's a common way to start the day, and it's a time when people take in the day's energy and prepare for the day ahead. Whether it's a simple breakfast or a hearty meal, it's an important part of the day's routine.",Qwen3,unsloth/Qwen3-0.6B,False,False,P4,False,2.0,False,0.7,2.512014150619507,6.41,7.41,8.84,7.04,6.03,6.72,76.24,7.62,3.98,23.0,4,61,270,83,4,44,7,3.97,0.07,"<think> </think> Certainly! ""Breakfast"" refers to the first meal of the day, which is usually eaten in the morning. It's a common way to start the day, and it's a time when people take in the day's energy and prepare for the day ahead. Whether it's a simple breakfast or a hearty meal, it's an important part of the day's routine.",,,
+c7b98712-3914-4639-bc62-e6fb021f2bd9,2025-10-04T12:17:11.474177,Qwen3_weighted,Can you explain what 'breakfast' is?,You are a helpful English teacher for beginner students. Answer with a paragraph only with plain text,"<think>
+
+</think>
+
+Sure! ""Breakfast"" is a meal that happens in the morning. It's usually a light meal to get you ready for the day. For example, you might have a cup of coffee, a bowl of cereal, or a sandwich. It's important to eat breakfast to start the day properly.",Qwen3,unsloth/Qwen3-0.6B,True,False,P4,True,2.0,False,0.7,15.261254787445068,4.36,6.4,8.84,4.01,4.44,5.4,81.63,5.0,2.94,15.4,5,50,217,68,5,38,4,3.19,0.05,"<think> </think> Sure! ""Breakfast"" is a meal that happens in the morning. It's usually a light meal to get you ready for the day. For example, you might have a cup of coffee, a bowl of cereal, or a sandwich. It's important to eat breakfast to start the day properly.",,,
+6ebf55a8-a2bc-4b4f-8d85-b018f099e7a7,2025-10-04T12:17:14.267520,Qwen3_prompted,Can you explain what 'breakfast' is?,You are a helpful English teacher for beginner students. Answer with a paragraph only with plain text,"<think>
+
+</think>
+
+Sure! Breakfast is when you eat your first meal of the day. It's like the start of your day. Maybe you eat something like bread, juice, or cereal. It's important to have breakfast because it helps you get ready for school or work. Let me know if you need more help!",Qwen3,unsloth/Qwen3-0.6B,False,True,P4,False,2.0,False,0.7,2.782768726348877,1.88,3.53,6.43,3.43,4.38,0.74,97.31,3.75,2.08,12.83,6,53,230,63,2,45,0,3.38,0.06,"<think> </think> Sure! Breakfast is when you eat your first meal of the day. It's like the start of your day. Maybe you eat something like bread, juice, or cereal. It's important to have breakfast because it helps you get ready for school or work. Let me know if you need more help!",,,
+a96c7934-8400-41cf-a735-002393144b88,2025-10-04T12:17:22.687938,Qwen3_weighted_prompted,Can you explain what 'breakfast' is?,You are a helpful English teacher for beginner students. Answer with a paragraph only with plain text,"<think>
+
+</think>
+
+Sure! Breakfast is when you eat food in the morning, like eggs or bread. It's the first meal of the day!",Qwen3,unsloth/Qwen3-0.6B,True,True,P4,True,2.0,False,0.7,8.413816928863525,0.23,3.07,3.13,2.68,2.78,1.07,107.1,2.83,1.92,11.33,3,23,99,25,0,21,0,1.45,0.02,"<think> </think> Sure! Breakfast is when you eat food in the morning, like eggs or bread. It's the first meal of the day!",,,
+58c4a87a-272b-4f71-877b-f0703f804241,2025-10-04T12:17:30.935555,Qwen3_control,What is the difference between 'big' and 'large'?,You are a helpful English teacher for beginner students. Answer with a paragraph only with plain text,"<think>
+
+</think>
+
+The word ""big"" and ""large"" both describe size, but they have slightly different nuances. ""Big"" generally refers to something that is large in size, often more than the typical size, while ""large"" is more about how big an object or group is, but not necessarily as much as ""big."" For example, a big dog is a large dog, but a large house is just a house. The difference lies in the emphasis: ""big"" is about the size being greater than average, whereas ""large"" can imply it's just big enough to be considered large.",Qwen3,unsloth/Qwen3-0.6B,False,False,P5,False,2.0,False,0.7,8.223453998565674,9.94,12.87,12.16,12.01,7.56,7.31,66.07,14.38,5.46,34.25,4,95,435,131,10,72,14,6.39,0.11,"<think> </think> The word ""big"" and ""large"" both describe size, but they have slightly different nuances. ""Big"" generally refers to something that is large in size, often more than the typical size, while ""large"" is more about how big an object or group is, but not necessarily as much as ""big."" For example, a big dog is a large dog, but a large house is just a house. The difference lies in the emphasis: ""big"" is about the size being greater than average, whereas ""large"" can imply it's just big enough to be considered large.",,,
+73646f03-83f9-4524-84d1-945aeba375de,2025-10-04T12:18:01.435395,Qwen3_weighted,What is the difference between 'big' and 'large'?,You are a helpful English teacher for beginner students. Answer with a paragraph only with plain text,"<think>
+
+</think>
+
+The difference between ""big"" and ""large"" is that ""big"" usually refers to a larger, more substantial object or person, while ""large"" can be used to describe something that is big, but not necessarily the same as ""big."" For example, a big tree is a large tree, and a large person is someone who is big. Both can be used in similar contexts, but ""big"" often implies a more substantial or larger size, while ""large"" can be used to describe something that is big in size, regardless of its actual size.",Qwen3,unsloth/Qwen3-0.6B,True,False,P5,True,2.0,False,0.7,30.48909592628479,12.79,15.74,13.02,15.56,8.01,7.56,58.0,18.33,6.47,45.33,3,92,423,128,9,68,12,6.21,0.1,"<think> </think> The difference between ""big"" and ""large"" is that ""big"" usually refers to a larger, more substantial object or person, while ""large"" can be used to describe something that is big, but not necessarily the same as ""big."" For example, a big tree is a large tree, and a large person is someone who is big. Both can be used in similar contexts, but ""big"" often implies a more substantial or larger size, while ""large"" can be used to describe something that is big in size, regardless of its actual size.",,,
+a41f17c7-d72b-4be5-b0a7-286d4abee669,2025-10-04T12:18:03.751847,Qwen3_prompted,What is the difference between 'big' and 'large'?,You are a helpful English teacher for beginner students. Answer with a paragraph only with plain text,"<think>
+
+</think>
+
+The difference between ""big"" and ""large"" is that ""big"" means the size is big, like a small baby, while ""large"" means the size is bigger, like a big box. So, if something is big, it's bigger than something small.",Qwen3,unsloth/Qwen3-0.6B,False,True,P5,False,2.0,False,0.7,2.3091959953308105,6.51,8.2,7.17,10.42,6.38,1.4,84.92,10.75,3.94,30.0,2,41,188,49,1,34,1,2.76,0.05,"<think> </think> The difference between ""big"" and ""large"" is that ""big"" means the size is big, like a small baby, while ""large"" means the size is bigger, like a big box. So, if something is big, it's bigger than something small.",,,
+fa4fcbba-f731-4067-8d0f-a2d6eb132de6,2025-10-04T12:18:18.835702,Qwen3_weighted_prompted,What is the difference between 'big' and 'large'?,You are a helpful English teacher for beginner students. Answer with a paragraph only with plain text,"<think>
+
+</think>
+
+Big and large are both used to describe something that's big or big. Big means it's a large size, like a big cat. Large means it's bigger than normal. So, big and large are similar, but big can be a bit more general.",Qwen3,unsloth/Qwen3-0.6B,True,True,P5,True,2.0,False,0.7,15.073148250579834,2.7,5.39,7.17,3.98,4.0,1.26,95.78,5.12,2.81,17.25,4,45,189,53,2,39,2,2.78,0.05,"<think> </think> Big and large are both used to describe something that's big or big. Big means it's a large size, like a big cat. Large means it's bigger than normal. So, big and large are similar, but big can be a bit more general.",,,

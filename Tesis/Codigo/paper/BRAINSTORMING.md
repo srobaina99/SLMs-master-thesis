@@ -2,7 +2,7 @@
 
 **Research Question:** Can small language models be controlled to produce appropriately simple text for A1 English learners through decoding manipulation and prompt engineering?
 
-**Models Evaluated:** Qwen2 (0.5B), Qwen3 (0.6B)
+**Models Evaluated:** Phi3 (3.8B), Qwen2 (0.5B), Qwen3 (0.6B), SmolLM (1.7B), TinyLlama (1.1B), TinyStories (33M)
 
 ---
 
@@ -53,54 +53,39 @@ big house with many special rooms where people keep their toys and stories!"
 
 **1.2.1 Text Simplification for Language Learning**
 
-- **Automatic Text Simplification (ATS):**
+- **Empirical Evidence for Simplification:**
+  - **Gala et al. (2018)**: Simplified texts improve reading fluency and comprehension in beginning readers, particularly those with lower skills
+  - **Crossley et al. (2011)**: Text simplification enhances L2 comprehension; word lists and readability formulas are effective approaches
+  - **Gap:** Studies focus on post-hoc simplification, not real-time generation control
 
-  - Paetzold & Specia (2016): Lexical simplification benchmarks
-  - Alva-Manchego et al. (2020): ASSET dataset for simplification
-  - **Gap:** Post-hoc approaches; separate model needed
-- **Controllable Text Generation:**
+- **Readability-Controlled Generation:**
+  - **Al-Thanyyan & Azmi (2020)**: Model trained on Newsela dataset produces text at specific readability levels using readability formulas
+  - **Al-Sabbagh & Al-Khalifa (2023)**: Review of multi-level simplification systems across languages; emphasizes need for readability-controlled generation
+  - **Gap:** Approaches require training on labeled data; no inference-time control methods
 
-  - Keskar et al. (2019): CTRL - control codes for style
-  - Dathathri et al. (2020): PPLM - attribute control via gradients
-  - **Gap:** Focus on style/topic, not readability complexity
-- **Vocabulary Constraints in Generation:**
+**1.2.2 Controlled Text Generation Approaches**
 
-  - Hokamp & Liu (2017): Lexically constrained decoding
-  - Post & Vilar (2018): Fast lexical constraints
-  - **Gap:** Hard constraints (must include words), not soft boosting
+- **Fine-tuning for Simplification:**
+  - **Baez & Saggion (2023)**: LSLlama fine-tunes LLaMA for lexical simplification, achieving baseline performance
+  - **Gap:** Fine-tuning is resource-intensive and locks in single difficulty level
 
-**1.2.2 Small Language Models for Education**
+- **Logits Manipulation:**
+  - **No prior work** on probability weighting for vocabulary-constrained simplification in educational contexts
+  - **This work:** First to apply logits processors for A1 vocabulary boosting
 
-- **SLMs vs LLMs:**
+**1.2.3 Readability Assessment for Target Audiences**
 
-  - Schick & Schütze (2021): Few-shot learning with small models
-  - Liu et al. (2023): QLoRA - efficient fine-tuning
-  - **Relevance:** SLMs practical for on-device deployment, but lack control
-- **Prompt Engineering:**
-
-  - Reynolds & McDonell (2021): Prompt programming
-  - Wei et al. (2022): Chain-of-thought prompting
-  - **Relevance:** Instructions shape outputs, but effectiveness for simplicity unexplored
-
-**1.2.3 Readability Metrics**
-
-- **Traditional Formulas:**
-
-  - Flesch (1948): Reading Ease score
-  - Kincaid et al. (1975): Grade level formula
-  - **Relevance:** Validated for educational contexts
-- **ESL-Specific Metrics:**
-
-  - Crossley et al. (2014): Linguistic features for L2 readability
-  - François & Fairon (2012): Readability for French learners
-  - **Relevance:** ESL differs from native text complexity
+- **Audience-Specific Evaluation:**
+  - **Yaneva et al. (2016)**: Emphasizes need for tailored readability assessment; introduces disability-specific linguistic features
+  - **Claridge (2005)**: Analyzes word frequency, sentence length, and syntactic complexity in graded readers
+  - **Relevance:** Validates use of multiple readability metrics (FK Grade, Dale-Chall, Spache) for beginner audiences
 
 **1.2.4 Our Contribution**
 
-✅ **Novel combination:** Decoding manipulation + prompt engineering for real-time complexity control
-✅ **SLM focus:** First study targeting sub-1B models for educational deployment
-✅ **Comprehensive metrics:** 18 readability indices validated against A1 targets
-✅ **Factorial design:** Isolates individual and interaction effects
+✅ **Novel approach:** Logits manipulation (probability weighting) + prompt engineering for real-time complexity control
+✅ **SLM focus:** First systematic evaluation across 6 models (33M-3.8B parameters) for educational deployment
+✅ **Factorial design:** Isolates individual and interaction effects of two interventions
+✅ **Comprehensive evaluation:** 18 readability metrics + 192 observations across diverse model architectures
 
 ---
 
@@ -110,14 +95,14 @@ big house with many special rooms where people keep their toys and stories!"
 
 **Factorial Design:**
 
-- **Models (2):** Qwen2 (0.5B), Qwen3 (0.6B)
+- **Models (6):** Phi3 (3.8B), Qwen2 (0.5B), Qwen3 (0.6B), SmolLM (1.7B), TinyLlama (1.1B), TinyStories (33M)
 - **Interventions (4 configs):**
   1. **Control:** No interventions
   2. **Weighting Only:** Probability boosting (vocab list)
   3. **Prompting Only:** Context instructions
   4. **Both:** Weighting + Prompting
-- **Prompts (5):** Diverse English learning questions
-- **Total:** 2 models × 4 configs × 5 prompts = 40 observations
+- **Prompts (8):** Diverse English learning questions
+- **Total:** 6 models × 4 configs × 8 prompts = 192 observations
 
 **1.3.2 Interventions**
 
@@ -206,14 +191,14 @@ big house with many special rooms where people keep their toys and stories!"
 **ANOVA Design:**
 
 - **Independent Variables:**
-  - Model (2 levels: Qwen2, Qwen3)
+  - Model (6 levels: Phi3, Qwen2, Qwen3, SmolLM, TinyLlama, TinyStories)
   - Weighting (2 levels: Yes/No)
   - Prompting (2 levels: Yes/No)
 - **Dependent Variables:** All readability metrics
 - **Tests:**
   - Main effects of Weighting, Prompting
   - Interaction: Weighting × Prompting
-  - Model differences (Qwen2 vs Qwen3)
+  - Model differences (pairwise comparisons across 6 models)
 
 **Effect Sizes:**
 
@@ -225,67 +210,88 @@ big house with many special rooms where people keep their toys and stories!"
 
 ### 1.4 Results
 
-**1.4.1 By-Config Analysis (Qwen2 + Qwen3 Combined)**
+**1.4.1 By-Config Analysis (All 6 Models Combined)**
 
 | Configuration            | FK Grade                | Gunning Fog             | Flesch Ease               | Response Time (s)      | Word Count             |
 | ------------------------ | ----------------------- | ----------------------- | ------------------------- | ---------------------- | ---------------------- |
-| **Control**        | 7.5 ± 2.6              | 10.0 ± 3.3             | 67.1 ± 13.9              | 10.2 ± 7.5            | 76.5 ± 32.3           |
-| **Weighting Only** | 7.7 ± 3.4              | 9.6 ± 3.5              | 67.8 ± 18.5              | **52.2 ± 46.1** | **98.3 ± 77.6** |
-| **Prompting Only** | **3.1 ± 2.6** ✅ | **5.7 ± 2.2** ✅ | **94.9 ± 11.4** ✅ | 8.0 ± 7.4             | 36.7 ± 20.5           |
-| **Both**           | **2.8 ± 2.3** ✅ | **5.0 ± 1.8** ✅ | **95.1 ± 10.4** ✅ | 22.3 ± 21.1           | 28.3 ± 15.4           |
+| **Control**        | TBD              | TBD             | TBD              | TBD            | TBD           |
+| **Weighting Only** | TBD              | TBD              | TBD              | TBD | TBD |
+| **Prompting Only** | TBD | TBD | TBD | TBD             | TBD           |
+| **Both**           | TBD | TBD | TBD | TBD           | TBD           |
 
 ✅ = Meets A1 target
 
 **Key Findings:**
 
-1. **Prompting is effective:** FK Grade reduced 58% (7.5 → 3.1)
-2. **Weighting alone fails:** No improvement, increases response time 5×
-3. **Combined is best:** Lowest FK Grade (2.8), highest Reading Ease (95.1)
-4. **Trade-off:** Combined config slower (22s vs 8s for Prompting Only)
+1. **TBD:** Results pending full 6-model experiment
+2. **TBD:** Results pending full 6-model experiment
+3. **TBD:** Results pending full 6-model experiment
+4. **TBD:** Results pending full 6-model experiment
 
 **1.4.2 Model Comparison**
 
 | Model           | Config    | FK Grade         | Flesch Ease        | Response Time (s) |
 | --------------- | --------- | ---------------- | ------------------ | ----------------- |
-| **Qwen2** | Control   | 9.5              | 56.7               | 15.7              |
-| **Qwen2** | Weighting | 10.0 ⚠️        | 56.6               | **71.2**    |
-| **Qwen2** | Prompting | 5.0 ✅           | 86.8 ✅            | 14.5              |
-| **Qwen2** | Both      | 3.7 ✅           | 92.6 ✅            | 38.3              |
-| **Qwen3** | Control   | 5.5 ✅           | 77.4               | 4.7               |
-| **Qwen3** | Weighting | 5.3 ✅           | 78.9               | 33.2              |
-| **Qwen3** | Prompting | **1.1** ✅ | **102.9** ✅ | **1.4**     |
-| **Qwen3** | Both      | **1.9** ✅ | **97.7** ✅  | 6.3               |
+| **Phi3** | Control   | TBD              | TBD               | TBD              |
+| **Phi3** | Weighting | TBD        | TBD               | TBD    |
+| **Phi3** | Prompting | TBD           | TBD            | TBD              |
+| **Phi3** | Both      | TBD           | TBD            | TBD              |
+| **Qwen2** | Control   | TBD              | TBD               | TBD              |
+| **Qwen2** | Weighting | TBD        | TBD               | TBD    |
+| **Qwen2** | Prompting | TBD           | TBD            | TBD              |
+| **Qwen2** | Both      | TBD           | TBD            | TBD              |
+| **Qwen3** | Control   | TBD           | TBD               | TBD               |
+| **Qwen3** | Weighting | TBD           | TBD               | TBD              |
+| **Qwen3** | Prompting | TBD | TBD | TBD     |
+| **Qwen3** | Both      | TBD | TBD  | TBD               |
+| **SmolLM** | Control   | TBD           | TBD               | TBD               |
+| **SmolLM** | Weighting | TBD           | TBD               | TBD              |
+| **SmolLM** | Prompting | TBD | TBD | TBD     |
+| **SmolLM** | Both      | TBD | TBD  | TBD               |
+| **TinyLlama** | Control   | TBD           | TBD               | TBD               |
+| **TinyLlama** | Weighting | TBD           | TBD               | TBD              |
+| **TinyLlama** | Prompting | TBD | TBD | TBD     |
+| **TinyLlama** | Both      | TBD | TBD  | TBD               |
+| **TinyStories** | Control   | TBD           | TBD               | TBD               |
+| **TinyStories** | Weighting | TBD           | TBD               | TBD              |
+| **TinyStories** | Prompting | TBD | TBD | TBD     |
+| **TinyStories** | Both      | TBD | TBD  | TBD               |
 
 **Key Findings:**
 
-1. **Qwen3 naturally simpler:** Control already meets A1 target (5.5 vs 9.5)
-2. **Qwen3 dramatically faster:** 1.4s vs 14.5s (Prompting)
-3. **Qwen2 + Weighting fails:** Increases complexity AND latency
-4. **Qwen3 + Prompting optimal:** FK 1.1, 1.4s response time
+1. **TBD:** Results pending full 6-model experiment
+2. **TBD:** Results pending full 6-model experiment
+3. **TBD:** Results pending full 6-model experiment
+4. **TBD:** Results pending full 6-model experiment
 
 **1.4.3 Effect Sizes**
 
-**Qwen2:**
+**Per-Model Analysis:**
 
-| Config    | FK Grade Change     | Cohen's d               | Flesch Ease Change |
-| --------- | ------------------- | ----------------------- | ------------------ |
-| Weighting | +5.7% ⚠️          | +0.15                   | -0.2%              |
-| Prompting | **-47.0%** ✅ | **-2.44** (large) | **+53.0%**   |
-| Both      | **-60.9%** ✅ | **-2.59** (large) | **+63.2%**   |
-
-**Qwen3:**
-
-| Config    | FK Grade Change     | Cohen's d               | Flesch Ease Change |
-| --------- | ------------------- | ----------------------- | ------------------ |
-| Weighting | -3.6%               | -0.10                   | +2.0%              |
-| Prompting | **-80.4%** ✅ | **-2.45** (large) | **+32.9%**   |
-| Both      | **-65.5%** ✅ | **-1.59** (large) | **+26.2%**   |
+| Model | Config    | FK Grade Change     | Cohen's d               | Flesch Ease Change |
+| ----- | --------- | ------------------- | ----------------------- | ------------------ |
+| **Phi3** | Weighting | TBD          | TBD                   | TBD              |
+| **Phi3** | Prompting | TBD | TBD | TBD   |
+| **Phi3** | Both      | TBD | TBD | TBD   |
+| **Qwen2** | Weighting | TBD          | TBD                   | TBD              |
+| **Qwen2** | Prompting | TBD | TBD | TBD   |
+| **Qwen2** | Both      | TBD | TBD | TBD   |
+| **Qwen3** | Weighting | TBD               | TBD                   | TBD              |
+| **Qwen3** | Prompting | TBD | TBD | TBD   |
+| **Qwen3** | Both      | TBD | TBD | TBD   |
+| **SmolLM** | Weighting | TBD               | TBD                   | TBD              |
+| **SmolLM** | Prompting | TBD | TBD | TBD   |
+| **SmolLM** | Both      | TBD | TBD | TBD   |
+| **TinyLlama** | Weighting | TBD               | TBD                   | TBD              |
+| **TinyLlama** | Prompting | TBD | TBD | TBD   |
+| **TinyLlama** | Both      | TBD | TBD | TBD   |
+| **TinyStories** | Weighting | TBD               | TBD                   | TBD              |
+| **TinyStories** | Prompting | TBD | TBD | TBD   |
+| **TinyStories** | Both      | TBD | TBD | TBD   |
 
 **Interpretation:**
 
-- Prompting: Very large effect sizes (Cohen's d > 2.0)
-- Weighting alone: Negligible effects
-- Combined: Best absolute values, but diminishing returns for Qwen3
+- TBD: Results pending full 6-model experiment
 
 ---
 
@@ -335,31 +341,34 @@ big house with many special rooms where people keep their toys and stories!"
 - Qwen3: Combined slower but acceptable (6.3s vs 4.7s control)
 - **Recommendation:** Prompting alone may suffice for latency-critical applications
 
-**1.5.4 Model Selection: Qwen3 > Qwen2**
+**1.5.4 Model Selection Across 6 Models**
 
-**Qwen3 Advantages:**
+**Model Comparison Dimensions:**
 
-1. **Naturally simpler baseline:** FK 5.5 vs 9.5 (control)
-2. **Faster generation:** 1.4s vs 14.5s (prompting)
-3. **Better intervention response:** FK 1.1 (prompting) vs 5.0
+1. **Size vs Performance:** Phi3 (3.8B) vs SmolLM (1.7B) vs TinyLlama (1.1B) vs Qwen3 (0.6B) vs Qwen2 (0.5B) vs TinyStories (33M)
+2. **Baseline Complexity:** Natural FK Grade without interventions
+3. **Intervention Responsiveness:** Effectiveness of prompting/weighting
+4. **Latency:** Response time across configurations
+5. **Deployment Viability:** Balance of simplicity, speed, and resource requirements
 
-**Architectural Differences (speculation):**
+**Architectural Considerations:**
 
-- Training data: Qwen3 may include simpler/educational texts
-- Model size: 0.6B vs 0.5B (slightly larger, but faster - optimization?)
-- Tokenizer: Different vocabulary distributions
+- Training data composition (general vs educational)
+- Tokenizer vocabulary distributions
+- Optimization strategies (quantization, caching)
+- Model architecture (attention mechanisms, layer depth)
 
-**Recommendation for Deployment:** Qwen3 + Prompting Only
+**Recommendation for Deployment:** TBD pending full experiment results
 
 ---
 
 ### 1.6 Limitations
 
-1. **Small Sample Size:**
+1. **Sample Size:**
 
-   - Only 5 prompts per model
+   - Currently 8 prompts per model
    - Need 50+ for robust statistical power
-   - Confidence intervals wide for some metrics
+   - Confidence intervals may be wide for some metrics
 2. **Prompt Dependency:**
 
    - Results may vary with different prompt types
@@ -530,7 +539,7 @@ big house with many special rooms where people keep their toys and stories!"
 
 **Slide 5: Experimental Design**
 
-- 2 models × 4 configs × 5 prompts = 40 observations
+- 6 models × 4 configs × 8 prompts = 192 observations
 - 18 readability metrics (focus on FK Grade, Flesch Ease)
 
 **Slide 6: Readability Metrics Explained**
@@ -545,8 +554,8 @@ big house with many special rooms where people keep their toys and stories!"
 
 **Slide 8: Results - Model Comparison**
 
-- Figure 2 (Qwen2 vs Qwen3)
-- Key finding: Qwen3 naturally simpler + faster
+- Figure 2 (6-model comparison)
+- Key finding: TBD pending full experiment
 
 **Slide 9: Why Weighting Fails**
 
@@ -556,16 +565,16 @@ big house with many special rooms where people keep their toys and stories!"
 **Slide 10: Trade-offs**
 
 - Figure 3 (scatter plot)
-- Qwen3 + Prompting in ideal zone
+- TBD: Identify optimal model + config combination
 
 **Slide 11: Effect Sizes**
 
-- Cohen's d > 2.0 for prompting (very large)
-- 47-80% reduction in FK Grade
+- TBD: Effect sizes pending full experiment
+- TBD: Percent reduction in FK Grade across models
 
 **Slide 12: Limitations**
 
-- Small sample (5 prompts)
+- Sample size (8 prompts, need 50+)
 - No human validation yet
 - **Weight factor hyperparameter not optimized**
 
@@ -578,32 +587,32 @@ big house with many special rooms where people keep their toys and stories!"
 
 **Slide 14: Practical Recommendations**
 
-- **Deploy:** Qwen3 + Prompting Only
+- **Deploy:** TBD pending full experiment results
 - **Monitor:** FK Grade ≤5.0, Response Time <10s
 - **Avoid:** Weighting alone (counterproductive)
 
 **Slide 15: Contributions**
 
 - ✅ First real-time complexity control for SLMs
-- ✅ Factorial design isolates intervention effects
+- ✅ Factorial design isolates intervention effects across 6 models
 - ✅ Comprehensive readability evaluation (18 metrics)
-- ✅ Practical deployment guidelines
+- ✅ Practical deployment guidelines (pending results)
 
 ---
 
 ## 4. ELEVATOR PITCHES
 
 **30 seconds:**
-"We tested whether small AI models can talk simply to beginner English learners. Using prompt instructions and vocabulary boosting, we reduced text complexity 60% while staying fast. Prompting works great; vocabulary weighting alone makes things worse. Use Qwen3 with simple prompts for real apps."
+"We tested whether small AI models can talk simply to beginner English learners. Using prompt instructions and vocabulary boosting across 6 models (33M to 3.8B parameters), we evaluated text complexity control. Results pending full experiment, but early findings suggest prompting works better than vocabulary weighting alone."
 
 **2 minutes:**
-"Language learning apps need AI that matches student level. We tested two small models (Qwen2, Qwen3) with two control methods: prompting (instructions to simplify) and weighting (boosting simple vocabulary during generation).
+"Language learning apps need AI that matches student level. We tested six small models (Phi3, Qwen2, Qwen3, SmolLM, TinyLlama, TinyStories) with two control methods: prompting (instructions to simplify) and weighting (boosting simple vocabulary during generation).
 
-Key findings: Prompting alone is highly effective—reduces complexity 47-80% and achieves beginner-appropriate levels. Vocabulary weighting alone backfires—models generate longer, more convoluted text. Combined is best for complexity, but slower.
+Experimental design: 6 models × 4 intervention configs × 8 prompts = 192 observations, evaluated across 18 readability metrics.
 
-Qwen3 outperforms Qwen2: naturally simpler baseline, 10× faster responses.
+Key research questions: Which models naturally produce simpler text? How effective is prompting vs weighting? What are the latency trade-offs? Which combination is optimal for deployment?
 
-Recommendation: Deploy Qwen3 with prompting only for production. Next steps: test with real students, optimize the vocabulary weighting strength, and expand to 50+ prompts for robust validation."
+Results pending full experiment. Next steps: complete 192-observation factorial experiment, analyze statistical significance, test with real A1 students, optimize vocabulary weighting strength, and expand to 50+ prompts for robust validation."
 
 ---
 
@@ -620,8 +629,8 @@ A: We hypothesize the vocabulary constraint (1,500 words) is too restrictive, fo
 Q: *How do you know readability formulas work for ESL learners?*
 A: Good question—formulas were designed for native speakers. We plan human validation with A1 learners. However, formulas are widely used in education and correlate with comprehension in prior ESL studies (Crossley et al., 2014).
 
-Q: *Only 5 prompts per model seems small.*
-A: Agreed—this is exploratory. We're expanding to 50+ prompts for statistical power. Current results show large, consistent effects (Cohen's d > 2.0), suggesting robustness.
+Q: *Only 8 prompts per model seems small.*
+A: Agreed—this is exploratory. We're expanding to 50+ prompts for statistical power. With 6 models and 4 configs, we have 192 observations total, but more prompts needed for robust per-model analysis.
 
 Q: *Can this work for other languages?*
 A: Unknown—English only so far. The mechanisms (prompting, vocabulary lists) should generalize, but empirical validation needed for Spanish, French, etc.
@@ -629,8 +638,8 @@ A: Unknown—English only so far. The mechanisms (prompting, vocabulary lists) s
 Q: *What's the optimal weight factor?*
 A: **Critical open question.** We used 2.0× based on initial tests, but didn't optimize. Next experiment: grid search over [1.1-3.0] to find the "sweet spot" balancing simplicity and fluency.
 
-Q: *Why is Qwen3 faster than Qwen2 despite being larger?*
-A: Likely optimization differences (quantization, kernel implementations). Both use MPS on Apple Silicon. Qwen3 may have better caching or attention optimizations.
+Q: *How do model sizes affect performance?*
+A: We're testing a wide range: TinyStories (33M) to Phi3 (3.8B). Hypothesis: larger models may produce more complex text naturally, but might also be more responsive to prompting. Latency should increase with size, but optimization matters too.
 
 Q: *How do you handle factual accuracy with simplified text?*
 A: We don't measure it yet—limitation. Simplification might sacrifice completeness (e.g., "A library is a place with books" omits "lending, studying, research"). Future work: QA benchmarks to ensure semantic correctness.
@@ -641,8 +650,8 @@ A: We don't measure it yet—limitation. Simplification might sacrifice complete
 
 **Before Paper Submission:**
 
-1. ✅ Generate combined analysis (DONE)
-2. ⏳ Run experiments with 50 prompts (Qwen2, Qwen3)
+1. ⏳ Complete 192-observation factorial experiment (6 models × 4 configs × 8 prompts)
+2. ⏳ Run experiments with 50 prompts per model (total: 1,200 observations)
 3. ⏳ Hyperparameter search for weight factor [1.1, 1.3, 1.5, 1.7, 2.0, 2.5]
 4. ⏳ Create all paper figures (4 total)
 5. ⏳ Write Introduction, Methods, Results, Discussion sections
@@ -690,6 +699,8 @@ A: We don't measure it yet—limitation. Simplification might sacrifice complete
 **END OF BRAINSTORMING DOCUMENT**
 
 *Generated: October 3, 2025*
-*Models: Qwen2 (0.5B), Qwen3 (0.6B)*
-*Total Observations: 40 (20 per model)*
+*Updated: October 5, 2025*
+*Models: Phi3 (3.8B), Qwen2 (0.5B), Qwen3 (0.6B), SmolLM (1.7B), TinyLlama (1.1B), TinyStories (33M)*
+*Total Observations: 192 (6 models × 4 configs × 8 prompts)*
+
 

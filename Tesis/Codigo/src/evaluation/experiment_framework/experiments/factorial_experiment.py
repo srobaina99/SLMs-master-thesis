@@ -18,7 +18,7 @@ sys.path.append(project_root)
 
 from src.evaluation.experiment_framework.core.data_models import ExperimentConfig, ExperimentResult, ExperimentDataManager
 from src.evaluation.experiment_framework.models import (
-    BaseModelWrapper, Qwen2Wrapper, Qwen3Wrapper, TinyLlamaWrapper, TinyStoriesWrapper
+    BaseModelWrapper, Phi3LlamaCppWrapper, Qwen2LlamaCppWrapper, Qwen3LlamaCppWrapper, SmolLMLlamaCppWrapper, TinyLlamaLlamaCppWrapper, TinyStoriesWrapper
 )
 from src.evaluation.text_complexity.text_evaluator import TextEvaluator
 from src.evaluation.experiment_framework.experiments.experiment_configs import create_factorial_configs, STANDARD_PROMPTS
@@ -48,9 +48,11 @@ class FactorialExperiment:
         # Model wrappers - lazily initialized
         self._models = {}
         self._model_classes = {
-            "Qwen2": Qwen2Wrapper,
-            "Qwen3": Qwen3Wrapper,
-            "TinyLlama": TinyLlamaWrapper,
+            "Phi3": Phi3LlamaCppWrapper,  # Using llama.cpp (Microsoft 3.8B reasoning model)
+            "Qwen2": Qwen2LlamaCppWrapper,  # Using llama.cpp for 4x speedup
+            "Qwen3": Qwen3LlamaCppWrapper,  # Using llama.cpp for 4.4x speedup
+            "SmolLM": SmolLMLlamaCppWrapper,  # Using llama.cpp (efficient architecture)
+            "TinyLlama": TinyLlamaLlamaCppWrapper,  # Using llama.cpp (standardized wrapper)
             "TinyStories": TinyStoriesWrapper
         }
         

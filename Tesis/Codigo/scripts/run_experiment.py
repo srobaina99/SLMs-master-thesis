@@ -29,8 +29,10 @@ def main():
     def normalize_model_name(name):
         """Normalize model name to proper case."""
         model_mapping = {
+            'phi3': 'Phi3',
             'qwen2': 'Qwen2',
-            'qwen3': 'Qwen3', 
+            'qwen3': 'Qwen3',
+            'smollm': 'SmolLM',
             'tinyllama': 'TinyLlama',
             'tinystories': 'TinyStories'
         }
@@ -38,7 +40,7 @@ def main():
     
     parser = argparse.ArgumentParser(description='Run LLM Evaluation Experiments')
     parser.add_argument('--experiment', type=str, default='quick_test',
-                       choices=['quick_test', 'Qwen2', 'qwen2', 'Qwen3', 'qwen3', 'TinyLlama', 'tinyllama', 'TinyStories', 'tinystories', 'demo'],
+                       choices=['quick_test', 'Phi3', 'phi3', 'Qwen2', 'qwen2', 'Qwen3', 'qwen3', 'SmolLM', 'smollm', 'TinyLlama', 'tinyllama', 'TinyStories', 'tinystories', 'demo'],
                        help='Type of experiment to run')
     parser.add_argument('--output', type=str, default=None,
                        help='Output filename prefix')
@@ -52,7 +54,7 @@ def main():
     
     if experiment == 'quick_test':
         results_file = run_quick_factorial_test()
-    elif experiment in ['Qwen2', 'Qwen3', 'TinyLlama', 'TinyStories']:
+    elif experiment in ['Phi3', 'Qwen2', 'Qwen3', 'SmolLM', 'TinyLlama', 'TinyStories']:
         results_file = run_single_model_test(experiment)
     elif experiment == 'demo':
         from src.evaluation.experiment_framework.demo_factorial_experiment import main as run_demo
