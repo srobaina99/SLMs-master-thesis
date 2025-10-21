@@ -14,4 +14,3 @@
 - [ ] Review and write State of the art
 - [ ] Write introduction and context with the original group research
   - [ ] Making enfasis on the importance of the use of small languge models that can be deployed with little cost on various contexts
-- [ ]

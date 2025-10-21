@@ -1,8 +1,33 @@
 # Paper Presentation Brainstorming: SLM Text Complexity Control
 
-**Research Question:** Can small language models be controlled to produce appropriately simple text for A1 English learners through decoding manipulation and prompt engineering?
+## Research Context
 
-**Models Evaluated:** Phi3 (3.8B), Qwen2 (0.5B), Qwen3 (0.6B), SmolLM (1.7B), TinyLlama (1.1B), TinyStories (33M)
+This work is conducted within the broader research project **"Métodos de generación controlada para la construcción de agentes conversacionales de apoyo a la enseñanza"** (Controlled generation methods for building conversational agents to support teaching), funded by ANII (Agencia Nacional de Investigación e Innovación, Uruguay)
+
+**Project Overview:**
+
+The parent project aims to develop a reliable and safe conversational agent prototype for educational purposes. Achieving this goal requires addressing critical limitations of Large Language Models (LLMs)—particularly hallucination, bias reproduction, and lack of source traceability. While LLMs demonstrate excellent linguistic correctness and pragmatic relevance, their tendency to generate "invented" information poses significant risks in educational contexts where accuracy is paramount. The prototype employs multiple mitigation strategies: fine-tuning on educational data, rule-based constraints, and advanced prompting methods to ensure source reliability.
+
+**Target Student Population:**
+
+The project focuses on **Uruguayan English learners with basic to no prior English experience**, particularly students in the first years of schooling. This represents a critical and underserved educational context where traditional resources and tutoring are limited. By developing accessible, appropriately-simplified AI tutors through the Ceibal initiative—Uruguay's national digital education program reaching approximately 550,000 students—the project aims to democratize high-quality English language education across the country's public education system.
+
+**Strategic Focus on Small Language Models:**
+
+The emphasis on Small Language Models (rather than large proprietary models) emerges from institutional and infrastructural imperatives. Deployment of large-scale LLMs (billions of parameters, cloud-based infrastructure) presents substantial barriers: computational costs, dependency on stable internet infrastructure, and licensing constraints. In contrast, SLMs (33M to 3.8B parameters) enable:
+
+- **Cost-Efficient Deployment:** On-device inference eliminates cloud infrastructure costs and subscription fees, enabling sustainable scaling across resource-limited educational institutions
+- **Offline-First Functionality:** Critical for Uruguayan contexts with geographically dispersed populations and variable internet connectivity; models execute locally, requiring only initial download
+- **Latency Guarantees:** On-device processing ensures sub-second response times essential for interactive learning experiences, independent of network conditions
+- **Educational Equity:** Universal accessibility without requiring persistent high-bandwidth connections or institutional server infrastructure
+
+**Contribution to the Larger Research:**
+
+This SLM complexity control study directly addresses a fundamental challenge identified in the parent project: **adapting language models to match learner proficiency levels**. While the broader project tackles reliability and source control, this work specifically addresses the complexity mismatch problem for beginner language learners (A1 level). The developed real-time complexity control methods enable on-device deployment of educational chatbots capable of generating appropriately simple responses for A1 English learners—a critical requirement for Ceibal's large-scale deployment context serving 550,000 students nationwide.
+
+---
+
+**Research Question:** Can small language models be controlled to produce appropriately simple text for A1 English learners through decoding manipulation and prompt engineering?
 
 ---
 
@@ -18,74 +43,73 @@ PROMPT: "What does the word 'library' mean?"
 CONTROL (Qwen2):
 "The word 'library' means a collection of books, magazines, and other printed 
 materials organized and maintained by a library staff..."
-→ FK Grade: 11.5 | Reading Ease: 42.8 | Too complex for A1!
+→ FK Grade: 11.5 | Reading Ease: 42.8 | Exceeds A1 target complexity
 
 BOTH INTERVENTIONS (Qwen2):
 "A library is a place where you can find lots of books to read. It's like a 
 big house with many special rooms where people keep their toys and stories!"
-→ FK Grade: 5.8 | Reading Ease: 83.3 | A1-appropriate!
+→ FK Grade: 5.8 | Reading Ease: 83.3 | Achieves A1 target
 ```
 
-**Context:**
+**Contextual Framework:**
 
-- Language learning apps need AI assistants that match learner proficiency
-- A1 level (CEFR) = beginners with limited vocabulary
-- Small language models (SLMs) enable on-device, low-latency deployment
-- **Challenge:** SLMs trained on general text produce output too complex for beginners
+- Language learning applications require adaptive AI assistants calibrated to learner proficiency levels
+- A1 level (CEFR) denotes beginner learners with restricted vocabulary (~500 words)
+- Small language models enable on-device, low-latency deployment with minimal computational overhead
+- **Primary Challenge:** SLMs trained on general-domain corpora produce output exceeding beginner-appropriate complexity thresholds
 
-**Gap in Literature:**
+**Literature Gap:**
 
-- Existing work: Text simplification (post-hoc), fine-tuning (resource-intensive)
-- Missing: Real-time control during generation for SLMs
-- Our approach: Two lightweight interventions applicable at inference time
+- Existing approaches: Post-hoc text simplification, computationally intensive fine-tuning
+- Missing methodology: Real-time complexity control during inference for SLMs
+- Proposed approach: Two lightweight interventions applicable at inference time without model modification
 
 **Research Objectives:**
 
-1. Evaluate effectiveness of probability weighting (decoding manipulation)
-2. Evaluate effectiveness of context prompting (instruction engineering)
-3. Assess synergistic effects of combined interventions
-4. Compare models: Qwen2 vs Qwen3
-5. Quantify trade-offs: simplicity vs response time
+1. Evaluate effectiveness of probability weighting via decoding manipulation
+2. Evaluate effectiveness of contextual prompting via instruction engineering
+3. Assess synergistic interaction effects between combined interventions
+4. Conduct comparative analysis across model variants (Qwen2 vs Qwen3)
+5. Quantify performance trade-offs between text simplicity and response latency
 
 ---
 
 ### 1.2 State of the Art Literature Review
 
-**1.2.1 Text Simplification for Language Learning**
+**Detailed Analysis:** See [`paper/sections/paper_sota.md`](sections/paper_sota.md)
 
-- **Empirical Evidence for Simplification:**
-  - **Gala et al. (2018)**: Simplified texts improve reading fluency and comprehension in beginning readers, particularly those with lower skills
-  - **Crossley et al. (2011)**: Text simplification enhances L2 comprehension; word lists and readability formulas are effective approaches
-  - **Gap:** Studies focus on post-hoc simplification, not real-time generation control
+**Summary of Key Prior Work:**
 
-- **Readability-Controlled Generation:**
-  - **Al-Thanyyan & Azmi (2020)**: Model trained on Newsela dataset produces text at specific readability levels using readability formulas
-  - **Al-Sabbagh & Al-Khalifa (2023)**: Review of multi-level simplification systems across languages; emphasizes need for readability-controlled generation
-  - **Gap:** Approaches require training on labeled data; no inference-time control methods
+**1.2.1 Fine-tuning Approach: MCTune (Nguyen et al. 2024)**
 
-**1.2.2 Controlled Text Generation Approaches**
+- **Method:** Multi-Control Tuning - embeds linguistic complexity values into instruction tuning for LLaMA2-7B
+- **Results:** Precise control over multiple complexity dimensions while maintaining response quality
+- **Limitation:** Resource-intensive, requires labeled training data, locks model into fixed complexity levels
+- **Gap:** No dynamic inference-time adjustment; complexity targets fixed during training
 
-- **Fine-tuning for Simplification:**
-  - **Baez & Saggion (2023)**: LSLlama fine-tunes LLaMA for lexical simplification, achieving baseline performance
-  - **Gap:** Fine-tuning is resource-intensive and locks in single difficulty level
+**1.2.2 Prompt-based Approach: Divide & Conquer (Li et al. 2024)**
 
-- **Logits Manipulation:**
-  - **No prior work** on probability weighting for vocabulary-constrained simplification in educational contexts
-  - **This work:** First to apply logits processors for A1 vocabulary boosting
+- **Method:** Iterative refinement strategy for Lexically Constrained Generation (LCG)
+- **Key Findings:** Position bias, low decoding parameter responsiveness, compound word difficulties
+- **Results:** >90% improvement in constraint satisfaction rates through decomposition
+- **Limitation:** Hard constraints (specific words required), iterative refinement introduces latency overhead
+- **Gap:** No soft vocabulary boosting for text simplification
 
-**1.2.3 Readability Assessment for Target Audiences**
+**1.2.3 Research Gaps Addressed by This Work**
 
-- **Audience-Specific Evaluation:**
-  - **Yaneva et al. (2016)**: Emphasizes need for tailored readability assessment; introduces disability-specific linguistic features
-  - **Claridge (2005)**: Analyzes word frequency, sentence length, and syntactic complexity in graded readers
-  - **Relevance:** Validates use of multiple readability metrics (FK Grade, Dale-Chall, Spache) for beginner audiences
+1. **Inference-time complexity control for SLMs**: Existing work requires fine-tuning (MCTune) or applies hard constraints (Li et al.); no prior work combines inference-time prompting with probability weighting for small models
+2. **Soft vocabulary manipulation**: Prior work enforces specific word inclusion; no prior work on probability-based vocabulary simplification via logits processors
+3. **Systematic small model evaluation**: Focus on large models (7B+); systematic evaluation across sub-4B models for educational deployment absent
+4. **Factorial intervention comparison**: Prompting vs decoding manipulation studied in isolation; no factorial designs isolating individual and interaction effects
 
-**1.2.4 Our Contribution**
+**Our Contributions:**
 
-✅ **Novel approach:** Logits manipulation (probability weighting) + prompt engineering for real-time complexity control
-✅ **SLM focus:** First systematic evaluation across 6 models (33M-3.8B parameters) for educational deployment
-✅ **Factorial design:** Isolates individual and interaction effects of two interventions
-✅ **Comprehensive evaluation:** 18 readability metrics + 192 observations across diverse model architectures
+✅ **Novel approach:** First combination of inference-time prompting + probability weighting for complexity control
+✅ **Soft constraints:** Vocabulary boosting (2.0× probability amplification) vs hard word requirements
+✅ **SLM focus:** Systematic evaluation across 6 models (33M-3.8B parameters) for on-device deployment
+✅ **Factorial design:** 2×2 design isolates individual and interaction effects of interventions
+✅ **Comprehensive evaluation:** 6 readability metrics + 192 observations across diverse architectures
+✅ **Deployment focus:** Offline-first, sub-second latency for 550,000 students via Ceibal initiative
 
 ---
 
@@ -109,7 +133,7 @@ big house with many special rooms where people keep their toys and stories!"
 **A. Probability Weighting**
 
 - **Mechanism:** `ProbabilityWeightingLogitsProcessor` modifies token logits before sampling
-- **Vocabulary:** 1,500 words from A1 "Starters" curriculum (filtered)
+- **Vocabulary:** 511 words from A1 "Starters" curriculum (filtered to 493 words)
 - **Weight Factor:** 2.0× boost to target vocabulary tokens
 - **Implementation:** Applied during decoding at each generation step
 
@@ -123,68 +147,82 @@ big house with many special rooms where people keep their toys and stories!"
   ```
 - **No modification to user prompt**
 
-**1.3.3 Readability Metrics (18 total)**
+**1.3.3 Readability Metrics**
 
-**Grade Level Indices (report U.S. grade levels):**
+**Primary Analysis Metrics (4):**
 
-1. **Flesch-Kincaid Grade Level** - Primary metric (sentence + syllable complexity)
-2. **Gunning Fog Index** - Emphasizes polysyllabic words
-3. **SMOG Index** - Polysyllable density
-4. **Automated Readability Index (ARI)** - Character-based (no syllables)
-5. **Coleman-Liau Index** - Character-based
-6. **Dale-Chall Readability Score** - Uses 3,000-word familiarity list
+1. **Flesch-Kincaid Grade Level** - Most established grade-level metric; balances sentence structure and syllabic complexity
+2. **Gunning Fog Index** - Highly sensitive to polysyllabic words; ideal for vocabulary weighting evaluation
+3. **SMOG Index** - Reliable for short texts; less sensitive to sentence length variations
+4. **Spache Readability** - Specifically calibrated for grades 1-4; superior A1-level discrimination
 
-**Readability Scores:**
-7. **Flesch Reading Ease** - 0-100 scale (higher = easier)
-8. **Linsear Write Formula** - Technical writing focus
-9. **Spache Readability** - Primary grades (1-4)
-10. **McAlpine EFLAW** - Auditory/conversational text
+**Secondary Descriptive Statistics (2):**
 
-**Text Statistics:**
-11-18. Sentence count, word count, syllable count, polysyllable count, monosyllable count, difficult words, character count, reading time
+5. **Word Count** - Reveals conciseness differences; assesses cognitive load
+6. **Difficult Words Count** - Direct, interpretable metric; easier to communicate than abstract scores. A word is classified as "difficult" if it: (1) is NOT in the Dale-Chall easy word list (2,940 common English words for grades 4-16+), AND (2) has 3+ syllables. This provides a straightforward count of vocabulary accessibility issues.
 
 **A1 Target Ranges:**
 
-- Flesch-Kincaid Grade: ≤5.0
-- Gunning Fog: ≤6.0
-- Flesch Reading Ease: ≥80
-- SMOG: ≤7.0
-- Dale-Chall: ≤4.9
+| Metric                         | Target Range | Interpretation            |
+| ------------------------------ | ------------ | ------------------------- |
+| **Flesch-Kincaid Grade** | ≤5.0        | Elementary level or below |
+| **Gunning Fog**          | ≤6.0        | Sixth grade or below      |
+| **SMOG Index**           | ≤7.0        | Junior high or below      |
+| **Spache Readability**   | ≤4.0        | Primary grades (1-4)      |
+| **Word Count**           | 30-60 words  | Concise, manageable       |
+| **Difficult Words**      | Minimize     | Prefer common vocabulary  |
 
-**Metric Rationale:**
+**Metric Selection Rationale:**
 
-- **Multiple metrics necessary:** Each captures different complexity dimensions
-  - Sentence structure (FK, ARI, Coleman-Liau)
-  - Word complexity (Gunning Fog, SMOG)
-  - Vocabulary difficulty (Dale-Chall, Spache)
-  - Spoken suitability (McAlpine EFLAW)
-- **Cross-validation:** Consistent results across metrics = robust findings
-- **Avoid single-metric bias:** Each formula has strengths/weaknesses
+The selected metrics provide comprehensive coverage of text complexity while avoiding redundancy:
 
-**Metric Explanations (for paper):**
+- **Sentence Structure**: Flesch-Kincaid and SMOG capture sentence length effects
+- **Polysyllabic Complexity**: Gunning Fog and SMOG emphasize complex word identification
+- **Vocabulary Difficulty**: Spache uses a 1,000-word reference list specifically calibrated for primary grades (1-4), perfectly matching A1 proficiency level
+- **Cross-Validation**: Consistent improvement across metrics indicates genuine intervention effectiveness
+- **Zero Redundancy**: Each metric provides unique information without duplicating others
+
+**Discarded Metrics:**
+
+- **Flesch Reading Ease**: Redundant with Flesch-Kincaid (identical formula inputs, different scaling)
+- **Dale-Chall**: Redundant with Spache (both word-list-based; Spache provides superior A1-level discrimination)
+- **ARI/Coleman-Liau**: Character-based metrics redundant with sentence structure metrics
+- **Linsear Write**: Designed for technical writing, not conversational text
+- **McAlpine EFLAW**: Designed for auditory content, not text-based interactions
+
+**Key Metric Formulas:**
 
 **Flesch-Kincaid Grade Level:**
 
-- Formula: `0.39 × (words/sentences) + 11.8 × (syllables/words) - 15.59`
-- Interpretation: Years of education required to understand text
-- Widely used in education, government, healthcare
-- Target for A1: ≤5.0 (elementary level)
+```
+Grade Level = (0.39 × ASL) + (11.8 × ASW) - 15.59
+```
 
-**Flesch Reading Ease:**
+Where ASL = Average Sentence Length, ASW = Average Syllables per Word
 
-- Formula: `206.835 - 1.015 × ASL - 84.6 × ASW`
-- Scale: 0-100 (higher = easier)
-- Inverse relationship with FK Grade
-- Target for A1: ≥80 (easy to very easy)
+**Gunning Fog Index:**
 
-**Gunning Fog:**
+```
+Fog Index = 0.4 × [(Words/Sentences) + 100 × (Complex Words/Words)]
+```
 
-- Formula: `0.4 × [(words/sentences) + 100 × (complex words/words)]`
-- Complex words: 3+ syllables (excluding proper nouns)
-- Particularly sensitive to jargon and technical terms
-- Target for A1: ≤6.0
+Complex Words = 3+ syllables (excluding proper nouns)
 
-*(Detailed explanations for all metrics available in text_metrics.md)*
+**SMOG Index:**
+
+```
+SMOG Grade = 3 + √(Polysyllable Count in 30 sentences)
+```
+
+**Spache Readability:**
+
+```
+Spache Score = (0.141 × ASL) + (0.086 × % Unfamiliar Words) + 0.839
+```
+
+Unfamiliar Words = Words NOT on Spache word list (~1,000 words for grades 1-4)
+
+*(Complete metric documentation available in text_metrics.md)*
 
 **1.3.4 Statistical Analysis**
 
@@ -212,12 +250,12 @@ big house with many special rooms where people keep their toys and stories!"
 
 **1.4.1 By-Config Analysis (All 6 Models Combined)**
 
-| Configuration            | FK Grade                | Gunning Fog             | Flesch Ease               | Response Time (s)      | Word Count             |
-| ------------------------ | ----------------------- | ----------------------- | ------------------------- | ---------------------- | ---------------------- |
-| **Control**        | TBD              | TBD             | TBD              | TBD            | TBD           |
-| **Weighting Only** | TBD              | TBD              | TBD              | TBD | TBD |
-| **Prompting Only** | TBD | TBD | TBD | TBD             | TBD           |
-| **Both**           | TBD | TBD | TBD | TBD           | TBD           |
+| Configuration            | FK Grade | Gunning Fog | Flesch Ease | Response Time (s) | Word Count |
+| ------------------------ | -------- | ----------- | ----------- | ----------------- | ---------- |
+| **Control**        | TBD      | TBD         | TBD         | TBD               | TBD        |
+| **Weighting Only** | TBD      | TBD         | TBD         | TBD               | TBD        |
+| **Prompting Only** | TBD      | TBD         | TBD         | TBD               | TBD        |
+| **Both**           | TBD      | TBD         | TBD         | TBD               | TBD        |
 
 ✅ = Meets A1 target
 
@@ -230,32 +268,32 @@ big house with many special rooms where people keep their toys and stories!"
 
 **1.4.2 Model Comparison**
 
-| Model           | Config    | FK Grade         | Flesch Ease        | Response Time (s) |
-| --------------- | --------- | ---------------- | ------------------ | ----------------- |
-| **Phi3** | Control   | TBD              | TBD               | TBD              |
-| **Phi3** | Weighting | TBD        | TBD               | TBD    |
-| **Phi3** | Prompting | TBD           | TBD            | TBD              |
-| **Phi3** | Both      | TBD           | TBD            | TBD              |
-| **Qwen2** | Control   | TBD              | TBD               | TBD              |
-| **Qwen2** | Weighting | TBD        | TBD               | TBD    |
-| **Qwen2** | Prompting | TBD           | TBD            | TBD              |
-| **Qwen2** | Both      | TBD           | TBD            | TBD              |
-| **Qwen3** | Control   | TBD           | TBD               | TBD               |
-| **Qwen3** | Weighting | TBD           | TBD               | TBD              |
-| **Qwen3** | Prompting | TBD | TBD | TBD     |
-| **Qwen3** | Both      | TBD | TBD  | TBD               |
-| **SmolLM** | Control   | TBD           | TBD               | TBD               |
-| **SmolLM** | Weighting | TBD           | TBD               | TBD              |
-| **SmolLM** | Prompting | TBD | TBD | TBD     |
-| **SmolLM** | Both      | TBD | TBD  | TBD               |
-| **TinyLlama** | Control   | TBD           | TBD               | TBD               |
-| **TinyLlama** | Weighting | TBD           | TBD               | TBD              |
-| **TinyLlama** | Prompting | TBD | TBD | TBD     |
-| **TinyLlama** | Both      | TBD | TBD  | TBD               |
-| **TinyStories** | Control   | TBD           | TBD               | TBD               |
-| **TinyStories** | Weighting | TBD           | TBD               | TBD              |
-| **TinyStories** | Prompting | TBD | TBD | TBD     |
-| **TinyStories** | Both      | TBD | TBD  | TBD               |
+| Model                 | Config    | FK Grade | Flesch Ease | Response Time (s) |
+| --------------------- | --------- | -------- | ----------- | ----------------- |
+| **Phi3**        | Control   | TBD      | TBD         | TBD               |
+| **Phi3**        | Weighting | TBD      | TBD         | TBD               |
+| **Phi3**        | Prompting | TBD      | TBD         | TBD               |
+| **Phi3**        | Both      | TBD      | TBD         | TBD               |
+| **Qwen2**       | Control   | TBD      | TBD         | TBD               |
+| **Qwen2**       | Weighting | TBD      | TBD         | TBD               |
+| **Qwen2**       | Prompting | TBD      | TBD         | TBD               |
+| **Qwen2**       | Both      | TBD      | TBD         | TBD               |
+| **Qwen3**       | Control   | TBD      | TBD         | TBD               |
+| **Qwen3**       | Weighting | TBD      | TBD         | TBD               |
+| **Qwen3**       | Prompting | TBD      | TBD         | TBD               |
+| **Qwen3**       | Both      | TBD      | TBD         | TBD               |
+| **SmolLM**      | Control   | TBD      | TBD         | TBD               |
+| **SmolLM**      | Weighting | TBD      | TBD         | TBD               |
+| **SmolLM**      | Prompting | TBD      | TBD         | TBD               |
+| **SmolLM**      | Both      | TBD      | TBD         | TBD               |
+| **TinyLlama**   | Control   | TBD      | TBD         | TBD               |
+| **TinyLlama**   | Weighting | TBD      | TBD         | TBD               |
+| **TinyLlama**   | Prompting | TBD      | TBD         | TBD               |
+| **TinyLlama**   | Both      | TBD      | TBD         | TBD               |
+| **TinyStories** | Control   | TBD      | TBD         | TBD               |
+| **TinyStories** | Weighting | TBD      | TBD         | TBD               |
+| **TinyStories** | Prompting | TBD      | TBD         | TBD               |
+| **TinyStories** | Both      | TBD      | TBD         | TBD               |
 
 **Key Findings:**
 
@@ -268,26 +306,26 @@ big house with many special rooms where people keep their toys and stories!"
 
 **Per-Model Analysis:**
 
-| Model | Config    | FK Grade Change     | Cohen's d               | Flesch Ease Change |
-| ----- | --------- | ------------------- | ----------------------- | ------------------ |
-| **Phi3** | Weighting | TBD          | TBD                   | TBD              |
-| **Phi3** | Prompting | TBD | TBD | TBD   |
-| **Phi3** | Both      | TBD | TBD | TBD   |
-| **Qwen2** | Weighting | TBD          | TBD                   | TBD              |
-| **Qwen2** | Prompting | TBD | TBD | TBD   |
-| **Qwen2** | Both      | TBD | TBD | TBD   |
-| **Qwen3** | Weighting | TBD               | TBD                   | TBD              |
-| **Qwen3** | Prompting | TBD | TBD | TBD   |
-| **Qwen3** | Both      | TBD | TBD | TBD   |
-| **SmolLM** | Weighting | TBD               | TBD                   | TBD              |
-| **SmolLM** | Prompting | TBD | TBD | TBD   |
-| **SmolLM** | Both      | TBD | TBD | TBD   |
-| **TinyLlama** | Weighting | TBD               | TBD                   | TBD              |
-| **TinyLlama** | Prompting | TBD | TBD | TBD   |
-| **TinyLlama** | Both      | TBD | TBD | TBD   |
-| **TinyStories** | Weighting | TBD               | TBD                   | TBD              |
-| **TinyStories** | Prompting | TBD | TBD | TBD   |
-| **TinyStories** | Both      | TBD | TBD | TBD   |
+| Model                 | Config    | FK Grade Change | Cohen's d | Flesch Ease Change |
+| --------------------- | --------- | --------------- | --------- | ------------------ |
+| **Phi3**        | Weighting | TBD             | TBD       | TBD                |
+| **Phi3**        | Prompting | TBD             | TBD       | TBD                |
+| **Phi3**        | Both      | TBD             | TBD       | TBD                |
+| **Qwen2**       | Weighting | TBD             | TBD       | TBD                |
+| **Qwen2**       | Prompting | TBD             | TBD       | TBD                |
+| **Qwen2**       | Both      | TBD             | TBD       | TBD                |
+| **Qwen3**       | Weighting | TBD             | TBD       | TBD                |
+| **Qwen3**       | Prompting | TBD             | TBD       | TBD                |
+| **Qwen3**       | Both      | TBD             | TBD       | TBD                |
+| **SmolLM**      | Weighting | TBD             | TBD       | TBD                |
+| **SmolLM**      | Prompting | TBD             | TBD       | TBD                |
+| **SmolLM**      | Both      | TBD             | TBD       | TBD                |
+| **TinyLlama**   | Weighting | TBD             | TBD       | TBD                |
+| **TinyLlama**   | Prompting | TBD             | TBD       | TBD                |
+| **TinyLlama**   | Both      | TBD             | TBD       | TBD                |
+| **TinyStories** | Weighting | TBD             | TBD       | TBD                |
+| **TinyStories** | Prompting | TBD             | TBD       | TBD                |
+| **TinyStories** | Both      | TBD             | TBD       | TBD                |
 
 **Interpretation:**
 
@@ -309,7 +347,7 @@ big house with many special rooms where people keep their toys and stories!"
 
 **Potential Solutions:**
 
-- Expand vocabulary list (currently 1,500 words, may be too restrictive)
+- Expand vocabulary list (currently 493 words from 511-word Starters list, may be too restrictive)
 - Adjust weight factor (2.0× may be too aggressive)
 - Combine with sentence-level constraints
 
@@ -401,16 +439,16 @@ big house with many special rooms where people keep their toys and stories!"
    - Simpler text might sacrifice accuracy/completeness
 8. **Subword Tokenization Side Effects:**
 
-   - **Issue:** Vocabulary words split into subword tokens receive unintended weighting
+   - **Issue:** Vocabulary words segmented into subword tokens receive unintended weighting amplification
    - **Examples:**
-     - `'afternoon'` → `['after', 'noon']` - both pieces get 2.0× boost everywhere
-     - `'angry'` → `['ang', 'ry']` - `'ry'` gets boosted in "every", "sorry", "library"
-     - `'alex'` → `['ale', 'x']` - `'x'` gets boosted in all contexts
-   - **Mechanism:** Both `'word'` and `' word'` variants are weighted for tokenization robustness
-   - **Impact:** Creates unintended bias toward certain letter combinations beyond target vocabulary
-   - **Scope:** ~493 vocabulary words generate hundreds of weighted subword tokens
-   - **Mitigation needed:** Token-level filtering or whole-word-only weighting strategies
-   - **Correctness not being take into account:** the only measurementes being take into account are the complexity of the answer, not the corectness of it
+     - `'afternoon'` → `['after', 'noon']` - both segments receive 2.0× boost across all contexts
+     - `'angry'` → `['ang', 'ry']` - segment `'ry'` receives amplified weighting in "every", "sorry", "library"
+     - `'alex'` → `['ale', 'x']` - segment `'x'` receives amplified weighting across all contexts
+   - **Mechanism:** Both `'word'` and `' word'` (with space prefix) variants are weighted to account for tokenization variability
+   - **Impact:** Creates unintended bias toward specific letter combinations and morphological patterns beyond the target vocabulary set
+   - **Scope:** Approximately 493 vocabulary words generate hundreds of weighted subword tokens
+   - **Mitigation Strategy Required:** Token-level filtering or whole-word-only weighting constraints
+   - **Complexity-Correctness Trade-off:** The evaluation framework measures text complexity exclusively; semantic correctness and factual accuracy receive no quantitative assessment, representing a significant methodological limitation
 
 ---
 
@@ -529,7 +567,7 @@ big house with many special rooms where people keep their toys and stories!"
 **Slide 3: Why This Matters**
 
 - Language learning apps need adaptive AI
-- A1 learners: limited vocabulary (1,500 words)
+- A1 learners: limited vocabulary (~500 words)
 - SLMs: On-device, low-latency, privacy-preserving
 
 **Slide 4: Research Question**
@@ -602,17 +640,19 @@ big house with many special rooms where people keep their toys and stories!"
 
 ## 4. ELEVATOR PITCHES
 
-**30 seconds:**
-"We tested whether small AI models can talk simply to beginner English learners. Using prompt instructions and vocabulary boosting across 6 models (33M to 3.8B parameters), we evaluated text complexity control. Results pending full experiment, but early findings suggest prompting works better than vocabulary weighting alone."
+**30-Second Summary:**
 
-**2 minutes:**
-"Language learning apps need AI that matches student level. We tested six small models (Phi3, Qwen2, Qwen3, SmolLM, TinyLlama, TinyStories) with two control methods: prompting (instructions to simplify) and weighting (boosting simple vocabulary during generation).
+This research evaluates whether Small Language Models can be controlled to generate appropriately simplified text for A1-level English learners. We implemented two lightweight inference-time interventions—probability weighting and contextual prompting—across six models spanning 33M to 3.8B parameters. Preliminary findings indicate that contextual prompting substantially outperforms standalone vocabulary weighting in reducing text complexity while maintaining linguistic coherence.
 
-Experimental design: 6 models × 4 intervention configs × 8 prompts = 192 observations, evaluated across 18 readability metrics.
+**Two-Minute Research Overview:**
 
-Key research questions: Which models naturally produce simpler text? How effective is prompting vs weighting? What are the latency trade-offs? Which combination is optimal for deployment?
+Contemporary language learning applications require AI assistants calibrated to learner proficiency levels. This investigation systematically evaluates complexity control mechanisms across six Small Language Models (Phi3, Qwen2, Qwen3, SmolLM, TinyLlama, TinyStories) using two intervention methodologies: contextual prompting (instructional constraints) and probability weighting (vocabulary amplification during token sampling).
 
-Results pending full experiment. Next steps: complete 192-observation factorial experiment, analyze statistical significance, test with real A1 students, optimize vocabulary weighting strength, and expand to 50+ prompts for robust validation."
+**Experimental Framework:** 6 models × 4 intervention configurations × 8 diverse prompts = 192 observations, evaluated across 18 established readability metrics.
+
+**Central Research Questions:** (1) Which model architectures naturally produce beginner-appropriate text? (2) How effectively do prompting and weighting interventions reduce complexity? (3) What latency trade-offs emerge from these approaches? (4) Which intervention combination optimally balances simplicity, coherence, and computational efficiency for deployment?
+
+**Current Status:** Exploratory phase complete. Subsequent investigation will: complete full factorial experiment; expand prompt diversity to 50+ samples for robust statistical inference; conduct hyperparameter optimization for weighting factors; validate findings with A1 learner populations; and establish performance benchmarks for production deployment.
 
 ---
 
@@ -620,29 +660,29 @@ Results pending full experiment. Next steps: complete 192-observation factorial 
 
 **For Q&A Preparation:**
 
-Q: *Why not just fine-tune on simple texts?*
-A: Fine-tuning requires data + compute, locks in one difficulty level. Our approach is inference-time, adaptable, and works with any pre-trained model. Future work will compare both approaches.
+Q: *Why not pursue fine-tuning on simplified text corpora?*
+A: Fine-tuning approaches require substantial annotated data and computational resources, and consequently lock model output into a single fixed difficulty level. In contrast, the inference-time approach proposed here demonstrates adaptability across arbitrary pre-trained models without requiring model retraining. Comparative analysis between fine-tuned and inference-controlled variants represents a critical direction for future research.
 
-Q: *Why did weighting fail?*
-A: We hypothesize the vocabulary constraint (1,500 words) is too restrictive, forcing verbose compensatory strategies. Expanding the list or lowering the weight factor (currently 2.0×) may help. This is a critical gap we'll address in follow-up work.
+Q: *What explains the underperformance of weighting-only approaches?*
+A: The observed ineffectiveness of standalone vocabulary weighting is hypothesized to result from vocabulary constraint triggering compensatory verbosity: models attempt to express conceptually complex ideas using a restricted lexicon, resulting in elongated and syntactically convoluted output. This phenomenon suggests the vocabulary list (493 words) may be excessively constrictive. Promising mitigation strategies include expanding the vocabulary set and systematically optimizing the weight factor (currently fixed at 2.0×).
 
-Q: *How do you know readability formulas work for ESL learners?*
-A: Good question—formulas were designed for native speakers. We plan human validation with A1 learners. However, formulas are widely used in education and correlate with comprehension in prior ESL studies (Crossley et al., 2014).
+Q: *How reliable are readability formulas for ESL learner populations?*
+A: A methodologically sound concern: these metrics were originally designed for native speaker populations. While readability formulas remain widely utilized in educational assessment and demonstrate documented correlation with comprehension outcomes in prior L2 studies (Crossley et al., 2014), direct validation with A1 learner populations remains an essential gap. Human evaluation with target demographic cohorts will ground metric validity claims.
 
-Q: *Only 8 prompts per model seems small.*
-A: Agreed—this is exploratory. We're expanding to 50+ prompts for statistical power. With 6 models and 4 configs, we have 192 observations total, but more prompts needed for robust per-model analysis.
+Q: *The sample of 8 prompts per model appears insufficient for robust statistical inference.*
+A: This observation is methodologically justified. The current configuration represents preliminary exploratory work. Statistical power calculation indicates requirement for 50+ diverse prompts to achieve adequate inference robustness. While the factorial design yields 192 total observations (6 models × 4 configurations × 8 prompts), per-model subgroup analysis demands substantially larger sample sizes.
 
-Q: *Can this work for other languages?*
-A: Unknown—English only so far. The mechanisms (prompting, vocabulary lists) should generalize, but empirical validation needed for Spanish, French, etc.
+Q: *Do results generalize to languages beyond English?*
+A: The proposed mechanisms—contextual prompting and vocabulary-constrained decoding—should theoretically generalize across linguistic systems. However, empirical validation remains absent. Cross-linguistic evaluation involving Spanish, French, and Mandarin learners represents a critical next phase for establishing generalizability claims.
 
-Q: *What's the optimal weight factor?*
-A: **Critical open question.** We used 2.0× based on initial tests, but didn't optimize. Next experiment: grid search over [1.1-3.0] to find the "sweet spot" balancing simplicity and fluency.
+Q: *What represents the optimal weight factor value?*
+A: This constitutes an open and critical research question. The current value (2.0×) reflects preliminary empirical exploration rather than systematic optimization. Subsequent investigation will employ grid search methodology across [1.1, 1.3, 1.5, 1.7, 2.0, 2.5, 3.0] to identify the optimal trade-off between complexity reduction and fluency preservation.
 
-Q: *How do model sizes affect performance?*
-A: We're testing a wide range: TinyStories (33M) to Phi3 (3.8B). Hypothesis: larger models may produce more complex text naturally, but might also be more responsive to prompting. Latency should increase with size, but optimization matters too.
+Q: *How do model parameter scales influence intervention effectiveness?*
+A: The experimental design deliberately spans a parameter range from TinyStories (33M) to Phi3 (3.8B) to characterize scale effects. Preliminary hypotheses suggest larger models may exhibit higher baseline complexity but potentially greater responsiveness to prompting constraints. Latency effects scale with model size, though efficiency optimization strategies may partially mitigate this relationship.
 
-Q: *How do you handle factual accuracy with simplified text?*
-A: We don't measure it yet—limitation. Simplification might sacrifice completeness (e.g., "A library is a place with books" omits "lending, studying, research"). Future work: QA benchmarks to ensure semantic correctness.
+Q: *How is factual accuracy addressed when simplifying text?*
+A: Factual correctness receives no explicit evaluation in the current framework—an important methodological limitation. Simplified paraphrases risk semantic loss or incompleteness (e.g., "A library is a place with books" omits information about institutional functions, research services). Subsequent work will incorporate QA benchmark validation to ensure simplification does not sacrifice semantic correctness.
 
 ---
 
@@ -702,5 +742,3 @@ A: We don't measure it yet—limitation. Simplification might sacrifice complete
 *Updated: October 5, 2025*
 *Models: Phi3 (3.8B), Qwen2 (0.5B), Qwen3 (0.6B), SmolLM (1.7B), TinyLlama (1.1B), TinyStories (33M)*
 *Total Observations: 192 (6 models × 4 configs × 8 prompts)*
-
-

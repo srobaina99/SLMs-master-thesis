@@ -15,7 +15,7 @@ class ExperimentConfig:
     """Configuration for a single experiment run."""
     
     # Model parameters - updated for specification compliance
-    model_name: str = "Qwen3"  # "Qwen2", "Qwen3", "TinyLlama", "TinyStories"
+    model_name: str = "Qwen3"  # "Qwen2", "Qwen3", "TinyLlama", "Phi3", "SmolLM"
     model_id: str = "unsloth/Qwen3-0.6B"  # Actual model path/identifier
     system_prompt: str = "You are a helpful English teacher for beginner students."
     
@@ -36,7 +36,7 @@ class ExperimentConfig:
     temperature: float = 0.7
     top_k: int = 50
     top_p: float = 0.95
-    max_new_tokens: int = 1024
+    max_new_tokens: int = 200  # ~150 words max for beginner-appropriate responses
     
     # Experiment metadata
     experiment_name: str = "default_experiment"
@@ -77,30 +77,17 @@ class ExperimentResult:
     # Performance metrics
     response_time_seconds: float
     
-    # Text complexity metrics (from text_evaluator.py)
-    flesch_kincaid_grade: float = 0.0
-    gunning_fog: float = 0.0
-    smog_index: float = 0.0
-    automated_readability_index: float = 0.0
-    coleman_liau_index: float = 0.0
-    dale_chall_readability_score: float = 0.0
-    flesch_reading_ease: float = 0.0
-    linsear_write_formula: float = 0.0
-    spache_readability: float = 0.0
-    mcalpine_eflaw: float = 0.0
+    # PRIMARY TEXT COMPLEXITY METRICS (4 metrics, non-redundant)
+    # Grade Level Indices (3)
+    flesch_kincaid_grade: float = 0.0  # Sentence structure & syllabic complexity
+    gunning_fog: float = 0.0  # Polysyllabic word emphasis
+    smog_index: float = 0.0  # Polysyllable density
+    # Readability Scores (1)
+    spache_readability: float = 0.0  # Primary-grade vocabulary (A1-focused)
     
-    # Text statistics
-    sentence_count: int = 0
-    word_count: int = 0
-    character_count: int = 0
-    syllable_count: int = 0
-    polysyllable_count: int = 0
-    monosyllable_count: int = 0
-    difficult_words: int = 0
-    
-    # Reading time
-    reading_time_seconds: float = 0.0
-    reading_time_minutes: float = 0.0
+    # SECONDARY DESCRIPTIVE STATISTICS (2 statistics)
+    word_count: int = 0  # Verbosity/conciseness
+    difficult_words: int = 0  # Vocabulary accessibility
     
     # Response formatting
     cleaned_response: str = ""  # Response after formatting cleanup
@@ -150,32 +137,17 @@ class ExperimentResult:
             temperature=config.temperature,
             response_time_seconds=response_time,
             
-            # Grade level indices
+            # PRIMARY METRICS - Grade level indices
             flesch_kincaid_grade=grade_indices.get('flesch_kincaid_grade', 0.0),
             gunning_fog=grade_indices.get('gunning_fog', 0.0),
             smog_index=grade_indices.get('smog_index', 0.0),
-            automated_readability_index=grade_indices.get('automated_readability_index', 0.0),
-            coleman_liau_index=grade_indices.get('coleman_liau_index', 0.0),
-            dale_chall_readability_score=grade_indices.get('dale_chall_readability_score', 0.0),
             
-            # Readability scores
-            flesch_reading_ease=readability_scores.get('flesch_reading_ease', 0.0),
-            linsear_write_formula=readability_scores.get('linsear_write_formula', 0.0),
+            # PRIMARY METRICS - Readability scores
             spache_readability=readability_scores.get('spache_readability', 0.0),
-            mcalpine_eflaw=readability_scores.get('mcalpine_eflaw', 0.0),
             
-            # Text statistics
-            sentence_count=text_stats.get('sentence_count', 0),
+            # SECONDARY STATISTICS
             word_count=text_stats.get('word_count', 0),
-            character_count=text_stats.get('character_count', 0),
-            syllable_count=text_stats.get('syllable_count', 0),
-            polysyllable_count=text_stats.get('polysyllable_count', 0),
-            monosyllable_count=text_stats.get('monosyllable_count', 0),
-            difficult_words=text_stats.get('difficult_words', 0),
-            
-            # Reading time
-            reading_time_seconds=reading_time.get('reading_time_seconds', 0.0),
-            reading_time_minutes=reading_time.get('reading_time_minutes', 0.0)
+            difficult_words=text_stats.get('difficult_words', 0)
         )
     
     def to_dict(self) -> Dict[str, Any]:
@@ -242,15 +214,18 @@ class ExperimentDataManager:
         df_spec['answer'] = df_spec['response']
         
         # Select columns for specification format
+        # Following streamlined metric set from docs/text_metrics.md
         spec_columns = [
-            'model', 'config_weighting', 'config_prompting', 'prompt_id',
-            'answer', 'time_spent', 'flesch_kincaid_grade', 'gunning_fog', 
-            'smog_index', 'automated_readability_index', 'coleman_liau_index',
-            'dale_chall_readability_score', 'flesch_reading_ease', 
-            'linsear_write_formula', 'spache_readability', 'mcalpine_eflaw',
-            'sentence_count', 'word_count', 'character_count', 'syllable_count',
-            'polysyllable_count', 'monosyllable_count', 'difficult_words',
-            'reading_time_seconds', 'reading_time_minutes'
+            # Experiment configuration
+            'model', 'config_weighting', 'config_prompting', 'weight_factor', 'prompt_id',
+            # Response data
+            'answer', 'time_spent',
+            # PRIMARY METRICS: Grade Level Indices (3)
+            'flesch_kincaid_grade', 'gunning_fog', 'smog_index',
+            # PRIMARY METRICS: Readability Scores (1)
+            'spache_readability',
+            # SECONDARY STATISTICS (2)
+            'word_count', 'difficult_words'
         ]
         
         # Filter to available columns
@@ -268,10 +243,13 @@ class ExperimentDataManager:
         
         df = self.to_dataframe()
         
-        # Key metrics to summarize
+        # Key metrics to summarize (streamlined set from docs/text_metrics.md)
         numeric_columns = [
-            'response_time_seconds', 'flesch_kincaid_grade', 'gunning_fog',
-            'flesch_reading_ease', 'word_count', 'sentence_count'
+            'response_time_seconds',
+            # PRIMARY METRICS
+            'flesch_kincaid_grade', 'gunning_fog', 'smog_index', 'spache_readability',
+            # SECONDARY STATISTICS
+            'word_count', 'difficult_words'
         ]
         
         # Overall summary

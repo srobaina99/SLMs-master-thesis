@@ -1,0 +1,94 @@
+{
+  "overall": {
+    "response_time_seconds": {
+      "mean": 83.53417847156524,
+      "std": 149.23784238097838,
+      "min": 0.0011758804321289062,
+      "max": 1181.8185541629791
+    },
+    "flesch_kincaid_grade": {
+      "mean": 7.19862962962963,
+      "std": 8.639690849006408,
+      "min": -3.4,
+      "max": 73.97
+    },
+    "gunning_fog": {
+      "mean": 8.676814814814813,
+      "std": 9.59256400764008,
+      "min": 0.0,
+      "max": 79.4
+    },
+    "flesch_reading_ease": {
+      "mean": 0.0,
+      "std": 0.0,
+      "min": 0.0,
+      "max": 0.0
+    },
+    "word_count": {
+      "mean": 60.766666666666666,
+      "std": 55.6105784111869,
+      "min": "0",
+      "max": "198"
+    },
+    "sentence_count": {
+      "mean": 0.0,
+      "std": 0.0,
+      "min": "0",
+      "max": "0"
+    }
+  },
+  "by_config": {
+    "weighting_only": {
+      "count": 270,
+      "response_time_seconds": {
+        "mean": 83.53417847156524,
+        "std": 149.23784238097838,
+        "min": 0.0011758804321289062,
+        "max": 1181.8185541629791
+      },
+      "flesch_kincaid_grade": {
+        "mean": 7.19862962962963,
+        "std": 8.639690849006408,
+        "min": -3.4,
+        "max": 73.97
+      },
+      "gunning_fog": {
+        "mean": 8.676814814814813,
+        "std": 9.59256400764008,
+        "min": 0.0,
+        "max": 79.4
+      },
+      "flesch_reading_ease": {
+        "mean": 0.0,
+        "std": 0.0,
+        "min": 0.0,
+        "max": 0.0
+      },
+      "word_count": {
+        "mean": 60.766666666666666,
+        "std": 55.6105784111869,
+        "min": "0",
+        "max": "198"
+      },
+      "sentence_count": {
+        "mean": 0.0,
+        "std": 0.0,
+        "min": "0",
+        "max": "0"
+      }
+    }
+  },
+  "metadata": {
+    "total_experiments": 270,
+    "unique_prompts": 15,
+    "configs_tested": 18,
+    "models_tested": [
+      "Phi3",
+      "Qwen2",
+      "Qwen3",
+      "SmolLM",
+      "TinyLlama",
+      "TinyStories"
+    ]
+  }
+}

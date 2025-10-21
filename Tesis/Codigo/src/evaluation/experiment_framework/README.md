@@ -38,7 +38,7 @@ from experiment_framework import ExperimentRunner
 # Initialize runner
 runner = ExperimentRunner()
 
-# Run complete factorial experiment (4 models × 4 configs × 10 prompts = 160 experiments)
+# Run complete factorial experiment (5 models × 4 configs × 10 prompts = 200 experiments)
 results_file = runner.run_factorial_experiment()
 
 # Run experiment for single model only
@@ -104,7 +104,7 @@ All configurations are automatically generated:
 ```python
 from experiment_framework import create_factorial_configs, STANDARD_PROMPTS
 
-# Get all 16 configurations (4 models × 4 intervention combinations)
+# Get all 20 configurations (5 models × 4 intervention combinations)
 configs = create_factorial_configs()
 
 # Get standard prompts

@@ -1,0 +1,269 @@
+model,config_weighting,config_prompting,prompt_id,answer,time_spent,flesch_kincaid_grade,gunning_fog,smog_index,automated_readability_index,coleman_liau_index,dale_chall_readability_score,flesch_reading_ease,linsear_write_formula,spache_readability,mcalpine_eflaw,sentence_count,word_count,character_count,syllable_count,polysyllable_count,monosyllable_count,difficult_words,reading_time_seconds,reading_time_minutes
+SmolLM,False,False,P1,"In the context of computer science, a library is a collection of pre-compiled code that can be easily used to perform specific tasks. Libraries are often reused and integrated into software applications, providing functionality without the need for writing the code from scratch. They offer advantages such as speed, portability, and reduced development time.
+
+In the context of libraries for programming, like the Standard Template Library (STL) in C++, they provide a set of predefined functions, data structures, and algorithms. These libraries are designed to solve common problems and are often used when a specific feature is not available as part of the standard library.
+
+For example, the STL offers features like containers (arrays, lists, etc.), algorithms (sort, find, etc.), and iterators, which can be customized or reused across different applications. The concept of libraries extends beyond the STL and encompasses a wide range of reusable components in software development, including Java libraries, Python packages, and other standard libraries","6,1","13,27","16,37","15,32","14,15","14,15","12,06","31,41","14,4","6,9","24,0",9,159,903,296,41,81,53,"13,27","0,22"
+SmolLM,True,False,P1,"The word 'library' is derived from the Greek word ""librion,"" which means ""bookshop"" or ""bureau."" It was first used by Isocrates in his work ""Demand, O Library,"" where he praised the library of Alexandria as the ""bureaucracy"" of literature. The word 'bureaucracy' was introduced by French writer Jean-Baptiste-Joseph-Nicolas-Denis-Sébastien-Carême, Baron Grimm, in his book ""The State and Its Administration."" In English, the term ""library"" is used to refer to an institution that collects books, while in German, it is called a ""Bibliothek.""","3,2","12,12","13,04","13,82","15,5","13,03","9,71","44,24","13,62","5,71","28,75",4,81,461,136,14,57,18,"6,77","0,11"
+SmolLM,False,True,P1,"A library is a special place where people can borrow books and other printed materials. It's like a big room filled with shelves and shelves of books, all waiting to be read. When you visit the library, you can take out a book and read it, and then return it when you're done so that others can enjoy it too. The library is a wonderful resource for learning new things and exploring different stories.","2,6","7,89","8,48","10,69","8,7","7,6","7,54","71,45","11,0","4,38","26,75",4,74,328,102,7,54,8,"4,82","0,08"
+SmolLM,True,True,P1,"A library is a special place where we keep and borrow books. Books are collections of pages filled with words, stories, and pictures. You can read about anything you want, from about anything, and learn about many interesting things. Libraries have shelves, and books are arranged so that when you want to find a book, you can easily look at its label. It's like a big, magical bookhouse!
+
+What's an 'electronic book' (or e-book)?
+An e-book is a special kind of book that lives on your computer, tablet, or smartphone. Instead of turning pages, you can read it on the screen. Some e-books have pictures, and you can even listen to them as you read. It's like having a whole library inside your device!
+
+What's a 'book club'?
+A book club is a group of people who read the same book. They talk about the book, share their opinions, and sometimes even meet up","4,3","4,89","6,56","8,62","5,93","6,67","7,2","81,1","6,5","3,57","16,23",13,154,701,207,12,114,16,"10,3","0,17"
+SmolLM,False,False,P2,"In English, you can introduce yourself by saying, ""My name is John, and I am from New York."" This simple sentence conveys your identity and the location you're from.","0,9","7,15","9,94","10,13","8,07","7,96","8,17","69,59","7,75","4,37","20,5",2,29,137,42,3,20,5,"2,01","0,03"
+SmolLM,True,False,P2,"To introduce yourself in English, you can say, ""I am [Your Name]. Nice to meet you. What's your name?"" This format is simple, clear, and commonly understood. However, if you want to include a personal touch, you can say, ""I'm [Your Name], and I'm here to learn English. I'm looking forward to getting to know you better."" This option adds a bit more detail but is still quite standard.","1,9","3,99","6,26","7,96","5,14","5,57","7,33","84,03","4,64","3,48","14,14",7,69,317,92,5,51,10,"4,66","0,08"
+SmolLM,False,True,P2,"Hi, I'm [Your Name]. Nice to meet you!
+
+What's your name?
+
+My name is [Your Name].
+
+Where are you from?
+
+I'm from [Location].
+
+What's your favorite subject in school?
+
+My favorite subject is [Subject].
+
+Do you have any hobbies?
+
+I have [Hobby] as a hobby.
+
+How do I say ""Hello"" in English?
+
+Hello!
+
+Thank you for meeting me. I hope to see you soon.","3,2","1,26","2,59","5,87","1,2","0,21","5,61","94,77","1,69","2,07","7,23",13,64,274,81,3,50,4,"4,03","0,07"
+SmolLM,True,True,P2,"Greeting someone in English is simple! You can say, ""Hello, my name is [your name]."" To introduce yourself, you would say, ""I am [your name], nice to meet you."" Remember, English has different ways to express politeness, like ""please"" and ""thank you."" So, you could also say, ""Hi, my name is [your name], and I'm [your name], please. It's nice to meet you.""","2,0","3,49","5,47","7,79","5,87","5,04","5,91","88,75","4,92","2,87","15,33",6,63,295,80,4,50,4,"4,33","0,07"
+SmolLM,False,False,P3,"The question ""What is a dog?"" is ambiguous due to the lack of a clear definition. It is possible to interpret the question in two ways:
+
+1. ""What is a dog?"" is an open-ended question that seeks the definition of a dog, leaving the answer open-ended and potentially varying depending on context, culture, or personal understanding.
+2. The question might be a meta-question, asking for the criteria or properties that define a dog. This interpretation would require clarification on how the question is to be answered or whether there are agreed-upon properties for a dog.
+
+Without a clear definition of ""dog,"" the question cannot be definitively answered. However, if we consider the second interpretation, the answer could be a definition like:
+
+- An animal with four legs, a tail, and a characteristic that includes barking and non-barking.
+- A domesticated mammal often kept as a pet, characterized by its ability to be trained and exhibit various behaviors","4,1","10,86","14,2","13,66","10,32","10,92","9,4","44,83","7,75","5,3","23,0",10,155,800,268,34,98,34,"11,75","0,2"
+SmolLM,True,False,P3,"A dog is a domesticated animal that is often kept as a pet. They are typically characterized by their four legs, fur, and tail. Dogs are social animals and can be trained to perform a variety of tasks, such as herding, hunting, and guarding.","1,1","7,83","10,41","11,21","7,1","7,23","9,39","65,05","8,33","4,86","21,67",3,44,198,66,6,32,10,"2,91","0,05"
+SmolLM,False,True,P3,"A dog is a friendly, furry animal that people keep as pets. They come in different shapes and sizes. Some dogs are small like a cat, while others are big and strong, like a cow. Dogs bark, meow, or make other sounds to communicate with their owners. They often wag their tails when they're happy. It's important to treat dogs nicely, like giving them food and water, so they stay healthy and happy.","3,2","4,83","5,41","7,79","5,69","6,48","7,05","82,07","5,75","3,26","16,0",6,73,326,97,4,54,6,"4,79","0,08"
+SmolLM,True,True,P3,"A dog is a four-legged, furry animal. It comes in different sizes, shapes, and colors. Dogs are often kept as pets. They can bark, run, and sometimes make a lot of noise. Some dogs are friendly, while others may bite. They are called ""man's best friend."" People love dogs, and they are part of many homes.","1,6","2,28","3,2","6,18","3,6","4,53","7,98","92,97","3,29","2,73","11,0",7,56,250,70,2,44,5,"3,67","0,06"
+SmolLM,False,False,P4,"Breakfast is the first meal of the day, typically consumed after an overnight period of fasting. It is typically eaten soon after waking up, although the term ""breakfast"" is not universally recognized as the first meal of the day.","2,0","10,77","12,93","13,02","11,51","10,34","8,25","52,55","12,75","5,57","28,5",2,39,192,62,6,24,8,"2,82","0,05"
+SmolLM,True,False,P4,"Breakfast is a meal that is typically consumed in the morning, usually after a period of fasting, such as overnight. It is typically lighter and more nutritious than dinner, as it provides essential nutrients, such as protein, carbohydrates, and fats, that may have been depleted overnight. While there are no strict rules for what can be considered breakfast, it is often assumed that breakfast should include at least one food group, such as grains, dairy, or protein.","2,3","12,66","15,46","14,55","15,5","11,67","9,42","50,04","16,83","6,47","34,67",3,77,394,119,12,49,16,"5,79","0,1"
+SmolLM,False,True,P4,"Breakfast is the first meal of the day, usually eaten in the morning after waking up. It is typically a light meal, often consisting of foods like cereal, toast, or yogurt, that provides energy to start the day.","4,0","9,52","11,81","12,16","9,64","8,13","7,9","60,65","12,0","5,1","27,0",2,38,174,57,5,25,7,"2,56","0,04"
+SmolLM,True,True,P4,"Breakfast is the first meal of the day, usually eaten after waking up. It's called ""breakfast"" because it breaks the fast that your body has been without food for a while, while you were sleeping.
+
+Here's a simple example:
+- If you wake up at 8 o'clock, breakfast might be having cereal with milk, toast, and orange juice.
+- Or, you could have a bowl of yogurt with berries, or even a sandwich with a slice of cheese.
+
+Remember, breakfast can be any meal you eat in the morning, and it's important for starting the day with energy.","3,9","7,88","8,93","9,39","8,93","7,37","6,4","72,78","10,8","4,17","27,4",5,96,432,130,6,69,7,"6,35","0,11"
+SmolLM,False,False,P5,"'Large' and 'big' are often used interchangeably, but there is a subtle distinction between them. 'Large' is typically used to describe something that is bigger or larger in size, while 'big' is used to describe something that is bigger or larger in quantity or quantity. For example, you could say, ""The building is large,"" but you could not say, ""The building is big.""
+
+In the context of size, 'large' is used to describe things that are not only bigger but also bigger in terms of quantity. For example, you could say, ""The building is large because it is bigger than the other buildings in the city.""
+
+'Large' is also used to describe things that are bigger in terms of quantity, regardless of their size. For example, you could say, ""The building is large because it is bigger than the other buildings in the city, regardless of their size.""
+
+In the context of quantity, 'large' is","5,1","8,56","11,1","10,41","10,41","8,34","7,04","68,18","11,6","4,68","28,25",8,155,729,218,13,107,10,"10,71","0,18"
+SmolLM,True,False,P5,"In mathematics, 'big' and 'large' are often used interchangeably, both referring to quantities that are greater than 'small' and 'smaller than 'large'. However, there is a subtle distinction. 'Large' is more commonly used to describe a quantity that is difficult to comprehend or is extremely large in size, while 'big' is more frequently associated with a quantity that is difficult to comprehend or is relatively large in size.
+
+For example, a 'big' number is one that is difficult to comprehend, such as 200,000,000, while a 'large' number is one that is difficult to comprehend, such as 20,000,000,000.
+
+It's important to note that the meanings of 'big' and 'large' can vary depending on the context. For example, if you are talking about the size of a group of people, 'big' might refer to","4,2","11,23","16,07","15,02","13,16","9,97","8,79","53,76","14,8","6,03","31,67",6,132,661,204,26,92,24,"9,71","0,16"
+SmolLM,False,True,P5,"The words ""big"" and ""large"" are similar, but they can have a slight difference in meaning. 
+
+""Big"" is a general term that describes something that is larger in size or quantity. For example, a big building is one that is large.
+
+""Large"" is a more specific term, often used to describe objects that are bigger in size but not necessarily in number. For instance, a large tree has more branches than a small one, but there may be fewer trees in total.
+
+In some cases, ""big"" can be used to emphasize that something is very large, while ""large"" might be more appropriate when emphasizing the quantity without the size. However, in most everyday situations, the context will help you understand the intended meaning.","4,2","8,53","10,61","11,77","9,76","8,78","7,72","65,2","8,67","4,85","24,71",7,123,585,180,16,87,20,"8,59","0,14"
+SmolLM,True,True,P5,"'Big' and 'large' are both words used to describe something that is bigger than others. However, there is a subtle difference.
+
+'Large' is a general term that can be used for things that are bigger, bigger, or just bigger. For example, a large dog, a large house, and a large river.
+
+'Big' is a specific word that is used to describe something that is very, very big. For example, a very big dog, a very big house, and a very big river.
+
+So, 'big' is a more precise way to describe something that is very, very big, while 'large' is a more general way to describe something that is bigger in general.","3,3","6,77","7,47","9,24","7,01","5,86","5,56","75,03","7,0","3,56","23,14",7,112,486,153,8,79,5,"7,14","0,12"
+SmolLM,False,False,P6,"My favorite animal is the tiger. I love tigers for their strength, agility, and beauty. They are one of the most impressive and captivating animals in the world. I hope to see them in person one day.","1,2","5,56","8,02","10,13","3,94","5,61","6,66","71,69","5,12","3,31","14,0",4,37,163,55,6,27,5,"2,39","0,04"
+SmolLM,True,False,P6,"My favorite animal is the tiger. I love tigers because they are beautiful, strong, and majestic. They are also one of the most powerful predators in the world. I appreciate their grace and power, and I am amazed by their ability to hunt. Additionally, tigers are important to the ecosystem, as they help to control the population of other animals. I am proud to be a part of the conservation efforts to protect these magnificent creatures.","1,9","8,91","10,33","12,16","7,46","8,8","7,8","53,72","7,83","4,44","18,33",6,76,364,126,15,49,15,"5,35","0,09"
+SmolLM,False,True,P6,"Sure, let's talk about your favorite animal, which is a cat. A cat is a small, furry animal that usually has four legs, two ears, and a tail. Cats can be different colors, like orange, black, or white. They are often known for their cute, purring sounds. They like to chase and play with yarn or other toys. Cats are also very clean animals, so they like to keep themselves tidy. Do you have a favorite animal?","2,8","4,79","5,44","9,24","4,5","5,31","6,85","80,31","5,64","3,17","14,57",7,77,334,105,8,58,7,"4,91","0,08"
+SmolLM,True,True,P6,"I love animals! My favorite animal is a cat. Cats are soft, fluffy, and often have beautiful fur. They are also very cute. My cat, Fluffy, loves to sleep, play, and purr. It's great fun to have a cat as a pet.","1,3","2,59","3,75","7,79","0,91","1,38","6,24","88,94","3,17","2,44","10,5",6,42,168,55,4,33,3,"2,47","0,04"
+SmolLM,False,False,P7,"A rainbow is formed when sunlight interacts with water droplets in the atmosphere. The colors we perceive are a result of the refraction, reflection, and dispersion of light. Here's a simplified explanation:
+
+1. The Sun emits a continuous spectrum of light, which contains all colors of the rainbow.
+2. When sunlight enters a water droplet, it slows down and bends, a phenomenon known as refraction.
+3. The light is then reflected internally, creating an internal reflection.
+4. As the light exits the droplet, it refracts again, this time in the opposite direction, due to the change in the refractive index of water.
+5. This causes the light to spread out, or disperse, into its constituent colors. The colors are separated based on their wavelengths, with red being the longest and violet the shortest.
+
+So, the colors you see in a rainbow are red, orange, yellow, green, blue, indigo, and violet. Each color corresponds to a specific wavelength","4,5","8,77","11,31","11,74","9,41","10,02","9,78","57,63","8,71","5,32","20,45",11,157,790,250,25,95,38,"11,61","0,19"
+SmolLM,True,False,P7,"In a rainbow, the colors you see are a result of refraction and reflection. When sunlight enters raindrops, it bends, or refracts, and then reflects, creating the visible colors. From the ground, you see red on the outside, followed by orange, yellow, green, blue, and violet, in that order. However, when you look into a rainbow, the colors are inverted, with violet on the outside and red on the inside.
+
+The order of colors in a rainbow is a combination of the angle of sunlight (90-degree angle) and the angle at which light is refracted by water droplets. The visible spectrum, which includes all colors, is not a single wavelength but a combination of many wavelengths. Each color in a rainbow corresponds to a specific wavelength, and as you move towards the center, the wavelengths become shorter, resulting in higher frequencies and colors closer to violet.","3,9","11,05","11,9","12,03","12,23","10,19","9,0","52,97","12,2","6,08","30,29",7,146,720,229,17,82,28,"10,58","0,18"
+SmolLM,False,True,P7,"A rainbow appears when sunlight interacts with water droplets in the atmosphere. Imagine a big circle with water droplets like tiny balls of juice. When sunlight shines on these droplets, it bends and changes colors. The colors you see are like a mix of different rainbows, just like when you look at a bunch of rainbows together. The colors you see are red, orange, yellow, green, blue, and violet. So, the rainbow you see is made up of many different colors from the sun.","3,0","6,73","7,03","9,3","7,44","8,05","7,53","71,77","7,17","4,25","19,83",6,84,390,120,7,55,8,"5,73","0,1"
+SmolLM,True,True,P7,"In a rainbow, you see different colors. There are seven main colors, which are red, orange, yellow, green, blue, and violet. The colors start from the top and go down, forming a curved arc. If you see a rainbow, it's because the sun is shining on water droplets in the sky. These droplets act like tiny prisms, bending light and separating it into different colors. So, when you see a rainbow, you see the colors of the sun, like red, orange, yellow, green, blue, and violet, all at the same time!","2,5","6,53","6,51","8,34","7,22","6,53","6,82","75,23","7,42","4,02","22,67",6,91,407,125,5,63,6,"5,98","0,1"
+SmolLM,False,False,P8,"In the morning, people often wake up and feel a sense of happiness. This is because they have had a good night's sleep and are starting their day with a positive outlook. The term ""happy"" can be subjective, but for many, it represents a general sense of well-being and contentment. It's not necessarily tied to a specific moment or event, but rather a general emotional state that people experience.","1,9","9,78","12,12","13,02","9,79","9,21","7,7","55,68","11,62","4,77","24,5",4,69,331,109,12,45,12,"4,86","0,08"
+SmolLM,True,False,P8,"In the morning, the sun is up, the sky is blue, and it's a beautiful day. The birds are singing, and the flowers are blooming. Everything looks bright and cheerful. When you wake up, you might feel happy because the sun is shining, and you're getting ready for another day.
+
+'Happy' is an adjective that describes a state of being. It's a feeling of joy, pleasure, or contentment. When you're happy, you might smile, laugh, or feel a positive emotion. So, when you're asked, ""What does happy mean?"", your answer would be, ""Feeling cheerful or content.""","2,7","4,67","5,93","8,17","6,28","6,86","6,8","80,56","5,11","3,51","15,44",9,96,456,131,7,68,12,"6,7","0,11"
+SmolLM,False,True,P8,"In the morning, after waking up, we often feel happy. This is because our bodies are adjusting to a new day, and it's a natural response to a new beginning. It's like the feeling you get when you start a new school year or make a new friend. When we're happy, we might smile, laugh, or feel cheerful. It's a positive emotion that comes from being carefree and enjoying life. So, the morning is a time when we can be happy and start the day with a good mood.","3,2","5,71","8,18","8,84","5,51","5,14","6,5","80,56","7,42","3,9","22,0",6,89,369,117,6,67,10,"5,42","0,09"
+SmolLM,True,True,P8,"In the morning, when the sun is still up, all animals, including you, are awake. You start by waking up, stretching, and then deciding what to do. You might eat breakfast, which is a delicious meal, and then go to school, where you learn new things.
+
+""Happy"" means feeling good or satisfied. When someone is happy, they often smile, laugh, or feel a warm, fuzzy feeling inside. For example, if you eat your favorite ice cream, you might be happy.
+
+I am a friendly, helpful teacher. I enjoy helping students learn new things. I believe that everyone can learn, no matter how old or young, and I teach in a simple, easy-to-understand way. I'm always available to help, even if it's just for a few minutes.","3,5","5,53","7,58","8,84","6,4","6,71","6,52","77,89","5,44","3,64","18,4",10,126,576,173,10,90,14,"8,46","0,14"
+SmolLM,False,False,P9,"In English, there are several ways to say goodbye. You can say ""Goodbye"" or ""See you later,"" or you can use ""See you tomorrow"" or ""See you in a few days."" If you want to express a specific time in the future, you can say ""See you next week"" or ""See you in a week from now.""","1,6","5,9","8,3","7,79","6,0","2,89","6,24","86,62","10,17","4,12","32,0",3,57,217,68,2,48,4,"3,19","0,05"
+SmolLM,True,False,P9,"Goodbye, as a greeting, is often translated as ""bye,"" ""bye-bye,"" or ""bye-bye, love."" However, when bidding farewell, the appropriate expression is ""goodbye."" For example, you might say, ""Goodbye, friend.""","1,1","8,12","9,38","10,5","11,99","11,34","9,02","54,08","5,5","4,87","13,33",3,29,176,49,5,15,8,"2,59","0,04"
+SmolLM,False,True,P9,"Goodbye is a way to say ""goodbye"" when you need to leave or end a conversation. It's like saying, ""I see you, but I'm going to go now.""
+
+Here are some simple examples:
+- Goodbye, nice meeting you.
+- See you later, friend.
+
+You can also use ""adios"" (pronounced ""ah-dee-oh"") when you want to say goodbye to someone, especially when you're leaving a place or saying goodbye to someone far away.
+
+Remember, ""goodbye"" is a word that people say when they're leaving or when they wish someone farewell.","3,4","6,33","7,59","8,34","7,41","7,22","6,37","75,22","7,0","3,76","20,67",6,86,405,119,5,59,8,"5,95","0,1"
+SmolLM,True,True,P9,"In English, you can say, ""See you later, folks!"" or ""Goodbye, friends."" These expressions convey the idea of parting, wishing someone a good time, and can also be used as farewells, such as when someone's job ends.","1,1","5,48","6,01","7,79","7,4","7,35","8,09","77,71","5,83","4,21","17,67",3,37,178,51,2,25,7,"2,61","0,04"
+SmolLM,False,False,P10,"The weather can be expressed in various ways, depending on the level of detail and context. Here are some common and more specific responses:
+
+1. General:
+   - ""It's nice outside, isn't it?""
+   - ""The weather is sunny and warm today.""
+
+2. Precise:
+   - ""The weather is forecast to be sunny with a high of 15°C.""
+   - ""There's a 30% chance of rain, but it's not expected to be torrential.""
+
+3. Particular:
+   - ""The forecast predicts a mild temperature, but it's likely to be cloudy.""
+   - ""The weatherman is calling for a mix of sunshine and showers.""
+   - ""I'm afraid the sky will be overcast with a chance of light drizzle.""
+
+4. Exact:
+   - ""The weatherman predicts a sunny day with a high of 19°C.""
+   - ""The forecast is for a sunny","4,3","5,76","8,04","9,1","4,75","6,11","8,59","73,53","5,78","4,02","16,82",11,122,574,176,12,81,19,"8,43","0,14"
+SmolLM,True,False,P10,The weather is forecast to be sunny.,"0,2","4,0","2,8","3,13","2,26","4,0","6,24","78,87","2,5","3,05","11,0",1,7,30,10,0,4,1,"0,44","0,01"
+SmolLM,False,True,P10,"The weather today is sunny.
+
+Explanation:
+The student is asking about the current conditions of the weather, such as whether it's sunny or cloudy. The sentence structure is simple and easy to understand.","1,6","8,37","6,82","8,84","8,33","10,33","7,53","54,67","5,5","4,21","15,67",3,33,170,55,3,15,7,"2,5","0,04"
+SmolLM,True,True,P10,The weather today is sunny.,"0,1","5,24","2,0","3,13","2,74","3,8","0,25","66,4","1,5","1,54","7,0",1,5,23,8,0,2,0,"0,34","0,01"
+SmolLM,False,False,P11,"In a group, a friend of an element $a$ is another element $b$ such that $b^{-1} \in \text{Stab}_G(a)$, where $\text{Stab}_G(a)$ is the set of elements in the group that commute with $a$. In other words, a friend of $a$ is an element that commutes with $a$ in the group.
+
+For example, in the dihedral group $D_8$, the group of symmetries of a square, the element $r$ has a friend $s$ such that $s^2 = r^4$. This means that $s$ and $r$ commute, and they are both in the same set of elements in the group that commute with $r$.","3,6","9,02","13,47","12,16","10,9","4,59","9,04","74,06","14,75","5,61","37,75",4,98,422,125,10,81,8,"6,2","0,1"
+SmolLM,True,False,P11,"A 'friend' is an individual who is familiar with or has a connection with another person. It can refer to a personal acquaintance, someone with whom you share a close relationship, or someone with whom you have a distant connection. The term 'friend' can also carry a connotation of trust, support, or a shared sense of belonging.","1,4","10,24","13,92","13,56","10,71","9,4","8,18","55,46","12,83","5,33","27,0",3,57,274,89,10,39,11,"4,03","0,07"
+SmolLM,False,True,P11,"A friend is someone you can trust and enjoy spending time with. They are a person you like and care about, and they are part of your social circle. Friends are important because they help each other and share common interests. You can choose your own friends, but it's usually best to pick people who are nice and share your values. Remember that friendships can change over time, and it's okay to be friends with different people.","2,6","6,2","6,68","8,24","7,98","8,26","6,66","78,04","7,5","3,9","21,0",5,77,355,103,4,56,8,"5,21","0,09"
+SmolLM,True,True,P11,"A friend is someone who you like to be around and spend time with. They are someone you enjoy being in the same room, talking, or doing activities together.
+
+For example, if you like playing soccer, you might have a best friend who you also like to play soccer with. You might even share your best friend's birthday!
+
+Sometimes, friends can be people you know, but you don't always see, like a teacher, a neighbor, or a classmate. It's important to remember that friends are special because you can choose whether or not to be with them.
+
+So, a 'friend' is someone you care about, and you can choose to be their friend.","3,0","6,16","7,17","7,96","7,65","7,05","6,11","79,65","6,86","3,8","23,14",7,113,504,148,5,84,8,"7,4","0,12"
+SmolLM,False,False,P12,I spend most of my time working on my math homework. I also enjoy reading and playing basketball.,"0,5","4,96","5,82","7,17","4,0","6,04","8,47","75,5","4,0","4,02","12,5",2,18,80,26,1,11,4,"1,18","0,02"
+SmolLM,True,False,P12,"At school, students attend classes, learn various subjects, participate in extracurricular activities, interact with teachers and classmates, and may also have lunch, recess, and free time. They may also have homework, projects, and exams.","0,9","12,21","12,68","12,16","15,61","15,72","10,52","37,8","11,0","6,52","21,0",2,34,206,61,5,17,13,"3,03","0,05"
+SmolLM,False,True,P12,"At school, I learn about numbers and other math concepts. I also study English, so I can communicate with my teachers and friends. We also play games and have fun together.","1,4","5,57","5,42","7,79","5,31","6,97","7,71","73,54","4,83","3,41","14,33",3,31,142,45,2,20,4,"2,09","0,03"
+SmolLM,True,True,P12,"At school, I...
+
+- Go to class.
+- I take notes.
+- I learn new things.
+- I play with my friends.
+- I eat lunch.
+- I go home.
+- I relax.","1,0","-1,89","1,49","3,13","-5,16","-5,25","6,25","115,21","0,86","1,69","5,71",7,26,101,27,0,25,1,"1,48","0,02"
+SmolLM,False,False,P13,"The terms 'hot' and 'cold' are relative and can be subjective. They refer to temperature differences rather than absolute values. While we often associate 'hot' with higher temperatures and 'cold' with lower temperatures, there is no universal standard for temperature measurement.
+
+In the context of the Oxford English Dictionary, 'hot' is described as having a ""degree of heat"" and 'cold' as having a ""degree of coldness."" It's important to note that temperature is a relative measure, and what we perceive as 'hot' or 'cold' can vary depending on the object or environment.
+
+For instance, a 2003 Ford Focus might be considered 'cold' in your area, but if someone in another part of the world experiences a temperature of 100°F (37°C), they would perceive it as 'hot.' Similarly, a 2003 Toyota Matrix might be 'hot' in your area, but if","4,7","11,0","14,56","13,93","12,15","9,96","9,96","51,56","11,17","6,18","28,57",7,139,698,222,25,89,33,"10,25","0,17"
+SmolLM,True,False,P13,"The terms 'hot' and 'cold' are often used colloquially to describe subjective experiences, but they have a specific technical meaning in physics.
+
+'Hot' refers to a state where an object's particles have a high average kinetic energy, causing it to move rapidly. This can be compared to a gas, where the particles move in random directions, with higher velocities corresponding to higher kinetic energy.
+
+'Cold' is the opposite, denoting a state with low kinetic energy, resulting in slower-moving particles. This analogy is used with liquids, where particles have more frequent, smaller-scale collisions, and solids, where particles vibrate more slowly.
+
+The distinction between 'hot' and 'cold' is not based on an absolute scale, but rather on the energy distribution among particles. A 'very hot object' will have a large energy difference between its particles, while a 'very cold object' will have a smaller difference.
+
+The terms 'hot' and 'cold","4,3","11,96","16,86","15,58","13,28","12,34","10,53","42,29","15,8","6,35","24,62",8,148,800,255,38,88,36,"11,75","0,2"
+SmolLM,False,True,P13,"The words ""hot"" and ""cold"" describe how warm or cool something feels when touched or sensed. Hot things can be felt as warm or even burning, while cold things are often icy or numb.
+
+Imagine holding a warm cup of cocoa on a cold day. You'll feel it's hot, but someone else might not notice it right away because they don't sense heat as easily.
+
+Now, think of a freezing cold winter day. You'll feel the ice on your skin, and you can't sense it unless you touch it.
+
+So, the difference between hot and cold is about how something feels when you touch it—how warm or cool it is.","3,6","4,91","7,01","6,87","6,34","5,67","6,43","87,83","6,57","3,45","22,57",7,110,465,134,3,89,5,"6,83","0,11"
+SmolLM,True,True,P13,"Hot and cold are opposite words that describe temperature. Hot means when something feels warm and can be burned, while cold means when something feels cool and can cause frostbite.
+
+For example, when you touch a hot frying pan, it's hot because it's hot, and it can hurt your hand. But when you touch a cold metal surface, it's cold because it's not hot, and it's not harmful.
+
+Your body has a natural ability to sense hot and cold. You can feel a temperature difference on your skin, like the warmth of a hug from someone you love or the coolness of the air on your skin.
+
+Remember, it's important to avoid touching very hot or cold things, as they can be dangerous. Always ask an adult for help, especially when dealing with things that could hurt you.","3,6","6,53","8,93","9,83","8,19","7,32","7,01","78,98","8,5","4,21","25,0",8,138,615,180,11,108,14,"9,03","0,15"
+SmolLM,False,False,P14,"My family consists of my mother, father, and myself. My mother is a teacher, and my father is a doctor. I am currently in high school.","0,8","5,04","5,01","7,79","2,65","3,76","5,28","74,39","4,0","2,72","13,33",3,26,109,38,2,16,2,"1,6","0,03"
+SmolLM,True,False,P14,"I have a family, but I'm not sure.","0,2","2,28","3,2","8,84","-1,53","-2,1","6,01","92,97","4,0","1,97","13,0",1,8,27,10,1,7,0,"0,4","0,01"
+SmolLM,False,True,P14,"Sure, here's a simple answer for your student:
+
+My family consists of my mom, dad, and me.
+
+My mom has a son named John and a daughter named Jane.
+
+I have two sisters, Lucy and Kate, and a brother, Tom.
+
+I love my family very much. We all live together in a big house, and we spend time together playing, eating meals, and talking.
+
+I have many friends, and we all love to play together.","2,8","4,7","5,0","8,34","4,16","4,26","7,84","83,6","6,08","3,4","18,67",6,75,308,98,5,57,7,"4,52","0,08"
+SmolLM,True,True,P14,"Sure, here's a simple answer:
+
+I have a family.
+
+My family includes my mom, dad, brother, and me.
+
+My mom is a teacher, and she teaches at a school.
+
+My dad is a doctor, and he helps people when they're sick.
+
+My brother is a student, and he goes to school too.
+
+I am a student, and I like learning new things.
+
+I have a pet, and it's a dog.
+
+I have a pet, and it's a dog.
+
+I have a pet, and it's a dog.
+
+I have a pet, and it's a dog.
+
+I have a pet, and it's a dog.
+
+I have a pet, and it's a dog.
+
+I have a pet, and it's a dog.
+
+I have a pet, and it's a dog.
+
+I have a","4,1","1,03","3,44","5,22","-1,61","-1,98","5,16","103,01","3,73","2,38","14,87",15,129,425,145,2,115,4,"6,24","0,1"
+SmolLM,False,False,P15,"In English, the question ""What do you eat for lunch?"" is typically answered with ""What do you like to eat?"", as it is the more common response when asked in this context. However, there are regional variations and different ways to phrase the question. Some people might say ""What do you like to eat for lunch?"", while others might ask ""What do you like to eat, and how often do you eat it?"" or simply ""What do you eat for lunch?"". It's important to note that the phrase ""What do you like to eat"" is often used to inquire about specific foods or preferences, as opposed to the general question ""What do you eat?"" which can be more open-ended.","3,1","5,13","7,31","9,15","5,92","5,94","6,81","81,8","6,0","3,72","19,89",9,119,524,157,10,93,14,"7,7","0,13"
+SmolLM,True,False,P15,"The given sentence, ""I eat lunch,"" is a declarative sentence, and its structure, ""I eat lunch,"" is a simple subject-verb-object sentence. The subject, ""I,"" is a noun, the verb, ""eat,"" is a transitive verb, and the object, ""lunch,"" is a noun.
+
+However, the question, ""What do you eat for lunch?"" is a question, not a statement. In the context of English, questions can be answered in a variety of ways, depending on the specific situation. For instance, if you're at a restaurant, you might say, ""I eat lunch at McDonald's."" If you're at a party, you might say, ""I eat pizza for lunch."" And if you're at a library, you might say, ""I eat an apple for lunch.""
+
+The question, ""What do you eat for lunch?"" is asking for a specific type of information, which is the type of","4,1","5,96","8,73","9,64","6,77","5,65","7,39","77,09","7,57","4,04","22,0",10,139,627,190,13,105,19,"9,21","0,15"
+SmolLM,False,True,P15,"You eat pizza for lunch, right? I like pizza too! It's delicious and we have pizza almost every day.
+
+I'm not sure about you, but I don't eat pizza. Instead, I usually have a sandwich for lunch. My friend likes sandwiches, and he brings one for me. He says it's better than pizza because it's healthy.
+
+Can you recommend a healthy food for lunch?
+
+I suggest trying carrots. They're crunchy and you can dip them in hummus. Hummus is a creamy sauce made from chickpeas.
+
+I also recommend spinach. It's a green leafy vegetable that's very healthy. You can add it to salads or sandwiches.
+
+What's your favorite food for lunch?
+
+My favorite food is eggs. They're a great option for a quick and easy meal.","4,3","3,78","4,87","7,51","3,51","4,93","7,39","81,14","3,07","3,32","10,65",17,126,568,176,10,87,15,"8,34","0,14"
+SmolLM,True,True,P15,"I typically eat a sandwich for lunch, which usually consists of bread, a filling, and sometimes a salad.","0,6","9,79","11,64","11,21","10,33","9,3","8,04","56,97","11,0","5,29","26,0",1,18,87,28,2,11,4,"1,28","0,02"

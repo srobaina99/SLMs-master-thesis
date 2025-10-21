@@ -258,3 +258,8 @@ Track these metrics to evaluate GPU offloading:
 ---
 
 **Summary:** GPU offloading via `n_gpu_layers=-1` provides massive speedups (73x) for large models (>2GB) but offers no benefit for small models (<1GB) already fast on CPU. Current configuration is optimal: Phi-3 uses GPU, others use CPU.
+
+
+
+
+

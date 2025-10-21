@@ -24,6 +24,14 @@ STANDARD_PROMPTS = [
     "Can you tell me about your favorite animal?",
     "What colors do you see in a rainbow?",
     "Can you describe what happens in the morning?"
+    "What does 'happy' mean?",
+    "How do you say goodbye in English?",
+    "What is the weather like today?",
+    "What is a 'friend' is?",
+    "What do you do at school?",
+    "What is the difference between 'hot' and 'cold'?",
+    "Can you describe your family?",
+    "What foods do you eat for lunch?"
 ]
 
 # Model configurations for factorial experiment
@@ -59,7 +67,7 @@ def create_factorial_configs() -> List[ExperimentConfig]:
     """
     Create all factorial experiment configurations.
     
-    Returns 4 models × 4 intervention combinations = 16 configurations
+    Returns 5 models × 4 intervention combinations = 20 configurations
     
     Returns:
         List of ExperimentConfig objects for factorial experiment
@@ -108,7 +116,7 @@ def create_factorial_configs() -> List[ExperimentConfig]:
                 temperature=0.7,
                 top_k=50,
                 top_p=0.95,
-                max_new_tokens=1024,
+                max_new_tokens=200,  # ~150 words max for beginner-appropriate responses
                 
                 # Experiment metadata
                 experiment_name=config_name,
@@ -143,12 +151,55 @@ def get_config_by_name(config_name: str) -> ExperimentConfig:
     raise ValueError(f"Configuration '{config_name}' not found. Available: {available_names}")
 
 
+def create_multi_weight_configs(weight_factors: List[float] = [1.5, 2.0, 4.0]) -> List[ExperimentConfig]:
+    """
+    Create experiment configurations testing multiple weight factors.
+    
+    Simplified design: only tests weighting intervention with different factors.
+    For each model, creates configs with weighting at each specified factor.
+    
+    Args:
+        weight_factors: List of weight factors to test (default: [1.5, 2.0, 4.0])
+    
+    Returns:
+        List of ExperimentConfig objects for multi-weight experiment
+    """
+    configs = []
+    
+    # Base system prompt for English learning
+    system_prompt = "You are a helpful English teacher for beginner students. Answer with a paragraph only with plain text"
+    
+    for model_name, model_info in MODEL_CONFIGS.items():
+        # Weighting only - for each weight factor
+        for weight in weight_factors:
+            weight_str = str(weight).replace('.', '_')
+            configs.append(ExperimentConfig(
+                model_name=model_info["model_name"],
+                model_id=model_info["model_id"],
+                system_prompt=system_prompt,
+                config_weighting=True,
+                config_prompting=False,
+                weighted_words_enabled=True,
+                weight_factor=weight,
+                enable_thinking=False,
+                verbose=False,
+                temperature=0.7,
+                top_k=50,
+                top_p=0.95,
+                max_new_tokens=200,
+                experiment_name=f"{model_name}_weighted_{weight_str}",
+                description=f"Multi-weight experiment: {model_name} with weighting (factor={weight})"
+            ))
+    
+    return configs
+
+
 def get_configs_for_model(model_name: str) -> List[ExperimentConfig]:
     """
     Get all configurations for a specific model.
     
     Args:
-        model_name: Name of the model ("Qwen2", "Qwen3", "TinyLlama", "TinyStories")
+        model_name: Name of the model ("Qwen2", "Qwen3", "TinyLlama", "Phi3", "SmolLM")
         
     Returns:
         List of ExperimentConfig objects for the specified model

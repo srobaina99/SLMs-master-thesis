@@ -129,11 +129,19 @@ def plot_all_metrics(csv_path: str, output_subdir: str = 'plots',
     df = load_results(csv_path)
     print(f"   Loaded {len(df)} rows")
     
-    # Extract model name from parent directory or filename
-    if csv_path.parent.name in ['Qwen2', 'Qwen3', 'SmolLM', 'TinyLlama', 'TinyStories']:
+    # Extract model name and experiment name from parent directory or filename
+    if csv_path.parent.name in ['Qwen2', 'Qwen3', 'SmolLM', 'TinyLlama', 'Phi3']:
         model_name = csv_path.parent.name
     else:
         model_name = csv_path.stem.split('_')[0] if '_' in csv_path.stem else 'Model'
+    
+    # Extract experiment name from filename (e.g., "Qwen2_multi_weight_specification_1005_1848.csv" -> "multi_weight")
+    filename_parts = csv_path.stem.split('_')
+    if 'specification' in filename_parts:
+        spec_idx = filename_parts.index('specification')
+        experiment_name = '_'.join(filename_parts[1:spec_idx])  # Everything between model name and "specification"
+    else:
+        experiment_name = 'factorial'
     
     # Create configuration labels
     df['config_label'] = df.apply(create_config_label, axis=1)
@@ -147,37 +155,23 @@ def plot_all_metrics(csv_path: str, output_subdir: str = 'plots',
     print(f"📁 Saving plots to: {csv_path.parent.name}/{output_subdir}/")
     
     # Define default metrics if not specified
+    # Following streamlined metric set from docs/text_metrics.md
     if metrics is None:
         metrics = [
-            # Time metrics
+            # Performance metric
             'time_spent',
             
-            # Grade level indices
+            # PRIMARY METRICS: Grade Level Indices (3)
             'flesch_kincaid_grade',
             'gunning_fog',
             'smog_index',
-            'automated_readability_index',
-            'coleman_liau_index',
-            'dale_chall_readability_score',
             
-            # Readability scores
-            'flesch_reading_ease',
-            'linsear_write_formula',
+            # PRIMARY METRICS: Readability Scores (1)
             'spache_readability',
-            'mcalpine_eflaw',
             
-            # Text statistics
-            'sentence_count',
+            # SECONDARY STATISTICS (2)
             'word_count',
-            'character_count',
-            'syllable_count',
-            'polysyllable_count',
-            'monosyllable_count',
-            'difficult_words',
-            
-            # Reading time
-            'reading_time_seconds',
-            'reading_time_minutes'
+            'difficult_words'
         ]
     
     # Filter to metrics present in the data
@@ -203,9 +197,9 @@ def plot_all_metrics(csv_path: str, output_subdir: str = 'plots',
         ax = plt.subplot(n_rows, n_cols, idx + 1)
         ax.set_visible(False)
     
-    # Add main title
-    fig.suptitle(f'{model_name} - Factorial Experiment Results', 
-                 fontsize=16, fontweight='bold', y=0.995)
+    # Add main title with experiment name
+    title_text = f'{model_name} - {experiment_name.replace("_", " ").title()} Experiment'
+    fig.suptitle(title_text, fontsize=16, fontweight='bold', y=0.995)
     
     # Adjust layout
     plt.tight_layout(rect=[0, 0, 1, 0.99])
@@ -245,7 +239,7 @@ def main():
     )
     parser.add_argument(
         '--model',
-        choices=['Qwen2', 'Qwen3', 'SmolLM', 'TinyLlama', 'TinyStories', 'all'],
+        choices=['Qwen2', 'Qwen3', 'SmolLM', 'TinyLlama', 'Phi3', 'all'],
         help='Process all CSVs for specific model'
     )
     
@@ -275,7 +269,7 @@ def main():
         # Process specific model or all models
         if args.model == 'all':
             model_dirs = [d for d in results_base_dir.iterdir() 
-                         if d.is_dir() and d.name in ['Qwen2', 'Qwen3', 'SmolLM', 'TinyLlama', 'TinyStories']]
+                         if d.is_dir() and d.name in ['Qwen2', 'Qwen3', 'SmolLM', 'TinyLlama', 'Phi3']]
         else:
             model_dirs = [results_base_dir / args.model]
         
@@ -299,7 +293,7 @@ def main():
     else:
         # Process all specification CSVs in all model directories
         model_dirs = [d for d in results_base_dir.iterdir() 
-                     if d.is_dir() and d.name in ['Qwen2', 'Qwen3', 'SmolLM', 'TinyLlama', 'TinyStories']]
+                     if d.is_dir() and d.name in ['Qwen2', 'Qwen3', 'SmolLM', 'TinyLlama', 'Phi3']]
         
         if not model_dirs:
             print("❌ No model directories found in results/")

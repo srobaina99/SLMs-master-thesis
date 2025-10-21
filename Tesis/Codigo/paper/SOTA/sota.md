@@ -2,6 +2,11 @@
 
 This document provides a comprehensive review of relevant state-of-the-art research for the evaluation of small language models in English language learning contexts, with focus on text simplification, controlled generation, readability assessment, and educational applications.
 
+
+# Main sources: 
+
+should be ACLantology
+
 ---
 
 ## 1. Text Simplification and Readability for Language Learners
@@ -17,6 +22,8 @@ This document provides a comprehensive review of relevant state-of-the-art resea
 **Abstract**: This paper discusses various text simplification (TS) systems, including statistical machine translation models and deep learning approaches, aimed at adapting texts to specific readability levels. It highlights the challenges of adapting TS techniques across different languages and domains, reviewing projects like KURA for Japanese, SIMPLIFICA for Portuguese, and PorSimples for Brazilian Portuguese. The study explores deep learning methods in TS, such as reinforcement learning-based models and neural programmer-interpreter approaches, emphasizing the need for multi-level simplification to cater to diverse readability requirements.
 
 **Relevance**: This paper directly addresses the challenge of controlling text complexity to match specific readability levels, which is central to this research. The review of various approaches to readability-controlled generation provides context for the probability weighting and prompting interventions used in this work. The emphasis on multi-level simplification aligns with the goal of producing texts appropriate for A1-level English learners.
+
+**Notes:** Interesting, different from mine in the sense that its post generation, not live
 
 **BibTeX**:
 
@@ -46,6 +53,8 @@ This document provides a comprehensive review of relevant state-of-the-art resea
 **Abstract**: This study investigates whether text simplification can enhance reading fluency and comprehension among primary school students. The results indicate that simplified texts lead to faster reading times and better comprehension scores, particularly benefiting readers with lower reading skills and weaker cognitive abilities. The study demonstrates that text simplification positively affects reading fluency and comprehension in children with reading difficulties.
 
 **Relevance**: This empirical study provides evidence for the effectiveness of text simplification in educational contexts, supporting the rationale for controlling language model outputs for beginner learners. Although focused on French, the methodology and findings are directly applicable to English language learning. The demonstrated benefits for readers with lower skills validate the importance of the readability metrics used in this research.
+
+**Notes:** the importance of the idea, doesnt provide solutions
 
 **BibTeX**:
 
@@ -112,34 +121,6 @@ This document provides a comprehensive review of relevant state-of-the-art resea
   number={1},
   pages={84--103},
   year={2011}
-}
-```
-
----
-
-### Simplification in Graded Readers: Measuring the Authenticity of Graded Texts
-
-**Authors**: Claridge, G.
-
-**Year**: 2005
-
-**URL**: https://www2.hawaii.edu/~readfl/rfl/October2005/claridge/claridge.html
-
-**Abstract**: This study analyzes the linguistic features of original texts and their simplified versions in graded readers. It examines aspects such as word frequency, sentence length, and syntactic complexity to measure the authenticity and effectiveness of simplified texts in aiding comprehension. The research provides empirical data on how text simplification affects various linguistic features.
-
-**Relevance**: This paper provides a framework for understanding how simplification affects linguistic authenticity, which is relevant to evaluating whether the interventions produce natural-sounding simplified text. The analysis of word frequency and sentence complexity metrics connects directly to the readability measures (Flesch-Kincaid, word count, difficult words) used in this experimental framework.
-
-**BibTeX**:
-
-```bibtex
-@article{claridge2005simplification,
-  title={Simplification in Graded Readers: Measuring the Authenticity of Graded Texts},
-  author={Claridge, Gillian},
-  journal={Reading in a Foreign Language},
-  volume={17},
-  number={2},
-  pages={144--158},
-  year={2005}
 }
 ```
 
@@ -268,7 +249,7 @@ This paper provides a technique for text simplification using BERT
 
 ---
 
-### Proceedings of the Second Workshop on Text Simplification, Accessibility and Readability (TSAR-2023)
+### ‼️Proceedings of the Second Workshop on Text Simplification, Accessibility and Readability (TSAR-2023)
 
 **Editors**: Various
 
@@ -324,16 +305,28 @@ This paper provides a technique for text simplification using BERT
 
 This state-of-the-art analysis reveals several key themes relevant to the evaluation of small language models for English language learning:
 
+### Individual Paper Contributions
+
+1. **Al-Sabbagh & Al-Khalifa (2023)**: Reviews **deep learning** approaches for text simplification to specific readability levels across multiple languages, providing context for readability-controlled generation methods.
+2. **Gala et al. (2018a)**: Empirically demonstrates that **simplified texts improve reading fluency** and comprehension in beginning readers, particularly those with lower skills, validating the educational impact of text simplification.
+3. **Gala et al. (2018b)**: Establishes a **typology of linguistic simplifications** (lexical, syntactic, discourse-level), providing theoretical framework for understanding how different interventions operate at multiple linguistic levels.
+4. **Crossley et al. (2011)**: **Confirms text simplification effectiveness** for L2 learners and validates word list approaches, directly supporting the filtered vocabulary strategy used in probability weighting.
+5. **Baez & Saggion (2023)**: Demonstrates **fine-tuning LLaMA** for lexical simplification, providing an alternative approach to the logits manipulation method used in this research.
+6. **Vásquez-Rodríguez et al. (2023)**: Addresses **coherence maintenance in simplified texts**, highlighting quality considerations beyond readability metrics for educational applications.
+7. **Yaneva et al. (2016)**: Establishes methodology for audience-specific readability evaluation, validating the use of multiple tailored metrics for beginner learners.
+8. **Al-Thanyyan & Azmi (2020)**: Introduces **Newsela-trained model** for readability-targeted generation, demonstrating feasibility of controlling text complexity during generation.
+9. **LLM Survey (2023)**: Provides broader context on controlling LLM behavior and evaluation methodologies applicable to educational deployments.
+
 ### Text Simplification Effectiveness
 
-Multiple studies (Gala et al., 2018; Crossley et al., 2011; Claridge, 2005) provide empirical evidence that text simplification improves comprehension and reading fluency for beginning readers and L2 learners, validating the core motivation for this research.
+Multiple studies (Gala et al., 2018; Crossley et al., 2011) provide empirical evidence that text simplification improves comprehension and reading fluency for beginning readers and L2 learners, validating the core motivation for this research.
 
 ### Readability Control Methods
 
 Research demonstrates various approaches to controlling text complexity:
 
 - **Fine-tuning approaches** (Baez & Saggion, 2023): Retraining models for simplification
-- **Prompt-based approaches** (Simple Science, 2025): Using instructions to guide generation
+- **Post-hoc simplification** (Al-Sabbagh & Al-Khalifa, 2023): Processing text after generation
 - **Readability-targeted generation** (Al-Thanyyan & Azmi, 2020): Training with readability labels
 
 This research contributes by exploring **logits manipulation** (probability weighting) as an alternative approach that doesn't require retraining and can be combined with prompting.
@@ -344,7 +337,7 @@ The reviewed papers emphasize the importance of:
 
 - **Multiple readability metrics** (Yaneva et al., 2016) for comprehensive assessment
 - **Audience-specific evaluation** (Gala et al., 2018) tailored to target learners
-- **Coherence and authenticity** (Vásquez-Rodríguez et al., 2023; Claridge, 2005) in simplified outputs
+- **Coherence and authenticity** (Vásquez-Rodríguez et al., 2023) in simplified outputs
 
 This research implements these principles through comprehensive readability assessment (10+ metrics) and factorial experimental design.
 
@@ -363,20 +356,19 @@ This research addresses these gaps by implementing and comparing two complementa
 
 ## References Summary
 
-**Total Papers**: 15 papers across 5 categories
+**Total Papers**: 9 papers + 1 workshop proceedings collection
 
 **Categories**:
 
-- Text Simplification and Readability: 5 papers
-- Controlled Text Generation: 3 papers
-- Educational NLP and CALL: 2 papers
-- Text Complexity Assessment: 2 papers
-- Related LLM Work: 2 papers
-- Workshop Proceedings: 1 collection
+- Text Simplification and Readability: 4 papers (Al-Sabbagh & Al-Khalifa 2023, Gala et al. 2018 [2 papers], Crossley et al. 2011)
+- Controlled Text Generation: 2 papers (Baez & Saggion 2023, Vásquez-Rodríguez et al. 2023)
+- Educational NLP and CALL: 1 paper (Yaneva et al. 2016)
+- Text Complexity Assessment: 2 papers (Al-Thanyyan & Azmi 2020, TSAR-2023 workshop proceedings)
+- Related LLM Work: 1 paper (LLM Software Engineering Survey 2023)
 
-**Key Venues**: Applied Psycholinguistics, ACL Workshops (TSAR), Frontiers in AI, IEEE Access, MDPI Mathematics, Reading in a Foreign Language
+**Key Venues**: Applied Psycholinguistics, ACL Workshops (TSAR), IEEE Access, MDPI Mathematics, Reading in a Foreign Language, LREC
 
-**Temporal Coverage**: 2005-2025, with concentration in 2018-2023 reflecting recent advances in neural text simplification and LLM applications
+**Temporal Coverage**: 2011-2023, with concentration in 2018-2023 reflecting recent advances in neural text simplification and LLM applications
 
 ---
 

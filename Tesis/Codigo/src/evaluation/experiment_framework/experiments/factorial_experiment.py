@@ -21,15 +21,15 @@ from src.evaluation.experiment_framework.models import (
     BaseModelWrapper, Phi3LlamaCppWrapper, Qwen2LlamaCppWrapper, Qwen3LlamaCppWrapper, SmolLMLlamaCppWrapper, TinyLlamaLlamaCppWrapper, TinyStoriesWrapper
 )
 from src.evaluation.text_complexity.text_evaluator import TextEvaluator
-from src.evaluation.experiment_framework.experiments.experiment_configs import create_factorial_configs, STANDARD_PROMPTS
+from src.evaluation.experiment_framework.experiments.experiment_configs import create_factorial_configs, create_multi_weight_configs, STANDARD_PROMPTS
 
 
 class FactorialExperiment:
     """
-    Factorial experiment runner for the 4×4×N experimental design.
+    Factorial experiment runner for the factorial experimental design.
     
     Runs all combinations of:
-    - 4 models: Qwen2, Qwen3, TinyLlama, TinyStories
+    - 5 models: Qwen2, Qwen3, TinyLlama, Phi3, SmolLM
     - 4 intervention combinations: control, weighting, prompting, both
     - N prompts: configurable set of test prompts
     """
@@ -190,7 +190,7 @@ class FactorialExperiment:
         Run factorial experiment for a single model only.
         
         Args:
-            model_name: Name of model to test ("Qwen2", "Qwen3", "TinyLlama", "TinyStories")
+            model_name: Name of model to test ("Qwen2", "Qwen3", "TinyLlama", "Phi3", "SmolLM")
             prompts: List of prompts to test (uses STANDARD_PROMPTS if None)
             
         Returns:
@@ -386,6 +386,146 @@ class FactorialExperiment:
             }
         
         return status
+    
+    def run_multi_weight_experiment(self,
+                                    prompts: Optional[List[str]] = None,
+                                    weight_factors: List[float] = [1.5, 2.0, 4.0],
+                                    experiment_name: str = "multi_weight_experiment") -> pd.DataFrame:
+        """
+        Run experiment testing multiple weight factors.
+        
+        Tests different weighting strengths to understand the effect of weight_factor parameter.
+        For each model, tests:
+        - Control (no interventions)
+        - Prompting only
+        - Weighting with each weight factor (alone and with prompting)
+        
+        Args:
+            prompts: List of prompts to test (uses STANDARD_PROMPTS if None)
+            weight_factors: List of weight factors to test (default: [1.5, 2.0, 4.0])
+            experiment_name: Name for this experiment run
+            
+        Returns:
+            DataFrame with all results in specification format
+        """
+        if prompts is None:
+            prompts = STANDARD_PROMPTS
+        
+        configs = create_multi_weight_configs(weight_factors)
+        
+        # Calculate total experiments: models × len(weight_factors) × prompts
+        configs_per_model = len(weight_factors)  # Only weighted configs
+        total_configs = len(self._model_classes) * configs_per_model
+        
+        print(f"\n🚀 Starting multi-weight experiment: {experiment_name}")
+        print(f"📝 Testing {len(prompts)} prompts")
+        print(f"🤖 Using {len(self._model_classes)} models")
+        print(f"⚖️  Testing {len(weight_factors)} weight factors: {weight_factors}")
+        print(f"⚙️  {configs_per_model} configurations per model (weighted only)")
+        print(f"📊 Total experiments: {len(prompts)} × {total_configs} = {len(prompts) * total_configs}")
+        
+        results = []
+        total_experiments = len(prompts) * len(configs)
+        start_time = time.time()
+        
+        # Create progress bar
+        with tqdm(total=total_experiments, desc="🧪 Multi-Weight Experiment", 
+                  unit="exp", ncols=100, colour="magenta") as pbar:
+            
+            for prompt_idx, prompt in enumerate(prompts):
+                prompt_id = f"P{prompt_idx + 1}"
+                
+                # Update progress bar description with current prompt
+                pbar.set_description(f"📝 P{prompt_idx + 1}/{len(prompts)}: {prompt[:30]}...")
+                
+                for config in configs:
+                    # Update progress bar with current model and weight
+                    weight_info = f"w={config.weight_factor}" if config.config_weighting else "w=off"
+                    pbar.set_postfix(model=config.model_name, 
+                                   weight=weight_info,
+                                   prompt=f"P:{config.config_prompting}")
+                    
+                    # Update config with prompt ID
+                    config.prompt_id = prompt_id
+                    
+                    # Get the appropriate model wrapper (lazy initialization)
+                    model_wrapper = self._get_model(config.model_name)
+                    
+                    # Generate response
+                    response_data = model_wrapper.generate_response(prompt, config)
+                    
+                    if response_data['generation_successful']:
+                        # Calculate text metrics
+                        text_metrics = self.text_evaluator.evaluate_text_comprehensive(
+                            response_data['cleaned_response']
+                        )
+                        
+                        # Create experiment result
+                        result = ExperimentResult.create_from_response(
+                            prompt=prompt,
+                            response=response_data['response'],
+                            config=config,
+                            response_time=response_data['time_spent'],
+                            text_metrics=text_metrics,
+                            experiment_name=config.experiment_name,
+                            cleaned_response=response_data['cleaned_response']
+                        )
+                        
+                        # Update progress bar with success
+                        pbar.set_postfix(model=config.model_name, 
+                                       weight=weight_info,
+                                       status="✅", 
+                                       time=f"{response_data['time_spent']:.1f}s")
+                        
+                    else:
+                        # Create result for failed/timeout generation
+                        empty_metrics = self.text_evaluator.evaluate_text_comprehensive("")
+                        
+                        response_value = response_data['response'] if response_data['response'] is not None else None
+                        
+                        result = ExperimentResult.create_from_response(
+                            prompt=prompt,
+                            response=response_value,
+                            config=config,
+                            response_time=response_data['time_spent'],
+                            text_metrics=empty_metrics,
+                            experiment_name=config.experiment_name,
+                            cleaned_response=response_data['cleaned_response']
+                        )
+                        
+                        # Update progress bar with failure/timeout
+                        if "timed out" in response_data['error_message'].lower():
+                            pbar.set_postfix(model=config.model_name, 
+                                           weight=weight_info,
+                                           status="⏰", 
+                                           time=f"{response_data['time_spent']:.0f}s")
+                        else:
+                            pbar.set_postfix(model=config.model_name, 
+                                           weight=weight_info,
+                                           status="❌", 
+                                           error="Failed")
+                    
+                    results.append(result)
+                    self.data_manager.add_result(result)
+                    
+                    # Update progress bar
+                    pbar.update(1)
+                    
+                    # Brief pause between experiments
+                    time.sleep(0.1)
+        
+        end_time = time.time()
+        total_time = end_time - start_time
+        
+        print(f"\n🎉 Multi-weight experiment completed!")
+        print(f"⏱️  Total time: {total_time:.2f} seconds ({total_time/60:.1f} minutes)")
+        print(f"📊 Generated {len(results)} results")
+        print(f"⚖️  Weight factors tested: {weight_factors}")
+        
+        # Convert to DataFrame in specification format
+        df = self.data_manager.to_dataframe()
+        
+        return df
     
     def clear_results(self):
         """Clear all stored results."""

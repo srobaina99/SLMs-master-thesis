@@ -99,7 +99,7 @@ def demo_full_factorial_experiment():
     
     print(f"Running FULL factorial experiment with {len(demo_prompts)} prompts...")
     print("This will test:")
-    print("  - 4 models: Qwen2, Qwen3, TinyLlama, TinyStories")
+    print("  - 5 models: Qwen2, Qwen3, TinyLlama, Phi3, SmolLM")
     print("  - 4 intervention combinations per model")
     print(f"  - Total experiments: {len(demo_prompts)} × 4 × 4 = {len(demo_prompts) * 16}")
     print()

@@ -5,30 +5,59 @@ A comprehensive framework for evaluating small language models in English teachi
 ## Project Structure
 
 ```
-thesis_code/
-├── .venv/                          # Virtual environment (Python 3.10)
+Codigo/
+├── venv/                          # Virtual environment (Python 3.11)
 ├── src/                           # Source code
-│   ├── models/                    # Model implementations
-│   │   ├── qwen/                  # Qwen model family
-│   │   │   ├── qwen2/            # Qwen2 implementation
-│   │   │   ├── qwen3/            # Qwen3 implementation (main)
-│   │   │   └── shared/           # Shared utilities (probability_processor)
-│   │   └── small_models/         # Other small models
-│   │       ├── tinyllama/        # TinyLlama implementation
-│   │       └── tinystories/      # TinyStories implementation
+│   ├── models/                    # Model implementations (legacy)
+│   │   ├── small_models/         # TinyStories implementations
+│   │   ├── probability_processor.py  # Probability weighting logic
+│   │   └── legacy_notebooks/     # Archived model experiments
 │   ├── evaluation/               # Evaluation frameworks
 │   │   ├── text_complexity/      # Text readability analysis
+│   │   │   └── text_evaluator.py # Comprehensive readability metrics
 │   │   └── experiment_framework/ # LLM experiment framework
+│   │       ├── core/             # Experiment runner, data models
+│   │       ├── experiments/      # Pre-configured experiments
+│   │       ├── models/           # Model wrappers
+│   │       │   ├── llamacpp_base.py            # Base llama.cpp wrapper
+│   │       │   ├── qwen2_llamacpp_wrapper.py   # Qwen2 (0.5B) - llama.cpp
+│   │       │   ├── qwen3_llamacpp_wrapper.py   # Qwen3 (0.6B) - llama.cpp
+│   │       │   ├── phi3_llamacpp_wrapper.py    # Phi3 (3.8B) - llama.cpp
+│   │       │   ├── smollm_llamacpp_wrapper.py  # SmolLM (1.7B) - llama.cpp
+│   │       │   ├── tinyllama_llamacpp_wrapper.py # TinyLlama (1.1B) - llama.cpp
+│   │       │   └── tinystories_wrapper.py      # TinyStories (33M) - Transformers
+│   │       └── results/          # Experiment outputs (CSV, PNG, JSON)
 │   └── utils/                    # Shared utilities
+├── models/                       # Model weights
+│   └── gguf/                     # GGUF quantized models
+│       ├── Qwen3-0.6B-Q4_0.gguf
+│       ├── qwen2.5-0.5b-instruct-q4_0.gguf
+│       ├── Phi-3-mini-4k-instruct-q4.gguf
+│       ├── SmolLM-1.7B-Instruct.Q4_K_M.gguf
+│       └── tinyllama-1.1b-chat-v1.0.Q4_0.gguf
 ├── data/                         # Data storage
-│   ├── vocabularies/             # English learning vocabularies
-│   ├── model_weights/            # Model weight files (.gguf)
-│   └── results/                  # Experiment results
-├── notebooks/                    # Jupyter notebooks for exploration
+│   └── vocabularies/             # English learning vocabularies (A1 Starters)
+├── paper/                        # Research paper materials
+│   ├── BRAINSTORMING.md         # Paper planning document
+│   ├── EXECUTIVE_SUMMARY.md     # Research summary
+│   ├── slm_complexity_control.tex # LaTeX paper draft
+│   ├── combined_analysis.py     # Results analysis script
+│   ├── figures/                 # Generated visualizations
+│   ├── results/                 # Aggregated experiment results
+│   ├── SOTA/                    # State-of-the-art literature review
+│   └── LREC2026 Author's kit/  # Conference submission template
+├── docs/                         # Technical documentation
+│   ├── LLAMACPP_MIGRATION_GUIDE.md  # Migration from Transformers
+│   ├── text_metrics.md          # Readability metrics reference
+│   └── weekly_progress/         # Development logs
 ├── scripts/                      # Entry point scripts
-│   ├── run_qwen3_chat.py        # Interactive chat interface
-│   └── run_experiment.py        # Experiment runner
+│   ├── run_experiment.py        # Experiment runner
+│   ├── visualize_*.py           # Result visualization scripts
+│   └── legacy_tests/            # Integration tests
+├── notebooks/                    # Jupyter notebooks
+│   └── legacy/                  # Archived explorations
 ├── requirements.txt              # Python dependencies
+├── ExperimentSpecification.md   # Experiment design documentation
 └── README.md                     # This file
 ```
 
@@ -38,36 +67,30 @@ thesis_code/
 
 ```bash
 # Activate virtual environment
-source .venv/bin/activate
+source venv/bin/activate
 
 # Install dependencies (if needed)
 pip install -r requirements.txt
 ```
 
-### 2. Run Interactive Chat
+### 2. Run Experiments
 
 ```bash
-# Basic English teacher chat
-python scripts/run_qwen3_chat.py
+# Run factorial experiment (all 6 models × 4 configs × 8 prompts = 192 observations)
+python scripts/run_experiment.py
 
-# With custom system prompt
-python scripts/run_qwen3_chat.py --system "You are a patient English tutor."
-
-# With weighted words
-python scripts/run_qwen3_chat.py --words "simple,clear,easy" --factor 1.5
+# Visualize results
+python scripts/visualize_multi_weight_combined.py
+python scripts/visualize_weights_comparison.py
 ```
 
-### 3. Run Experiments
+### 3. Model Integration Tests
 
 ```bash
-# Quick test experiment
-python scripts/run_experiment.py --experiment quick_test
-
-# Weighted words comparison
-python scripts/run_experiment.py --experiment weighted_comparison
-
-# Full demo
-python scripts/run_experiment.py --experiment demo
+# Test individual model wrappers
+python scripts/legacy_tests/test_qwen3_llamacpp_integration.py
+python scripts/legacy_tests/test_phi3_llamacpp_integration.py
+python scripts/legacy_tests/benchmark_qwen3_llamacpp.py
 ```
 
 ## Experiment Framework
@@ -128,28 +151,72 @@ print(f"Reading ease: {analysis['readability_scores']['flesch_reading_ease']}")
 
 ## Model Implementations
 
-### Qwen3 (Primary Model)
-- **Location**: `src/models/qwen/qwen3/`
-- **Features**: Weighted word generation, thinking mode, MPS support
-- **Usage**: Interactive chat, experiment framework integration
+All models use **llama.cpp GGUF backend** for efficient inference:
 
-### Qwen2
-- **Location**: `src/models/qwen/qwen2/`
-- **Features**: Basic chat interface, MPS optimization
+### Qwen3-0.6B
+- **Wrapper**: `src/evaluation/experiment_framework/models/qwen3_llamacpp_wrapper.py`
+- **Model File**: `models/gguf/Qwen3-0.6B-Q4_0.gguf`
+- **Performance**: 98 tok/s, 491MB memory
+- **Template**: ChatML format
 
-### TinyLlama & TinyStories
-- **Location**: `src/models/small_models/`
-- **Features**: Lightweight models for comparison studies
+### Qwen2-0.5B
+- **Wrapper**: `src/evaluation/experiment_framework/models/qwen2_llamacpp_wrapper.py`
+- **Model File**: `models/gguf/qwen2.5-0.5b-instruct-q4_0.gguf`
+- **Template**: ChatML format
 
-## English Learning Prompts
+### Phi3-3.8B
+- **Wrapper**: `src/evaluation/experiment_framework/models/phi3_llamacpp_wrapper.py`
+- **Model File**: `models/gguf/Phi-3-mini-4k-instruct-q4.gguf`
+- **Template**: Phi3 chat format
 
-The framework includes 50+ standardized prompts across categories:
+### SmolLM-1.7B
+- **Wrapper**: `src/evaluation/experiment_framework/models/smollm_llamacpp_wrapper.py`
+- **Model File**: `models/gguf/SmolLM-1.7B-Instruct.Q4_K_M.gguf`
+- **Template**: ChatML format
 
-- **Vocabulary Questions**: Word definitions and usage
-- **Grammar Questions**: Grammar rules and patterns
-- **Conversation Scenarios**: Real-world communication
-- **Cultural Questions**: Social context and norms
-- **Error Correction**: Common ESL mistakes
+### TinyLlama-1.1B
+- **Wrapper**: `src/evaluation/experiment_framework/models/tinyllama_llamacpp_wrapper.py`
+- **Model File**: `models/gguf/tinyllama-1.1b-chat-v1.0.Q4_0.gguf`
+- **Template**: Zephyr/ChatML format
+
+### TinyStories-33M
+- **Wrapper**: `src/evaluation/experiment_framework/models/tinystories_wrapper.py`
+- **Model**: `roneneldan/TinyStories-33M` (Hugging Face)
+- **Template**: Plain text (no chat template)
+- **Backend**: Transformers (native probability weighting support)
+
+**Key Features (llama.cpp models):**
+- 4-bit quantization (Q4_0/Q4_K_M) for memory efficiency
+- Probability weighting via `logit_bias` for vocabulary control
+- On-device inference (no API calls required)
+- Metal GPU acceleration on Apple Silicon
+
+**Key Features (TinyStories):**
+- Native Transformers probability weighting via `LogitsProcessor`
+- Smallest model (33M parameters) for baseline comparison
+- Direct vocabulary token manipulation
+
+## Experimental Design
+
+The framework implements a **factorial experiment** for text complexity control:
+
+### Interventions (4 configurations)
+1. **Control**: No interventions
+2. **Weighting Only**: Probability boosting (A1 vocabulary list, 493 words, 2.0× factor)
+3. **Prompting Only**: Context instructions ("You are an English teacher for beginners...")
+4. **Both**: Weighting + Prompting combined
+
+### Evaluation Prompts (8 diverse questions)
+- Vocabulary definitions ("What does 'library' mean?")
+- Grammar explanations ("When do we use 'have' vs 'has'?")
+- Conversation scenarios
+- Cultural context questions
+
+### Models Evaluated (6 total)
+- **llama.cpp**: Phi3 (3.8B), SmolLM (1.7B), TinyLlama (1.1B), Qwen3 (0.6B), Qwen2 (0.5B)
+- **Transformers**: TinyStories (33M)
+
+**Total Observations:** 6 models × 4 configs × 8 prompts = **192 observations**
 
 ## Data Analysis
 
@@ -184,31 +251,32 @@ Results are exported in multiple formats:
 ## Configuration
 
 ### Virtual Environment
-- **Python**: 3.10
-- **Key Dependencies**: torch, transformers, textstat, pandas
-- **GPU Support**: MPS (Apple Silicon), CUDA (optional)
+- **Python**: 3.11
+- **Key Dependencies**: llama-cpp-python, textstat, pandas, matplotlib, seaborn
+- **Backend**: llama.cpp with Metal GPU acceleration (Apple Silicon)
 
-### Model Configuration
-- **Default Model**: Qwen3-0.6B (unsloth version)
-- **Generation**: Temperature 0.7, top-k 50, top-p 0.95
-- **Max Tokens**: 1024
-
-## Experiment Types
-
-### Standard Experiments
-- **quick_test**: 5 diverse prompts, basic evaluation
-- **grammar_focus**: Grammar-specific teaching scenarios
-- **conversation_practice**: Dialogue-based interactions
-- **error_correction**: ESL mistake correction
-- **weighted_comparison**: Parameter sweep analysis
-
-### Custom Experiments
-Custom experiments can be created using the `ExperimentRunner` class with custom configurations and prompt sets.
+### Generation Parameters
+- **Temperature**: 0.7
+- **Top-K**: 50
+- **Top-P**: 0.95
+- **Max Tokens**: 512
+- **Context Window**: 2048 tokens (model-dependent)
 
 ## Research Context
 
-This codebase supports thesis research on:
-- Small language model evaluation in educational contexts
-- Text complexity analysis for English learning
-- Parameter optimization for teaching-focused LLMs
-- Comparative analysis of model architectures
+This codebase supports thesis research on **text complexity control in Small Language Models** for A1 English learners:
+
+### Research Questions
+- Can SLMs be controlled to produce appropriately simple text for beginner learners?
+- How effective is probability weighting vs. contextual prompting?
+- What are the trade-offs between simplicity and response latency?
+- Which models naturally produce beginner-appropriate text?
+
+### Key Contributions
+- **Novel approach**: Real-time complexity control via logits manipulation + prompt engineering
+- **Comprehensive evaluation**: 6 models (33M-3.8B parameters) across 18 readability metrics
+- **Factorial design**: Isolates individual and interaction effects of interventions
+- **Deployment focus**: On-device inference for resource-constrained educational settings
+
+### Target Application
+Adaptive AI tutors for **550,000 Uruguayan students** through the Ceibal initiative, enabling offline-first, cost-efficient educational technology at scale.

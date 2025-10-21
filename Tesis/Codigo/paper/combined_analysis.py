@@ -60,16 +60,17 @@ def compute_statistics(df, groupby_cols, metrics):
 def generate_by_config_comparison(df):
     """Generate statistics by config across both models"""
     
+    # Following streamlined metric set from docs/text_metrics.md
     metrics = [
         'response_time_seconds',
+        # PRIMARY METRICS
         'flesch_kincaid_grade',
         'gunning_fog',
-        'flesch_reading_ease',
+        'smog_index',
+        'spache_readability',
+        # SECONDARY STATISTICS
         'word_count',
-        'sentence_count',
-        'difficult_words',
-        'polysyllable_count',
-        'monosyllable_count'
+        'difficult_words'
     ]
     
     # Overall by config (across both models)
@@ -112,8 +113,9 @@ def generate_by_config_comparison(df):
             config_model_data = df[(df['config_label'] == config) & (df['model'] == model)]
             print(f"\n  {model} (n={len(config_model_data)}):")
             
-            for metric in ['flesch_kincaid_grade', 'gunning_fog', 'flesch_reading_ease', 
-                          'response_time_seconds', 'word_count']:
+            # Show key metrics only
+            for metric in ['flesch_kincaid_grade', 'gunning_fog', 'smog_index',
+                          'spache_readability', 'response_time_seconds', 'word_count']:
                 data = config_model_data[metric]
                 if len(data) > 0:
                     print(f"    {metric}: {data.mean():.2f} ± {data.std():.2f}")
@@ -132,11 +134,12 @@ def create_comparison_visualizations(df):
     # Figure 1: Main complexity metrics by config (combined models)
     fig, axes = plt.subplots(2, 2, figsize=(14, 10))
     
+    # Use streamlined metrics from docs/text_metrics.md
     metrics_to_plot = [
         ('flesch_kincaid_grade', 'Flesch-Kincaid Grade Level', 'lower is better'),
         ('gunning_fog', 'Gunning Fog Index', 'lower is better'),
-        ('flesch_reading_ease', 'Flesch Reading Ease', 'higher is better'),
-        ('response_time_seconds', 'Response Time (seconds)', 'lower is better')
+        ('smog_index', 'SMOG Index', 'lower is better'),
+        ('spache_readability', 'Spache Readability', 'lower is better')
     ]
     
     for idx, (metric, title, note) in enumerate(metrics_to_plot):
@@ -158,15 +161,18 @@ def create_comparison_visualizations(df):
         ax.tick_params(axis='x', rotation=45)
         ax.grid(True, alpha=0.3)
         
-        # Add target line for complexity metrics
-        if metric in ['flesch_kincaid_grade', 'gunning_fog']:
-            target = 5.0 if metric == 'flesch_kincaid_grade' else 6.0
+        # Add target line for complexity metrics (from docs/text_metrics.md)
+        targets = {
+            'flesch_kincaid_grade': 5.0,
+            'gunning_fog': 6.0,
+            'smog_index': 7.0,
+            'spache_readability': 4.0
+        }
+        
+        if metric in targets:
+            target = targets[metric]
             ax.axhline(y=target, color='red', linestyle='--', linewidth=2, 
                       label=f'A1 Target (≤{target})')
-            ax.legend()
-        elif metric == 'flesch_reading_ease':
-            ax.axhline(y=80, color='green', linestyle='--', linewidth=2, 
-                      label='A1 Target (≥80)')
             ax.legend()
     
     plt.tight_layout()
@@ -254,8 +260,8 @@ def generate_summary_json(df):
         'effect_sizes': {}
     }
     
-    # Overall statistics
-    metrics = ['flesch_kincaid_grade', 'gunning_fog', 'flesch_reading_ease', 
+    # Overall statistics (streamlined metrics from docs/text_metrics.md)
+    metrics = ['flesch_kincaid_grade', 'gunning_fog', 'smog_index', 'spache_readability',
               'response_time_seconds', 'word_count', 'difficult_words']
     
     for metric in metrics:
@@ -307,7 +313,8 @@ def generate_summary_json(df):
             config_data = df[(df['model'] == model) & (df['config_label'] == config)]
             summary['effect_sizes'][model][config] = {}
             
-            for metric in ['flesch_kincaid_grade', 'flesch_reading_ease']:
+            # Calculate effect sizes for primary complexity metrics
+            for metric in ['flesch_kincaid_grade', 'gunning_fog', 'smog_index', 'spache_readability']:
                 if len(control_data) > 0 and len(config_data) > 0:
                     control_mean = control_data[metric].mean()
                     config_mean = config_data[metric].mean()
@@ -359,8 +366,10 @@ def generate_example_table(df):
             print(f"{'='*80}")
             print(f"Response: {example['cleaned_response'][:300]}...")
             print(f"\nMetrics:")
-            print(f"  Flesch-Kincaid Grade: {example['flesch_kincaid_grade']:.1f}")
-            print(f"  Flesch Reading Ease: {example['flesch_reading_ease']:.1f}")
+            print(f"  Flesch-Kincaid Grade: {example['flesch_kincaid_grade']:.1f} (target: ≤5.0)")
+            print(f"  Gunning Fog: {example['gunning_fog']:.1f} (target: ≤6.0)")
+            print(f"  SMOG Index: {example['smog_index']:.1f} (target: ≤7.0)")
+            print(f"  Spache Readability: {example['spache_readability']:.1f} (target: ≤4.0)")
             print(f"  Word Count: {int(example['word_count'])}")
             print(f"  Difficult Words: {int(example['difficult_words'])}")
 

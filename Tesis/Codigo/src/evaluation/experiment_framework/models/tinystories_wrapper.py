@@ -116,7 +116,7 @@ class TinyStoriesWrapper(BaseModelWrapper):
             outputs = self.model.generate(
                 input_ids,
                 attention_mask=attention_mask,
-                max_length=min(len(input_ids[0]) + 1024, 2048),  # Limit total length
+                max_length=min(len(input_ids[0]) + config.max_new_tokens, 2048),  # Use config max_new_tokens
                 do_sample=True,
                 temperature=config.temperature,
                 top_k=config.top_k,
@@ -165,7 +165,7 @@ class TinyStoriesWrapper(BaseModelWrapper):
             outputs = self.model.generate(
                 input_ids,
                 attention_mask=attention_mask,
-                max_length=min(len(input_ids[0]) + 1024, 2048),
+                max_length=min(len(input_ids[0]) + config.max_new_tokens, 2048),  # Use config max_new_tokens
                 do_sample=True,
                 temperature=config.temperature,
                 top_k=config.top_k,

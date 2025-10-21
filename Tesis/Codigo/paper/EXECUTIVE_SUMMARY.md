@@ -58,7 +58,7 @@
 - Response time: 5× slower
 - No complexity reduction
 
-**Root cause:** Weight factor (2.0×) likely too aggressive, vocabulary list (1,500 words) too restrictive
+**Root cause:** Weight factor (2.0×) likely too aggressive, vocabulary list (493 words) too restrictive
 
 ### 2. Prompting is Highly Effective
 **Mechanism:** Explicit instruction shapes holistic generation
@@ -196,7 +196,7 @@ Q: *Why not fine-tune?*
 A: Fine-tuning locks in difficulty, requires data/compute. Ours: inference-time, adaptable, works with any model.
 
 Q: *Why did weighting fail?*  
-A: Vocabulary too restrictive (1,500 words), weight factor (2.0×) too aggressive. **Critical gap:** need hyperparameter optimization.
+A: Vocabulary too restrictive (493 words), weight factor (2.0×) too aggressive. **Critical gap:** need hyperparameter optimization.
 
 Q: *Only 5 prompts?*  
 A: Exploratory study. Large effects (d>2.0) suggest robustness. Expanding to 50+.
@@ -240,6 +240,7 @@ A: Likely optimization (quantization, kernels). Both use MPS. Qwen3 may have bet
 **END OF EXECUTIVE SUMMARY**
 
 **Next step:** Run hyperparameter search for weight factor [1.1-3.0] before paper submission.
+
 
 
 
