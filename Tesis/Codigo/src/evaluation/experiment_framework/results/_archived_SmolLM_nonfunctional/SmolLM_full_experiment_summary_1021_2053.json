@@ -1,0 +1,236 @@
+{
+  "overall": {
+    "response_time_seconds": {
+      "mean": 0.31487299998601276,
+      "std": 0.24945331387765213,
+      "min": 0.1532289981842041,
+      "max": 1.766038179397583
+    },
+    "flesch_kincaid_grade": {
+      "mean": 0.0,
+      "std": 0.0,
+      "min": 0.0,
+      "max": 0.0
+    },
+    "gunning_fog": {
+      "mean": 0.0,
+      "std": 0.0,
+      "min": 0.0,
+      "max": 0.0
+    },
+    "smog_index": {
+      "mean": 0.0,
+      "std": 0.0,
+      "min": 0.0,
+      "max": 0.0
+    },
+    "spache_readability": {
+      "mean": 0.0,
+      "std": 0.0,
+      "min": 0.0,
+      "max": 0.0
+    },
+    "word_count": {
+      "mean": 0.0,
+      "std": 0.0,
+      "min": "0",
+      "max": "0"
+    },
+    "difficult_words": {
+      "mean": 0.0,
+      "std": 0.0,
+      "min": "0",
+      "max": "0"
+    }
+  },
+  "by_config": {
+    "control": {
+      "count": 15,
+      "response_time_seconds": {
+        "mean": 0.3640933354695638,
+        "std": 0.40188672227157507,
+        "min": 0.16836094856262207,
+        "max": 1.766038179397583
+      },
+      "flesch_kincaid_grade": {
+        "mean": 0.0,
+        "std": 0.0,
+        "min": 0.0,
+        "max": 0.0
+      },
+      "gunning_fog": {
+        "mean": 0.0,
+        "std": 0.0,
+        "min": 0.0,
+        "max": 0.0
+      },
+      "smog_index": {
+        "mean": 0.0,
+        "std": 0.0,
+        "min": 0.0,
+        "max": 0.0
+      },
+      "spache_readability": {
+        "mean": 0.0,
+        "std": 0.0,
+        "min": 0.0,
+        "max": 0.0
+      },
+      "word_count": {
+        "mean": 0.0,
+        "std": 0.0,
+        "min": "0",
+        "max": "0"
+      },
+      "difficult_words": {
+        "mean": 0.0,
+        "std": 0.0,
+        "min": "0",
+        "max": "0"
+      }
+    },
+    "weighting_only": {
+      "count": 15,
+      "response_time_seconds": {
+        "mean": 0.30479661623636883,
+        "std": 0.22502563427018263,
+        "min": 0.1532289981842041,
+        "max": 1.0385351181030273
+      },
+      "flesch_kincaid_grade": {
+        "mean": 0.0,
+        "std": 0.0,
+        "min": 0.0,
+        "max": 0.0
+      },
+      "gunning_fog": {
+        "mean": 0.0,
+        "std": 0.0,
+        "min": 0.0,
+        "max": 0.0
+      },
+      "smog_index": {
+        "mean": 0.0,
+        "std": 0.0,
+        "min": 0.0,
+        "max": 0.0
+      },
+      "spache_readability": {
+        "mean": 0.0,
+        "std": 0.0,
+        "min": 0.0,
+        "max": 0.0
+      },
+      "word_count": {
+        "mean": 0.0,
+        "std": 0.0,
+        "min": "0",
+        "max": "0"
+      },
+      "difficult_words": {
+        "mean": 0.0,
+        "std": 0.0,
+        "min": "0",
+        "max": "0"
+      }
+    },
+    "prompting_only": {
+      "count": 15,
+      "response_time_seconds": {
+        "mean": 0.29666531880696617,
+        "std": 0.17573886645638112,
+        "min": 0.18340110778808594,
+        "max": 0.8655130863189697
+      },
+      "flesch_kincaid_grade": {
+        "mean": 0.0,
+        "std": 0.0,
+        "min": 0.0,
+        "max": 0.0
+      },
+      "gunning_fog": {
+        "mean": 0.0,
+        "std": 0.0,
+        "min": 0.0,
+        "max": 0.0
+      },
+      "smog_index": {
+        "mean": 0.0,
+        "std": 0.0,
+        "min": 0.0,
+        "max": 0.0
+      },
+      "spache_readability": {
+        "mean": 0.0,
+        "std": 0.0,
+        "min": 0.0,
+        "max": 0.0
+      },
+      "word_count": {
+        "mean": 0.0,
+        "std": 0.0,
+        "min": "0",
+        "max": "0"
+      },
+      "difficult_words": {
+        "mean": 0.0,
+        "std": 0.0,
+        "min": "0",
+        "max": "0"
+      }
+    },
+    "both": {
+      "count": 15,
+      "response_time_seconds": {
+        "mean": 0.29393672943115234,
+        "std": 0.12521676720951447,
+        "min": 0.19562387466430664,
+        "max": 0.6630001068115234
+      },
+      "flesch_kincaid_grade": {
+        "mean": 0.0,
+        "std": 0.0,
+        "min": 0.0,
+        "max": 0.0
+      },
+      "gunning_fog": {
+        "mean": 0.0,
+        "std": 0.0,
+        "min": 0.0,
+        "max": 0.0
+      },
+      "smog_index": {
+        "mean": 0.0,
+        "std": 0.0,
+        "min": 0.0,
+        "max": 0.0
+      },
+      "spache_readability": {
+        "mean": 0.0,
+        "std": 0.0,
+        "min": 0.0,
+        "max": 0.0
+      },
+      "word_count": {
+        "mean": 0.0,
+        "std": 0.0,
+        "min": "0",
+        "max": "0"
+      },
+      "difficult_words": {
+        "mean": 0.0,
+        "std": 0.0,
+        "min": "0",
+        "max": "0"
+      }
+    }
+  },
+  "metadata": {
+    "total_experiments": 60,
+    "unique_prompts": 15,
+    "configs_tested": 4,
+    "models_tested": [
+      "SmolLM"
+    ]
+  }
+}

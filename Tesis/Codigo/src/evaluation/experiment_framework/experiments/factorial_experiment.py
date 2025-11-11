@@ -6,6 +6,7 @@ Runs all model-intervention combinations across multiple prompts.
 import sys
 import os
 import time
+import gc
 from typing import List, Dict, Any, Optional
 import pandas as pd
 from datetime import datetime
@@ -18,7 +19,7 @@ sys.path.append(project_root)
 
 from src.evaluation.experiment_framework.core.data_models import ExperimentConfig, ExperimentResult, ExperimentDataManager
 from src.evaluation.experiment_framework.models import (
-    BaseModelWrapper, Phi3LlamaCppWrapper, Qwen2LlamaCppWrapper, Qwen3LlamaCppWrapper, SmolLMLlamaCppWrapper, TinyLlamaLlamaCppWrapper, TinyStoriesWrapper
+    BaseModelWrapper, Phi3LlamaCppWrapper, Qwen2LlamaCppWrapper, Qwen3LlamaCppWrapper, TinyLlamaLlamaCppWrapper
 )
 from src.evaluation.text_complexity.text_evaluator import TextEvaluator
 from src.evaluation.experiment_framework.experiments.experiment_configs import create_factorial_configs, create_multi_weight_configs, STANDARD_PROMPTS
@@ -29,7 +30,7 @@ class FactorialExperiment:
     Factorial experiment runner for the factorial experimental design.
     
     Runs all combinations of:
-    - 5 models: Qwen2, Qwen3, TinyLlama, Phi3, SmolLM
+    - 4 models: Qwen2, Qwen3, TinyLlama, Phi3
     - 4 intervention combinations: control, weighting, prompting, both
     - N prompts: configurable set of test prompts
     """
@@ -51,9 +52,7 @@ class FactorialExperiment:
             "Phi3": Phi3LlamaCppWrapper,  # Using llama.cpp (Microsoft 3.8B reasoning model)
             "Qwen2": Qwen2LlamaCppWrapper,  # Using llama.cpp for 4x speedup
             "Qwen3": Qwen3LlamaCppWrapper,  # Using llama.cpp for 4.4x speedup
-            "SmolLM": SmolLMLlamaCppWrapper,  # Using llama.cpp (efficient architecture)
             "TinyLlama": TinyLlamaLlamaCppWrapper,  # Using llama.cpp (standardized wrapper)
-            "TinyStories": TinyStoriesWrapper
         }
         
         # Create results directory if it doesn't exist
@@ -65,7 +64,10 @@ class FactorialExperiment:
                           prompts: Optional[List[str]] = None,
                           experiment_name: str = "factorial_experiment") -> pd.DataFrame:
         """
-        Run the complete factorial experiment.
+        Run the complete factorial experiment with memory-efficient model cleanup.
+        
+        Groups experiments by model to minimize memory usage:
+        - Load model → run all prompts/configs → cleanup → next model
         
         Args:
             prompts: List of prompts to test (uses STANDARD_PROMPTS if None)
@@ -82,9 +84,20 @@ class FactorialExperiment:
         print(f"🤖 Using {len(self._model_classes)} models")
         print(f"⚙️  Testing 4 intervention combinations per model")
         print(f"📊 Total experiments: {len(prompts)} × {len(self._model_classes)} × 4 = {len(prompts) * len(self._model_classes) * 4}")
+        print(f"💡 Memory-efficient mode: Models loaded one at a time with cleanup")
+        
+        # Clear previous results to avoid accumulation
+        self.data_manager.clear()
         
         configs = create_factorial_configs()
         results = []
+        
+        # Group configs by model for efficient memory management
+        configs_by_model = {}
+        for config in configs:
+            if config.model_name not in configs_by_model:
+                configs_by_model[config.model_name] = []
+            configs_by_model[config.model_name].append(config)
         
         total_experiments = len(prompts) * len(configs)
         start_time = time.time()
@@ -93,83 +106,96 @@ class FactorialExperiment:
         with tqdm(total=total_experiments, desc="🧪 Factorial Experiment", 
                   unit="exp", ncols=100, colour="green") as pbar:
             
-            for prompt_idx, prompt in enumerate(prompts):
-                prompt_id = f"P{prompt_idx + 1}"
+            # Process one model at a time
+            for model_idx, (model_name, model_configs) in enumerate(configs_by_model.items()):
+                print(f"\n🤖 [{model_idx + 1}/{len(configs_by_model)}] Loading {model_name}...")
                 
-                # Update progress bar description with current prompt
-                pbar.set_description(f"📝 P{prompt_idx + 1}/{len(prompts)}: {prompt[:30]}...")
+                # Load model
+                model_wrapper = self._get_model(model_name)
                 
-                for config in configs:
-                    # Update progress bar with current model
-                    pbar.set_postfix(model=config.model_name, 
-                                   config=f"W:{config.config_weighting} P:{config.config_prompting}")
+                # Run all prompts × configs for this model
+                for prompt_idx, prompt in enumerate(prompts):
+                    prompt_id = f"P{prompt_idx + 1}"
                     
-                    # Update config with prompt ID
-                    config.prompt_id = prompt_id
+                    # Update progress bar description
+                    pbar.set_description(f"🤖 {model_name} - P{prompt_idx + 1}/{len(prompts)}")
                     
-                    # Get the appropriate model wrapper (lazy initialization)
-                    model_wrapper = self._get_model(config.model_name)
-                    
-                    # Generate response
-                    response_data = model_wrapper.generate_response(prompt, config)
-                    
-                    if response_data['generation_successful']:
-                        # Calculate text metrics
-                        text_metrics = self.text_evaluator.evaluate_text_comprehensive(
-                            response_data['cleaned_response']
-                        )
+                    for config in model_configs:
+                        # Update progress bar with current config
+                        pbar.set_postfix(model=model_name, 
+                                       config=f"W:{config.config_weighting} P:{config.config_prompting}")
                         
-                        # Create experiment result
-                        result = ExperimentResult.create_from_response(
-                            prompt=prompt,
-                            response=response_data['response'],
-                            config=config,
-                            response_time=response_data['time_spent'],
-                            text_metrics=text_metrics,
-                            experiment_name=config.experiment_name,
-                            cleaned_response=response_data['cleaned_response']
-                        )
+                        # Update config with prompt ID
+                        config.prompt_id = prompt_id
                         
-                        # Update progress bar with success
-                        pbar.set_postfix(model=config.model_name, 
-                                       status="✅", 
-                                       time=f"{response_data['time_spent']:.1f}s")
+                        # Generate response
+                        response_data = model_wrapper.generate_response(prompt, config)
                         
-                    else:
-                        # Create result for failed/timeout generation
-                        empty_metrics = self.text_evaluator.evaluate_text_comprehensive("")
-                        
-                        # Use None for response if it was a timeout or failure
-                        response_value = response_data['response'] if response_data['response'] is not None else None
-                        
-                        result = ExperimentResult.create_from_response(
-                            prompt=prompt,
-                            response=response_value,
-                            config=config,
-                            response_time=response_data['time_spent'],
-                            text_metrics=empty_metrics,
-                            experiment_name=config.experiment_name,
-                            cleaned_response=response_data['cleaned_response']
-                        )
-                        
-                        # Update progress bar with failure/timeout
-                        if "timed out" in response_data['error_message'].lower():
-                            pbar.set_postfix(model=config.model_name, 
-                                           status="⏰", 
-                                           time=f"{response_data['time_spent']:.0f}s")
+                        if response_data['generation_successful']:
+                            # Calculate text metrics using model's text_evaluator (includes tokenizer)
+                            text_metrics = model_wrapper.text_evaluator.evaluate_text_comprehensive(
+                                response_data['cleaned_response']
+                            )
+                            
+                            # Create experiment result
+                            result = ExperimentResult.create_from_response(
+                                prompt=prompt,
+                                response=response_data['response'],
+                                config=config,
+                                response_time=response_data['time_spent'],
+                                text_metrics=text_metrics,
+                                experiment_name=config.experiment_name,
+                                cleaned_response=response_data['cleaned_response']
+                            )
+                            
+                            # Update progress bar with success
+                            pbar.set_postfix(model=model_name, 
+                                           status="✅", 
+                                           time=f"{response_data['time_spent']:.1f}s")
+                            
                         else:
-                            pbar.set_postfix(model=config.model_name, 
-                                           status="❌", 
-                                           error="Failed")
-                    
-                    results.append(result)
-                    self.data_manager.add_result(result)
-                    
-                    # Update progress bar
-                    pbar.update(1)
-                    
-                    # Brief pause between experiments
-                    time.sleep(0.1)
+                            # Create result for failed/timeout generation
+                            empty_metrics = self.text_evaluator.evaluate_text_comprehensive("")
+                            
+                            # Use None for response if it was a timeout or failure
+                            response_value = response_data['response'] if response_data['response'] is not None else None
+                            
+                            result = ExperimentResult.create_from_response(
+                                prompt=prompt,
+                                response=response_value,
+                                config=config,
+                                response_time=response_data['time_spent'],
+                                text_metrics=empty_metrics,
+                                experiment_name=config.experiment_name,
+                                cleaned_response=response_data['cleaned_response']
+                            )
+                            
+                            # Update progress bar with failure/timeout
+                            if "timed out" in response_data['error_message'].lower():
+                                pbar.set_postfix(model=model_name, 
+                                               status="⏰", 
+                                               time=f"{response_data['time_spent']:.0f}s")
+                            else:
+                                pbar.set_postfix(model=model_name, 
+                                               status="❌", 
+                                               error="Failed")
+                        
+                        results.append(result)
+                        self.data_manager.add_result(result)
+                        
+                        # Update progress bar
+                        pbar.update(1)
+                
+                # Cleanup model after completing all experiments for this model
+                print(f"🧹 Cleaning up {model_name}...")
+                model_wrapper.cleanup()
+                del self._models[model_name]
+                
+                # Force garbage collection to free memory
+                gc.collect()
+                
+                # Brief pause to let system stabilize
+                time.sleep(1)
         
         end_time = time.time()
         total_time = end_time - start_time
@@ -204,6 +230,9 @@ class FactorialExperiment:
         
         print(f"\n🚀 Starting single model experiment: {model_name}")
         
+        # Clear previous results to avoid accumulation
+        self.data_manager.clear()
+        
         # Filter configs to only the specified model
         all_configs = create_factorial_configs()
         model_configs = [c for c in all_configs if c.model_name == model_name]
@@ -234,7 +263,7 @@ class FactorialExperiment:
                     response_data = model_wrapper.generate_response(prompt, config)
                     
                     if response_data['generation_successful']:
-                        text_metrics = self.text_evaluator.evaluate_text_comprehensive(
+                        text_metrics = model_wrapper.text_evaluator.evaluate_text_comprehensive(
                             response_data['cleaned_response']
                         )
                         
@@ -455,8 +484,8 @@ class FactorialExperiment:
                     response_data = model_wrapper.generate_response(prompt, config)
                     
                     if response_data['generation_successful']:
-                        # Calculate text metrics
-                        text_metrics = self.text_evaluator.evaluate_text_comprehensive(
+                        # Calculate text metrics using model's text_evaluator (includes tokenizer)
+                        text_metrics = model_wrapper.text_evaluator.evaluate_text_comprehensive(
                             response_data['cleaned_response']
                         )
                         

@@ -217,6 +217,174 @@ def plot_all_metrics(csv_path: str, output_subdir: str = 'plots',
 
 
 
+def plot_aggregate_across_models(results_base_dir: Path, output_subdir: str = 'plots',
+                                  metrics: Optional[List[str]] = None,
+                                  experiment_pattern: str = '*_specification_*.csv'):
+    """
+    Generate aggregate boxplots combining data from all models.
+    
+    Args:
+        results_base_dir: Base directory containing model subdirectories
+        output_subdir: Subdirectory name for plots (default: 'plots')
+        metrics: Optional list of specific metrics to plot
+        experiment_pattern: Glob pattern to match CSV files
+    """
+    print("\n" + "="*80)
+    print("📊 GENERATING AGGREGATE VISUALIZATION ACROSS ALL MODELS")
+    print("="*80)
+    
+    # Find all model directories
+    model_dirs = [d for d in results_base_dir.iterdir() 
+                 if d.is_dir() and d.name in ['Qwen2', 'Qwen3', 'SmolLM', 'TinyLlama', 'Phi3']]
+    
+    if not model_dirs:
+        print("❌ No model directories found")
+        return None
+    
+    print(f"\n📁 Found {len(model_dirs)} model directories: {[d.name for d in model_dirs]}")
+    
+    # Collect all data
+    all_data = []
+    for model_dir in model_dirs:
+        # Find the most recent specification CSV for this model
+        csv_files = sorted(model_dir.glob(experiment_pattern), 
+                          key=lambda x: x.stat().st_mtime, reverse=True)
+        
+        if not csv_files:
+            print(f"⚠️  No CSV files found in {model_dir.name}/")
+            continue
+        
+        # Use the most recent file
+        csv_file = csv_files[0]
+        print(f"   Loading {model_dir.name}: {csv_file.name}")
+        
+        try:
+            df = load_results(csv_file)
+            df['model'] = model_dir.name  # Add model identifier
+            df['config_label'] = df.apply(create_config_label, axis=1)
+            all_data.append(df)
+            print(f"      ✅ Loaded {len(df)} rows")
+        except Exception as e:
+            print(f"      ❌ Error loading: {e}")
+    
+    if not all_data:
+        print("❌ No data loaded from any model")
+        return None
+    
+    # Combine all data
+    combined_df = pd.concat(all_data, ignore_index=True)
+    print(f"\n✅ Combined dataset: {len(combined_df)} total rows from {len(all_data)} models")
+    
+    # Configuration order
+    config_order = ['Control', 'Weighting', 'Prompting', 'Both']
+    config_order = [c for c in config_order if c in combined_df['config_label'].values]
+    
+    # Define metrics
+    if metrics is None:
+        metrics = [
+            'flesch_kincaid_grade',
+            'gunning_fog',
+            'smog_index',
+            'spache_readability',
+            'word_count',
+            'difficult_words'
+        ]
+    
+    # Filter to available metrics
+    available_metrics = [m for m in metrics if m in combined_df.columns]
+    print(f"\n🎨 Generating aggregate plots for {len(available_metrics)} metrics...")
+    
+    # Calculate grid dimensions
+    n_metrics = len(available_metrics)
+    n_cols = 2
+    n_rows = (n_metrics + n_cols - 1) // n_cols
+    
+    # Create figure
+    fig = plt.figure(figsize=(14, 9 * n_rows))
+    
+    # Define target values for A1 learners
+    metric_targets = {
+        'flesch_kincaid_grade': 5.0,
+        'gunning_fog': 6.0,
+        'smog_index': 7.0,
+        'spache_readability': 4.0
+    }
+    
+    # Create subplots
+    for idx, metric in enumerate(available_metrics):
+        ax = plt.subplot(n_rows, n_cols, idx + 1)
+        
+        if metric not in combined_df.columns:
+            ax.set_visible(False)
+            continue
+        
+        # Create boxplot
+        sns.boxplot(
+            data=combined_df,
+            x='config_label',
+            y=metric,
+            hue='config_label',
+            order=config_order,
+            palette='Set2',
+            legend=False,
+            ax=ax
+        )
+        
+        # Add individual points
+        sns.stripplot(
+            data=combined_df,
+            x='config_label',
+            y=metric,
+            order=config_order,
+            color='black',
+            alpha=0.2,
+            size=2,
+            ax=ax
+        )
+        
+        # Add target line if applicable
+        if metric in metric_targets:
+            target_value = metric_targets[metric]
+            ax.axhline(y=target_value, color='red', linestyle='--', linewidth=4, 
+                      label=f'Target: {target_value}', zorder=10)
+        
+        # Formatting
+        ax.set_title(metric.replace('_', ' ').title(), fontsize=32, fontweight='bold')
+        ax.set_xlabel('')
+        ax.set_ylabel('')
+        ax.tick_params(labelsize=24)
+        ax.grid(axis='y', alpha=0.3)
+        
+        # Add sample size annotation
+        n_per_config = combined_df.groupby('config_label').size()
+        ax.text(0.02, 0.98, f"n={n_per_config[config_order[0]]}/config", 
+                transform=ax.transAxes, fontsize=20, va='top',
+                bbox=dict(boxstyle='round', facecolor='wheat', alpha=0.3))
+    
+    # Hide unused subplots
+    for idx in range(len(available_metrics), n_rows * n_cols):
+        ax = plt.subplot(n_rows, n_cols, idx + 1)
+        ax.set_visible(False)
+    
+    # Adjust layout
+    plt.tight_layout()
+    
+    # Create output directory
+    output_dir = results_base_dir / 'aggregate' / output_subdir
+    output_dir.mkdir(parents=True, exist_ok=True)
+    
+    # Save
+    timestamp = pd.Timestamp.now().strftime('%m%d_%H%M')
+    output_path = output_dir / f'aggregate_all_models_{timestamp}.png'
+    plt.savefig(output_path, dpi=300, bbox_inches='tight')
+    plt.close()
+    
+    print(f"\n✅ Saved aggregate visualization: {output_path.name}")
+    print(f"   Location: {output_dir}/")
+    
+    return output_path
+
+
 def main():
     """Main entry point for visualization script."""
     parser = argparse.ArgumentParser(
@@ -242,10 +410,20 @@ def main():
         choices=['Qwen2', 'Qwen3', 'SmolLM', 'TinyLlama', 'Phi3', 'all'],
         help='Process all CSVs for specific model'
     )
+    parser.add_argument(
+        '--aggregate',
+        action='store_true',
+        help='Generate aggregate visualization combining all models'
+    )
     
     args = parser.parse_args()
     
     results_base_dir = Path(__file__).parent
+    
+    # Handle aggregate flag
+    if args.aggregate:
+        plot_aggregate_across_models(results_base_dir, args.output_dir, args.metrics)
+        return
     
     if args.csv_file:
         # Check if it's a direct file path

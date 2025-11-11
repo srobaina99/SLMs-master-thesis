@@ -23,7 +23,7 @@ class ExperimentRunner:
     Simplified experiment runner focused on factorial experiments.
     
     Provides a clean interface to run the factorial design:
-    - 5 models: Qwen2, Qwen3, TinyLlama, Phi3, SmolLM
+    - 4 models: Qwen2, Qwen3, TinyLlama, Phi3
     - 4 intervention combinations: control, weighting, prompting, both
     - N prompts: configurable set of test prompts
     """

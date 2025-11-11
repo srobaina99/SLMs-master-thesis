@@ -85,8 +85,9 @@ class ExperimentResult:
     # Readability Scores (1)
     spache_readability: float = 0.0  # Primary-grade vocabulary (A1-focused)
     
-    # SECONDARY DESCRIPTIVE STATISTICS (2 statistics)
+    # SECONDARY DESCRIPTIVE STATISTICS (3 statistics)
     word_count: int = 0  # Verbosity/conciseness
+    token_count: Optional[int] = None  # Actual tokens generated (if tokenizer available)
     difficult_words: int = 0  # Vocabulary accessibility
     
     # Response formatting
@@ -147,6 +148,7 @@ class ExperimentResult:
             
             # SECONDARY STATISTICS
             word_count=text_stats.get('word_count', 0),
+            token_count=text_stats.get('token_count', None),
             difficult_words=text_stats.get('difficult_words', 0)
         )
     

@@ -33,7 +33,6 @@ def main():
             'phi3': 'Phi3',
             'qwen2': 'Qwen2',
             'qwen3': 'Qwen3',
-            'smollm': 'SmolLM',
             'tinyllama': 'TinyLlama',
             'tinystories': 'TinyStories'
         }
@@ -41,7 +40,7 @@ def main():
     
     parser = argparse.ArgumentParser(description='Run LLM Evaluation Experiments')
     parser.add_argument('--experiment', type=str, default='quick_test',
-                       choices=['quick_test', 'all', 'multi_weight', 'Phi3', 'phi3', 'Qwen2', 'qwen2', 'Qwen3', 'qwen3', 'SmolLM', 'smollm', 'TinyLlama', 'tinyllama', 'demo'],
+                       choices=['quick_test', 'all', 'multi_weight', 'Phi3', 'phi3', 'Qwen2', 'qwen2', 'Qwen3', 'qwen3', 'TinyLlama', 'tinyllama', 'demo'],
                        help='Type of experiment to run (use "all" to run all models, "multi_weight" to test different weight factors)')
     parser.add_argument('--output', type=str, default=None,
                        help='Output filename prefix')
@@ -123,7 +122,7 @@ def main():
         runner.run_all_models_experiment(prompts, generate_plots=generate_plots)
         return
     
-    elif experiment in ['Phi3', 'Qwen2', 'Qwen3', 'SmolLM', 'TinyLlama']:
+    elif experiment in ['Phi3', 'Qwen2', 'Qwen3', 'TinyLlama']:
         # Get number of prompts
         num_prompts = get_prompts_count()
         prompts = STANDARD_PROMPTS[:num_prompts]

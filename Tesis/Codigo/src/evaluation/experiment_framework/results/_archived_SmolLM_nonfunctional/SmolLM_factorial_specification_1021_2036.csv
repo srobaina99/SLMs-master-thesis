@@ -1,0 +1,12 @@
+model,config_weighting,config_prompting,weight_factor,prompt_id,answer,time_spent,flesch_kincaid_grade,gunning_fog,smog_index,spache_readability,word_count,difficult_words
+SmolLM,False,False,"2,0",P1,"A library is a collection of books, documents, and other resources that are organized and available for use. It can also refer to a collection of software or electronic resources. Libraries provide access to information and knowledge, and they can be found in many different settings, including schools, universities, and public institutions.","1,1","13,41","16,93","15,9","6,43",52,17
+SmolLM,True,False,"2,0",P1,"The word 'library' is derived from the Greek word ""librion,"" which means ""to read"" or ""peruse."" It refers to a collection of books, documents, and other resources that are organized for easy access and use. Libraries serve as repositories of knowledge, providing a wide range of resources for research, education, and leisure reading.","1,1","10,89","14,61","14,07","6,09",53,16
+SmolLM,False,True,"2,0",P1,"A library is a place where people can borrow books and other resources for free. It's like a big room filled with shelves and shelves of books, just like a toy box but for reading and learning. Libraries have shelves to keep all the books organized so that everyone can find what they need easily. In your country, there is a special word for this place called ""library.""
+
+Here's a simple sentence to explain:
+""The library is a room with lots of books.""
+
+You can also say, ""A library is a place for books.""
+
+Imagine a large room with many books lined up on shelves, just like a big bookcase. You can take a book from the shelf and read it, and then return it to its place when you're done. Libraries are a great way to learn new things and explore stories!","2,9","5,54","8,03","9,44","3,62",143,8
+SmolLM,True,True,"2,0",P1,"A library is a special place where we keep and share books. Books are collections of pages filled with words, stories, and pictures. When we visit the library, we can borrow (take out) books to read and then return them when we're done. It's like a magical place where we can learn new things, travel to different worlds, and meet interesting characters. Libraries are important because they give us the chance to explore, discover, and enjoy reading.","1,5","7,12","8,24","11,21","4,02",77,9

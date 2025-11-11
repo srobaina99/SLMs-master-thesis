@@ -48,17 +48,9 @@ MODEL_CONFIGS = {
         "model_name": "Qwen3", 
         "model_id": "ggml-org/Qwen3-0.6B-GGUF"  # Using llama.cpp GGUF (4.4x faster)
     },
-    "SmolLM": {
-        "model_name": "SmolLM",
-        "model_id": "MaziyarPanahi/SmolLM-1.7B-Instruct-GGUF"  # Using llama.cpp GGUF (efficient architecture)
-    },
     "TinyLlama": {
         "model_name": "TinyLlama",
         "model_id": "TheBloke/TinyLlama-1.1B-Chat-v1.0-GGUF"  # Using llama.cpp GGUF
-    },
-    "TinyStories": {
-        "model_name": "TinyStories",
-        "model_id": "roneneldan/TinyStories-33M"
     }
 }
 
@@ -67,7 +59,7 @@ def create_factorial_configs() -> List[ExperimentConfig]:
     """
     Create all factorial experiment configurations.
     
-    Returns 5 models × 4 intervention combinations = 20 configurations
+    Returns 4 models × 4 intervention combinations = 16 configurations (excludes TinyStories)
     
     Returns:
         List of ExperimentConfig objects for factorial experiment
@@ -108,7 +100,7 @@ def create_factorial_configs() -> List[ExperimentConfig]:
                 
                 # Legacy fields for backward compatibility
                 weighted_words_enabled=config_weighting,
-                weight_factor=2.0,  # Standard weighting factor
+                weight_factor=1.5,  # Optimal weighting factor from multi-weight experiment
                 enable_thinking=False,
                 verbose=False,
                 
@@ -199,7 +191,7 @@ def get_configs_for_model(model_name: str) -> List[ExperimentConfig]:
     Get all configurations for a specific model.
     
     Args:
-        model_name: Name of the model ("Qwen2", "Qwen3", "TinyLlama", "Phi3", "SmolLM")
+        model_name: Name of the model ("Qwen2", "Qwen3", "TinyLlama", "Phi3")
         
     Returns:
         List of ExperimentConfig objects for the specified model

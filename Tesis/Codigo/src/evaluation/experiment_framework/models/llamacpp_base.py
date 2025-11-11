@@ -76,7 +76,8 @@ class LlamaCppBaseWrapper(BaseModelWrapper):
         self.n_threads = n_threads
         self.n_gpu_layers = n_gpu_layers
         
-        self.text_evaluator = TextEvaluator()
+        # Initialize without tokenizer first, will be set after model loads
+        self.text_evaluator = None
         self.response_formatter = ResponseFormatter()
         
         self.llm = None
@@ -104,11 +105,31 @@ class LlamaCppBaseWrapper(BaseModelWrapper):
                 verbose=False
             )
             self.model_loaded = True
+            
+            # Initialize text evaluator with tokenizer now that model is loaded
+            self.text_evaluator = TextEvaluator(tokenizer=self._tokenize_text)
+            
             print(f"✅ {self.model_name} loaded successfully")
             
         except Exception as e:
             print(f"❌ {self.model_name}: Failed to load model: {e}")
             self.model_loaded = False
+            # Fallback to evaluator without tokenizer
+            self.text_evaluator = TextEvaluator()
+    
+    def _tokenize_text(self, text: str) -> list:
+        """
+        Tokenize text using the model's tokenizer.
+        
+        Args:
+            text: Text to tokenize
+            
+        Returns:
+            List of token IDs
+        """
+        if self.llm is None:
+            return []
+        return self.llm.tokenize(text.encode('utf-8'))
     
     @abstractmethod
     def _format_prompt(self, user_input: str, system_prompt: str) -> str:
@@ -283,3 +304,15 @@ class LlamaCppBaseWrapper(BaseModelWrapper):
             'model_loaded': self.model_loaded
         })
         return info
+    
+    def cleanup(self):
+        """
+        Clean up llama.cpp model resources to free memory.
+        
+        Explicitly deletes the model instance and marks as unloaded.
+        """
+        if self.llm is not None:
+            print(f"🧹 Cleaning up {self.model_name} model...")
+            del self.llm
+            self.llm = None
+            self.model_loaded = False
