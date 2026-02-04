@@ -1,6 +1,31 @@
 import textstat
-from typing import Dict, Any, Optional, Callable
+from typing import Dict, Any, Optional, Callable, Set, Tuple
 import json
+
+try:
+    import nltk
+    from nltk import pos_tag, word_tokenize
+    from nltk.corpus import wordnet
+    NLTK_AVAILABLE = True
+except ImportError:
+    NLTK_AVAILABLE = False
+
+# Download required NLTK data on first import
+if NLTK_AVAILABLE:
+    try:
+        nltk.data.find('tokenizers/punkt')
+    except LookupError:
+        nltk.download('punkt', quiet=True)
+    
+    try:
+        nltk.data.find('taggers/averaged_perceptron_tagger')
+    except LookupError:
+        nltk.download('averaged_perceptron_tagger', quiet=True)
+    
+    try:
+        nltk.data.find('corpora/wordnet')
+    except LookupError:
+        nltk.download('wordnet', quiet=True)
 
 
 class TextEvaluator:
@@ -20,6 +45,111 @@ class TextEvaluator:
                       If None, token counting will not be available.
         """
         self.tokenizer = tokenizer
+        # Cache for POS tags to avoid redundant computation
+        self._pos_cache = {}
+    
+    def extract_content_words(self, text: str) -> Set[str]:
+        """
+        Extract content words (nouns, verbs, adjectives, adverbs) from text.
+        
+        Uses NLTK POS tagging to identify content words and filters out function words.
+        
+        Args:
+            text: Text to analyze
+            
+        Returns:
+            Set of lowercase content words (without punctuation)
+        """
+        if not NLTK_AVAILABLE:
+            # Fallback: use simple heuristic if NLTK unavailable
+            return self._extract_content_words_fallback(text)
+        
+        try:
+            # Check cache
+            if text in self._pos_cache:
+                return self._pos_cache[text]
+            
+            # Tokenize and tag
+            tokens = word_tokenize(text.lower())
+            pos_tags = pos_tag(tokens)
+            
+            # Content POS tags: NN, NNS, NNP, NNPS (nouns), VB, VBD, VBG, VBN, VBP, VBZ (verbs),
+            #                   JJ, JJR, JJS (adjectives), RB, RBR, RBS (adverbs)
+            content_pos = {'NN', 'NNS', 'NNP', 'NNPS', 'VB', 'VBD', 'VBG', 'VBN', 'VBP', 'VBZ',
+                          'JJ', 'JJR', 'JJS', 'RB', 'RBR', 'RBS'}
+            
+            content_words = set()
+            for token, pos in pos_tags:
+                if pos in content_pos:
+                    # Remove punctuation
+                    clean_token = ''.join(c for c in token if c.isalnum())
+                    if clean_token:
+                        content_words.add(clean_token)
+            
+            # Cache result
+            self._pos_cache[text] = content_words
+            return content_words
+            
+        except Exception as e:
+            print(f"⚠️ POS tagging failed: {e}. Using fallback method.")
+            return self._extract_content_words_fallback(text)
+    
+    def _extract_content_words_fallback(self, text: str) -> Set[str]:
+        """
+        Fallback method to extract content words without NLTK.
+        
+        Uses simple heuristic: words longer than 2 characters that aren't common function words.
+        
+        Args:
+            text: Text to analyze
+            
+        Returns:
+            Set of lowercase content words
+        """
+        function_words = {
+            'the', 'a', 'an', 'and', 'or', 'but', 'in', 'on', 'at', 'to', 'for', 'of', 'with',
+            'by', 'from', 'as', 'is', 'are', 'am', 'was', 'were', 'be', 'been', 'being',
+            'have', 'has', 'had', 'do', 'does', 'did', 'will', 'would', 'should', 'could',
+            'may', 'might', 'can', 'must', 'shall', 'it', 'its', 'this', 'that', 'these',
+            'those', 'i', 'you', 'he', 'she', 'we', 'they', 'me', 'him', 'her', 'us', 'them',
+            'my', 'your', 'his', 'her', 'our', 'their', 'if', 'then', 'so', 'what', 'when',
+            'where', 'why', 'how', 'all', 'each', 'every', 'no', 'not', 'only', 'just', 'very'
+        }
+        
+        tokens = text.lower().split()
+        content_words = set()
+        
+        for token in tokens:
+            # Remove punctuation
+            clean_token = ''.join(c for c in token if c.isalnum())
+            if clean_token and len(clean_token) > 2 and clean_token not in function_words:
+                content_words.add(clean_token)
+        
+        return content_words
+    
+    def calculate_a1_word_ratio(self, text: str, a1_vocab: Set[str]) -> Tuple[float, int, int]:
+        """
+        Calculate ratio of A1 words to content words.
+        
+        Args:
+            text: Generated text
+            a1_vocab: Set of A1 vocabulary words (lowercase)
+            
+        Returns:
+            Tuple of (ratio, a1_count, content_count)
+        """
+        content_words = self.extract_content_words(text)
+        
+        if not content_words:
+            return 0.0, 0, 0
+        
+        # Count A1 words in content words
+        a1_count = sum(1 for word in content_words if word in a1_vocab)
+        
+        # Calculate ratio
+        ratio = a1_count / len(content_words) if content_words else 0.0
+        
+        return ratio, a1_count, len(content_words)
     
     def get_grade_level_indices(self, text: str) -> Dict[str, float]:
         """

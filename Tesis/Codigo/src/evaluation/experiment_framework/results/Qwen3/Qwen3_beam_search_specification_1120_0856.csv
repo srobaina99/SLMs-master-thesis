@@ -1,0 +1,45 @@
+model,config_weighting,config_prompting,weight_factor,prompt_id,answer,time_spent,flesch_kincaid_grade,gunning_fog,smog_index,spache_readability,word_count,difficult_words
+Qwen3,False,True,"1,5",P1,"A library is a place where people read books. It's like a room where you can read books for fun. It's a common place, so it's used in many different ways.","18,5","2,9","4,13","7,79","2,57",31,1
+Qwen3,False,True,"1,5",P1,"system
+You are a helpful English teacher for beginner students. Answer with a paragraph only with plain text
+user
+# Context
+Please respond using simple words that a young non-English speaking student can understand. 
+Use vocabulary from basic English learning materials. Keep sentences short and clear.
+Avoid complex grammar structures and difficult words.
+
+What does the word 'library' mean?
+assistant
+<think>
+Okay, the user is asking about the meaning of the word 'library'. Let me think about how to explain it simply.
+
+First, I need to make sure the definition is clear and straightforward. The library is a place where people gather, right? So maybe start by saying that a library is a place where you can read books. Then, since it's a place for reading, that's where people go to read. Wait, but sometimes libraries have books, so maybe mention that. But keeping it simple, just say a library is a place where you can read books. That's a good start.
+
+Let me check if there are other terms I can use. ""Library"" is a common word, so using that is perfect. Avoid complex structures, like using ""library"" directly. The user is a beginner, so no need for complicated words. Just a simple explanation with a definition and a sentence.
+
+So the answer should be: A library is a place where you can read","17,4","6,01","6,95","9,24","4,07",224,36
+Qwen3,False,True,"1,5",P2,"How do you introduce yourself in English?  
+You can say, “Hi! How are you?” Then say, “My name is [Your Name]!” If you like something, say, “I like [Hobby/interest]!”","14,8","2,13","5,08","6,74","2,25",29,2
+Qwen3,False,True,"1,5",P2,"How do I introduce myself in English?  
+Start with a friendly greeting, like","16,6","4,19","5,68","7,17","3,08",13,2
+Qwen3,False,True,"1,5",P3,A dog is a kind of animal! 🐾 A dog is like a friend who can play with you! 🐾,"10,1","1,03","3,6","7,17","2,11",18,0
+Qwen3,False,True,"1,5",P3,"system
+You are a helpful English teacher for beginner students. Answer with a paragraph only with plain text
+user
+# Context
+Please respond using simple words that a young non-English speaking student can understand. 
+Use vocabulary from basic English learning materials. Keep sentences short and clear.
+Avoid complex grammar structures and difficult words.
+
+What is a dog?
+assistant
+<think>
+Okay, so the user wants me to answer ""What is a dog?"" using simple words. Let me start by understanding the context. The user is a beginner, so I need to make sure the answer is straightforward and easy to understand.
+
+First, ""What is a dog?"" is a simple question. The answer should be clear. In basic English learning materials, the answer is often something like ""A dog is a kind of animal."" But maybe the user wants a more engaging or creative answer? Let me think. If I use a common definition, that's probably okay. But maybe the user is looking for something more interesting. Hmm.
+
+Alternatively, maybe using a more playful way: ""A dog is a pet."" But that might be too simple. Or maybe ""A dog is a small animal."" But the main point is to answer the question in simple terms. Let me confirm: ""A dog is a small animal."" That's simple and clear. Or ""A dog is","12,3","5,54","6,43","8,49","3,84",220,35
+Qwen3,False,True,"1,5",P4,Breakfast is the time you eat something in the morning. It's a meal you have to eat in the morning. It's important to eat a little at breakfast!,"14,3","3,22","3,73","6,43","2,16",28,0
+Qwen3,False,True,"1,5",P4,"Breakfast is the first meal of the day, usually eaten before dinner. It's something","14,5","8,41","8,46","8,84","3,43",14,1
+Qwen3,False,True,"1,5",P5,"Big and large are both words for how big something is. ""Big"" means it's large in size, like a big dog or a big tree. ""Large"" is about the size, like a large tree or a large building. So, when someone is big, they're large. Like, a big tree is large, and a large tree is big. That's how you tell the difference.","13,4","1,43","4,2","5,46","2,32",63,0
+Qwen3,False,True,"1,5",P5,The difference between *big*,"13,6","6,62","1,6","8,84","1,4",4,0

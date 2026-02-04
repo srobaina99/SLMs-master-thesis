@@ -22,7 +22,9 @@ from src.evaluation.experiment_framework.models import (
     BaseModelWrapper, Phi3LlamaCppWrapper, Qwen2LlamaCppWrapper, Qwen3LlamaCppWrapper, TinyLlamaLlamaCppWrapper
 )
 from src.evaluation.text_complexity.text_evaluator import TextEvaluator
-from src.evaluation.experiment_framework.experiments.experiment_configs import create_factorial_configs, create_multi_weight_configs, STANDARD_PROMPTS
+from src.evaluation.experiment_framework.experiments.experiment_configs import (
+    create_factorial_configs, create_multi_weight_configs, create_beam_search_configs, STANDARD_PROMPTS
+)
 
 
 class FactorialExperiment:
@@ -552,6 +554,149 @@ class FactorialExperiment:
         print(f"⚖️  Weight factors tested: {weight_factors}")
         
         # Convert to DataFrame in specification format
+        df = self.data_manager.to_dataframe()
+        
+        return df
+    
+    def run_beam_search_experiment(self,
+                                  prompts: Optional[List[str]] = None,
+                                  beam_width: int = 4,
+                                  experiment_name: str = "beam_search_experiment") -> pd.DataFrame:
+        """
+        Run beam search experiment testing two selection criteria: A1 word ratio and max probability.
+        
+        Uses first N prompts from STANDARD_PROMPTS and Qwen3 model with contextual prompting.
+        Compares beam selection methods by generating readability metrics for each selected beam.
+        
+        Args:
+            prompts: List of prompts to test (uses first 5 STANDARD_PROMPTS if None)
+            beam_width: Number of beams to maintain (default: 4)
+            experiment_name: Name for this experiment run
+            
+        Returns:
+            DataFrame with all results in specification format
+        """
+        # Use first 5 prompts if not specified
+        if prompts is None:
+            prompts = STANDARD_PROMPTS[:5]
+        else:
+            prompts = prompts[:5]  # Limit to 5 prompts
+        
+        print(f"\n🚀 Starting beam search experiment: {experiment_name}")
+        print(f"📝 Testing {len(prompts)} prompts")
+        print(f"🤖 Model: Qwen3")
+        print(f"🔦 Beam width: {beam_width}")
+        print(f"⚙️  Selection methods: A1 word ratio, Max cumulative log probability")
+        print(f"📊 Total experiments: {len(prompts)} × 2 selection methods = {len(prompts) * 2}")
+        
+        # Clear previous results
+        self.data_manager.clear()
+        
+        results = []
+        total_experiments = len(prompts) * 2  # 2 selection methods
+        start_time = time.time()
+        
+        # Load Qwen3 model
+        print(f"\n🤖 Loading Qwen3 model...")
+        qwen3_wrapper = self._get_model("Qwen3")
+        
+        # Create beam search configs
+        configs = create_beam_search_configs(beam_width=beam_width, use_prompting=True)
+        
+        # Create progress bar
+        with tqdm(total=total_experiments, desc="🧪 Beam Search Experiment", 
+                  unit="exp", ncols=100, colour="cyan") as pbar:
+            
+            for prompt_idx, prompt in enumerate(prompts):
+                prompt_id = f"P{prompt_idx + 1}"
+                
+                # Update progress bar description
+                pbar.set_description(f"📝 P{prompt_idx + 1}/{len(prompts)}: {prompt[:30]}...")
+                
+                # Test both selection methods
+                for config in configs:
+                    config.prompt_id = prompt_id
+                    
+                    # Determine selection method from config name
+                    selection_method = "a1_ratio" if "a1_ratio" in config.experiment_name else "max_probability"
+                    
+                    # Update progress bar
+                    pbar.set_postfix(method=selection_method)
+                    
+                    # Generate response with beam search
+                    beam_response_data = qwen3_wrapper.generate_with_beam_search(
+                        prompt=prompt,
+                        config=config,
+                        beam_width=beam_width,
+                        selection_method=selection_method
+                    )
+                    
+                    if beam_response_data['generation_successful']:
+                        # Calculate text metrics
+                        text_metrics = qwen3_wrapper.text_evaluator.evaluate_text_comprehensive(
+                            beam_response_data['response']
+                        )
+                        
+                        # Create experiment result with beam-specific fields
+                        result = ExperimentResult.create_from_beam_response(
+                            prompt=prompt,
+                            response=beam_response_data['response'],
+                            config=config,
+                            response_time=beam_response_data['time_spent'],
+                            text_metrics=text_metrics,
+                            experiment_name=config.experiment_name,
+                            cleaned_response=beam_response_data['response'],
+                            beam_selection_method=beam_response_data['beam_selection_method'],
+                            beam_a1_ratio=beam_response_data['beam_a1_ratio'],
+                            beam_a1_count=beam_response_data['beam_a1_count'],
+                            beam_content_word_count=beam_response_data['beam_content_word_count'],
+                            beam_cumulative_logprob=beam_response_data['beam_cumulative_logprob'],
+                            beam_width=beam_width
+                        )
+                        
+                        # Update progress bar with success
+                        pbar.set_postfix(method=selection_method,
+                                       status="✅",
+                                       time=f"{beam_response_data['time_spent']:.1f}s")
+                        
+                    else:
+                        # Create result for failed generation
+                        empty_metrics = self.text_evaluator.evaluate_text_comprehensive("")
+                        
+                        result = ExperimentResult.create_from_beam_response(
+                            prompt=prompt,
+                            response="",
+                            config=config,
+                            response_time=beam_response_data['time_spent'],
+                            text_metrics=empty_metrics,
+                            experiment_name=config.experiment_name,
+                            cleaned_response="",
+                            beam_selection_method=selection_method,
+                            beam_a1_ratio=0.0,
+                            beam_a1_count=0,
+                            beam_content_word_count=0,
+                            beam_cumulative_logprob=0.0,
+                            beam_width=beam_width
+                        )
+                        
+                        # Update progress bar with failure
+                        pbar.set_postfix(method=selection_method,
+                                       status="❌",
+                                       error=beam_response_data['error_message'][:20])
+                    
+                    results.append(result)
+                    self.data_manager.add_result(result)
+                    pbar.update(1)
+        
+        end_time = time.time()
+        total_time = end_time - start_time
+        
+        print(f"\n🎉 Beam search experiment completed!")
+        print(f"⏱️  Total time: {total_time:.2f} seconds ({total_time/60:.1f} minutes)")
+        print(f"📊 Generated {len(results)} results")
+        print(f"🔦 Selection methods: A1 word ratio, Max cumulative log probability")
+        
+        # Convert to DataFrame
         df = self.data_manager.to_dataframe()
         
         return df

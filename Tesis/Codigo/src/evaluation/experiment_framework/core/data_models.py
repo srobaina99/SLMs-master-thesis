@@ -93,6 +93,14 @@ class ExperimentResult:
     # Response formatting
     cleaned_response: str = ""  # Response after formatting cleanup
     
+    # Beam search fields (optional, for beam search experiments)
+    beam_selection_method: Optional[str] = None  # "a1_ratio", "max_probability", or None for greedy
+    beam_a1_ratio: Optional[float] = None  # Ratio of A1 words to content words
+    beam_a1_count: Optional[int] = None  # Count of A1 words
+    beam_content_word_count: Optional[int] = None  # Count of content words
+    beam_cumulative_logprob: Optional[float] = None  # Cumulative log probability of the beam
+    beam_width: Optional[int] = None  # Number of beams used (e.g., 4)
+    
     # Optional manual evaluation fields
     response_appropriateness: Optional[float] = None  # 1-5 scale
     vocabulary_level: Optional[str] = None  # 'beginner', 'elementary', etc.
@@ -151,6 +159,44 @@ class ExperimentResult:
             token_count=text_stats.get('token_count', None),
             difficult_words=text_stats.get('difficult_words', 0)
         )
+    
+    @classmethod
+    def create_from_beam_response(cls,
+                                 prompt: str,
+                                 response: str,
+                                 config: ExperimentConfig,
+                                 response_time: float,
+                                 text_metrics: Dict[str, Any],
+                                 experiment_name: str = "default",
+                                 cleaned_response: str = "",
+                                 beam_selection_method: str = "a1_ratio",
+                                 beam_a1_ratio: float = 0.0,
+                                 beam_a1_count: int = 0,
+                                 beam_content_word_count: int = 0,
+                                 beam_cumulative_logprob: float = 0.0,
+                                 beam_width: int = 4) -> 'ExperimentResult':
+        """Create ExperimentResult from beam search response data."""
+        
+        # Create base result first
+        result = cls.create_from_response(
+            prompt=prompt,
+            response=response,
+            config=config,
+            response_time=response_time,
+            text_metrics=text_metrics,
+            experiment_name=experiment_name,
+            cleaned_response=cleaned_response
+        )
+        
+        # Add beam-specific fields
+        result.beam_selection_method = beam_selection_method
+        result.beam_a1_ratio = beam_a1_ratio
+        result.beam_a1_count = beam_a1_count
+        result.beam_content_word_count = beam_content_word_count
+        result.beam_cumulative_logprob = beam_cumulative_logprob
+        result.beam_width = beam_width
+        
+        return result
     
     def to_dict(self) -> Dict[str, Any]:
         """Convert to dictionary for DataFrame creation."""

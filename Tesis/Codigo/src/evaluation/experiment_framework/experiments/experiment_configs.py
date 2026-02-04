@@ -143,6 +143,74 @@ def get_config_by_name(config_name: str) -> ExperimentConfig:
     raise ValueError(f"Configuration '{config_name}' not found. Available: {available_names}")
 
 
+def create_beam_search_configs(beam_width: int = 4, use_prompting: bool = True) -> List[ExperimentConfig]:
+    """
+    Create experiment configurations for beam search experiments.
+    
+    Beam search uses contextual prompting by default and tests standard beam selection
+    criteria: A1 word ratio and cumulative log probability.
+    
+    Args:
+        beam_width: Number of beams (default: 4)
+        use_prompting: Whether to use contextual prompting intervention (default: True)
+    
+    Returns:
+        List of ExperimentConfig objects for beam search experiment
+    """
+    configs = []
+    
+    # Base system prompt for English learning
+    system_prompt = "You are a helpful English teacher for beginner students. Answer with a paragraph only with plain text"
+    
+    # Create configs for Qwen3 with beam search (can extend to all models)
+    # Using first 5 prompts as specified
+    beam_search_model = "Qwen3"
+    
+    # Config for beam search with A1 ratio selection
+    configs.append(ExperimentConfig(
+        model_name=beam_search_model,
+        model_id="ggml-org/Qwen3-0.6B-GGUF",
+        system_prompt=system_prompt,
+        config_weighting=False,  # Weighting not used during beam generation
+        config_prompting=use_prompting,  # Use contextual prompting
+        
+        weighted_words_enabled=False,
+        weight_factor=1.5,
+        enable_thinking=False,
+        verbose=False,
+        temperature=0.7,
+        top_k=50,
+        top_p=0.95,
+        max_new_tokens=200,
+        
+        experiment_name=f"{beam_search_model}_beam_search_a1_ratio",
+        description=f"Beam search (n={beam_width}) with A1 word ratio selection"
+    ))
+    
+    # Config for beam search with max probability selection
+    configs.append(ExperimentConfig(
+        model_name=beam_search_model,
+        model_id="ggml-org/Qwen3-0.6B-GGUF",
+        system_prompt=system_prompt,
+        config_weighting=False,
+        config_prompting=use_prompting,
+        
+        weighted_words_enabled=False,
+        weight_factor=1.5,
+        enable_thinking=False,
+        verbose=False,
+        temperature=0.7,
+        top_k=50,
+        top_p=0.95,
+        max_new_tokens=200,
+        
+        experiment_name=f"{beam_search_model}_beam_search_max_probability",
+        description=f"Beam search (n={beam_width}) with max cumulative log probability selection"
+    ))
+    
+    return configs
+
+
 def create_multi_weight_configs(weight_factors: List[float] = [1.5, 2.0, 4.0]) -> List[ExperimentConfig]:
     """
     Create experiment configurations testing multiple weight factors.
