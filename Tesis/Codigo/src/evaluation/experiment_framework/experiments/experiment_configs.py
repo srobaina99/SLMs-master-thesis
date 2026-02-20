@@ -27,7 +27,7 @@ STANDARD_PROMPTS = [
     "What does 'happy' mean?",
     "How do you say goodbye in English?",
     "What is the weather like today?",
-    "What is a 'friend' is?",
+    "What is a 'friend'?",
     "What do you do at school?",
     "What is the difference between 'hot' and 'cold'?",
     "Can you describe your family?",
