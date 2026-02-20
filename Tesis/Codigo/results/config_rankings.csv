@@ -1,0 +1,17 @@
+config_name,rank_spache,rank_composite,avg_spache,avg_fk_grade,avg_gunning_fog,avg_smog,avg_composite_norm,selected_spache,selected_composite
+Qwen3_prompted,1,2,2.84,3.786,4.706,7.2633,0.2032,yes,yes
+Qwen3_weighted_prompted,2,1,2.9493,3.5007,4.6067,6.6487,0.1954,yes,yes
+Phi3_weighted_prompted,3,3,2.9853,3.8833,5.6867,6.87,0.2075,no,no
+Phi3_prompted,4,4,3.0067,4.236,5.598,7.5093,0.2171,no,no
+Qwen3_weighted,5,5,3.498,4.962,6.048,7.272,0.2296,no,no
+Qwen2_prompted,6,6,3.7987,6.004,7.7393,8.736,0.2686,no,no
+Qwen3_control,7,7,3.878,5.9627,7.5827,9.1433,0.2735,no,no
+TinyLlama_weighted_prompted,8,8,4.2667,6.952,8.7813,9.6727,0.2995,no,no
+Qwen2_weighted_prompted,9,9,4.526,8.0167,10.0827,8.812,0.3082,no,no
+TinyLlama_prompted,10,10,4.7693,8.3887,9.9107,9.8707,0.3259,no,no
+TinyLlama_control,11,11,4.9633,8.4113,10.1193,10.7233,0.3406,no,no
+TinyLlama_weighted,12,12,5.2593,9.4833,11.4567,10.8493,0.3617,no,no
+Phi3_control,13,13,5.6627,10.544,12.568,12.8147,0.4049,no,no
+Phi3_weighted,14,14,5.792,10.6327,12.8313,12.99,0.4112,no,no
+Qwen2_control,15,15,5.8233,10.8693,13.9533,12.8053,0.4179,no,no
+Qwen2_weighted,16,16,5.9813,11.362,13.8653,13.0373,0.4257,no,no
