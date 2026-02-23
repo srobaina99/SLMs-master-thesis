@@ -5,6 +5,11 @@
 \usepackage[review]{lrec2026} % this is the new style
 \usepackage{natbib} 
 \usepackage{amsmath} % for \text in math mode
+\usepackage{amssymb} % for \mathbb
+\usepackage{algorithm}
+\usepackage{algpseudocode}
+\let\oldtexttt\texttt
+\renewcommand{\texttt}[1]{{\small\oldtexttt{#1}}}
 % the 'review' option anonymizes the paper following submission guideline
 % the 'final' option produces the camera ready version (non anonymized)
 % default version is 'final', so use review option for submission
@@ -20,7 +25,7 @@
 
 
 \abstract{
-Language learning AI applications require generation of text that's appropriate for beginner learners, yet pretrained language models typically produce overly complex responses. This study investigates inference-time complexity control for Small Language Models (0.5B-3.8B parameters) targeting A1-level English learners through two interventions: contextual prompting and vocabulary probability weighting. A 2×2 factorial experiment evaluated four models (Qwen2, Qwen3, Phi3, TinyLlama) across 15 A1-level prompts (240 observations). Results demonstrate that contextual prompting achieved substantial complexity reductions of $8-67\%$ across all readability metrics (Flesch-Kincaid Grade, Gunning Fog, SMOG, Spache), with Phi3 and Qwen3 consistently meeting A1 targets (FK Grade $\leq$5.0). Standalone vocabulary weighting ($1.5\times$ boost) showed minimal impact. Interaction of effects of both interventions varied substantially by architecture against prompting alone, from negative (Qwen2: $+11\%$ FK) to positive (Qwen3: $-25\%$ FK). Qwen3 (0.6B) achieved optimal complexity while being 6.3× smaller than Phi3 (3.8B). Findings establish inference-time complexity control viability for educational deployments, prioritizing prompt engineering over probability manipulation.
+Small Language Models (SLMs) deployed in educational settings must generate text appropriate for beginner learners, yet they typically produce responses far exceeding A1-level proficiency. We investigate two lightweight, training-free inference-time interventions---contextual prompting and A1 vocabulary probability weighting---for controlling text complexity in SLMs (0.5B--3.8B parameters), targeting resource-constrained educational deployments where retraining is infeasible. A 2$\times$2 factorial experiment across four model architectures (Qwen2.5, Qwen3, Phi3, TinyLlama) and 15 A1-level prompts reveals that contextual prompting is the dominant mechanism, achieving 27--47\% complexity reductions across all readability metrics, while standalone vocabulary weighting shows minimal impact. Intervention effectiveness is highly architecture-dependent, with interaction effects ranging from negative (Qwen2.5) to strongly positive (Qwen3). Human evaluation of the top configurations exposes a practitioner trade-off: Qwen3 achieves highest simplicity but Phi3 scores higher on correctness and naturalness, highlighting the limits of automatic readability metrics for educational deployment decisions.
 \newline \Keywords{Small Language Models, Text Complexity Control, Readability Metrics, Educational NLP, Inference-Time Control} }
 
 \begin{document}
@@ -29,56 +34,47 @@ Language learning AI applications require generation of text that's appropriate 
 \section{Introduction}
 Language learning applications increasingly rely on AI assistants to provide personalized instruction and practice opportunities. However, a critical challenge emerges when deploying these systems for beginner learners: pretrained language models typically generate text that exceeds the linguistic proficiency of early-stage learners. Consider the following example from a small language model responding to an A1-level English learner:
 
-Prompt:\texttt{ "What does the word 'library' mean?"}
+Prompt:\texttt{ "What is a `friend'?"}
 
-Control (Qwen2-0.5B, no interventions):
+Control (Phi3-mini, no interventions):
 
-\texttt{""The word 'library' means a collection of books, magazines, and other printed materials organized and maintained by a library staff..."
-"}
+\texttt{"A friend is a person with whom one shares a bond of mutual affection, trust, and support. Friendships are often formed due to shared experiences, interests, or values, and they can provide emotional comfort, companionship, and a sense of belonging. Friends typically enjoy spending time together, engaging in activities, and offering each other advice or assistance when needed. Friendships can be formed at any stage in life and play a crucial role in personal and social development."}
 
-Interventions (Qwen2-0.5B, prompting + weighting):
-\texttt{"A library is a place where you can find lots of books to read. It's like a big house with many special rooms where people keep their toys and stories!"}
+Interventions (Phi3-mini, prompting + weighting):
 
-The uncontrolled response, while semantically accurate, uses vocabulary and sentence structures far beyond A1-level proficiency.
+\texttt{"A friend is a person who you like and enjoy spending time with. Friends play with you, talk to you, and help you when you need it. You can have many friends, and they can be people who live close to you or people who you know from school or a club. Friends make you feel happy and safe."}
+
+The uncontrolled response, while semantically accurate, uses vocabulary and sentence structures far beyond A1-level proficiency (Flesch-Kincaid Grade 12.0, 29 difficult words).
+The combined intervention reduces this to Grade 2.8 with only 1 difficult word, while preserving the factual content of the answer.
 The complexity mismatch limits the pedagogical value of AI-assisted language learning, as learners cannot understand the responses intended to help them.
 
-Existing approaches to controlling text complexity face significant limitations for educational deployments:
-Fine-tuning methods require substantial computational resources, labeled training data, and lock models into fixed complexity levels determined during training. Recent decoding-time control methods demonstrate promising results but require training auxiliary models (expert models, predictors, or discriminators) and focus predominantly on large language models requiring cloud infrastructure. Critically, no prior work addresses real-time complexity control for small language models through lightweight, training-free mechanisms suitable for resource-constrained educational contexts.
-
-% \subsection{Research Context}
-
-% This work is conducted within the larger research project \textbf{"Métodos de generación controlada para la construcción of agentes conversacionales de apoyo a la enseñanza"}(Controlled generation methods for building conversational agents to support teaching), funded by ANII (Agencia Nacional de Investigación e Innovación, Uruguay)
-
-% \subsubsection{Project Overview}
-
-% This work is in the context of a project that aims to develop a reliable and safe conversational agent prototype for educational purposes.
-% Achieving this goal requires addressing critical limitations of Large Language Models (LLMs)—particularly hallucinations, bias reproduction, and lack of source traceability.
-% LLMs demonstrate excellent linguistic correctness and pragmatic relevance, but their tendency to generate "invented" information poses significant risks in educational contexts where accuracy is paramount. 
-% The prototype employs multiple mitigation strategies: fine-tuning on educational data, rule-based constraints, and advanced prompting methods to ensure source reliability.
-
-% \subsubsection{Target Student Population}
+Existing approaches to controlling text complexity face significant limitations for educational deployments: All require substantial resources and lack flexibility
+% Fine-tuning methods require substantial computational resources, labeled training data, and lock models into fixed complexity levels determined during training. Recent decoding-time control methods demonstrate promising results but require training auxiliary models (expert models, predictors, or discriminators) and focus predominantly on large language models requiring cloud infrastructure. Critically, no prior work addresses inference-time complexity control for small language models through lightweight, training-free mechanisms suitable for resource-constrained educational contexts.
 
 This work is conducted within a larger project developing conversational agents for educational purposes, focusing on beginner English learners with minimal prior experience. The emphasis on Small Language Models \cite{fang2024survey} in the 0.5-3.8B parameter range, rather than large proprietary models emerges from deployment constraints: on-device inference eliminates cloud costs and enables offline functionality, critical for resource-constrained educational institutions with variable connectivity.
 
+We present a method that combines contextual prompting with probability weighting via vocabulary-aware logits processors, enabling inference-time complexity control without model retraining or auxiliary model training. The methodology applies soft constraints through probability boosting for target vocabulary tokens from the Cambridge A1 "Starters" curriculum (494 words), guiding models toward simpler alternatives while preserving generation flexibility.
 
-% \subsection{Research objectives}
-In this work, we present a method that combines contextual prompting with probability weighting via vocabulary-aware logits processors, enabling real-time complexity control without model retraining or auxiliary model training. The methodology applies soft constraints through probability boosting for target vocabulary tokens from the Cambridge A1 "Starters" curriculum (494 words), guiding models toward simpler alternatives while preserving generation flexibility.
+In the following section, the paper covers the related work reviewing existing approaches to complexity control. Then the methods section presents the experimental design. The results section reports aggregate performance across models and compares model specific results in prompting versus combined interventions. This discussion interprets our findings, synthesizing key contributions on intervention mechanisms and architectural heterogeneity in model controllability. The paper concludes by acknowledging limitations and presenting an ethics statement.
 
-In the following section, the paper covers the related work reviewing existing approaches to complexity control, including fine-tuning methods and decoding-time manipulation techniques, establishing the gap in inference-time control for small models. Then the methods section presents the 2×2 factorial experimental design, detailing the two interventions tested—contextual prompting and $1.5\times$ vocabulary weighting—across four models (Qwen2, Qwen3, Phi3, TinyLlama), evaluated using six complexity metrics. The results section reports aggregate performance across models and also compares model specific results in prompting versus combined interventions. This discussion interprets our findings, synthesizing key contributions on intervention mechanisms and architectural heterogeneity in model controllability. The paper concludes by acknowledging limitations and presenting an ethics statement.
 
 \section{Related Work}
 
-Controllable text generation is an important research area for educational applications, where content must be adapted to learners' proficiency levels. This work intersects two primary research streams: linguistic complexity control in language models and decoding-time probability manipulation. This work focuses on resource-constrained educational deployments.
+Controllable text generation is an important research area for educational applications, where content must be adapted to learners' proficiency levels. This work intersects two primary research streams: linguistic complexity control in language models and decoding-time probability manipulation. It focuses on resource-constrained educational deployments.
 
 \subsection{Linguistic Complexity Control}
 
-Recent work has explored methods for controlling linguistic complexity in language model outputs through training-time interventions. One approach is training data curation: \citet{eldan2023tinystories} demonstrated that language models trained on a synthetic data set restricted to vocabulary typically understood by 3-4 year-olds can produce grammatically correct narratives with controlled lexical complexity. However, this data-centric approach fixes complexity at training time, offering no mechanism for adjustment the complexity over time.
+Recent work has explored methods for controlling linguistic complexity in language model outputs through training-time interventions. One approach is training data curation: \citet{eldan2023tinystories} demonstrated that language models trained on a synthetic data set restricted to vocabulary typically understood by 3-4 year-olds can produce grammatically correct narratives with controlled lexical complexity. However, this data-centric approach fixes complexity at training time, offering no mechanism for adjusting the complexity over time.
 
 Beyond data curation, model-level complexity control methods have been developed. \citet{nguyen2024multi} introduced Multi-Control Tuning (MCTune), which fine-tunes LLaMA2-7B by embedding multiple linguistic complexity values directly into the instruction tuning process. By conditioning the model on target complexity specifications during training, MCTune achieves control over multiple complexity dimensions simultaneously while maintaining response quality and semantic coherence.
 
 \citet{nie2023lexical} introduced lexical complexity-controlled sentence generation specifically for language learning. Their approach embeds complexity representations directly into the model architecture and enforces constraints on sentence length and syntactic complexity during decoding.
 
-These training-time approaches present fundamental limitations. All three methods—data curation (TinyStories), fine-tuning (MCTune), and architecture-level control (Nie et al.)—require substantial computational resources, labeled training data, and lock the model into complexity levels observed during training. Critically, complexity targets must be specified during training rather than adapted dynamically based on individual learner proficiency.
+\citet{tran2024readctrl} introduced ReadCtrl, which instruction-tunes Mistral-7B on data augmented with target readability levels, enabling text generation at near-continuous complexity scores. Rather than fixed categorical levels, ReadCtrl conditions the model on numerical readability targets during training, achieving strong control across a broad range of complexity levels.
+
+\citet{malik2024tarzan} investigate controlling the language proficiency level of content generated by LLMs for language learners, evaluating GPT-4, LLaMA2-7B and Mistral-7B. They find a large performance gap between GPT-4 and smaller open-source models when using prompt-based strategies alone, and demonstrate that this gap can be closed through fine-tuning combined with reinforcement learning alignment.
+
+These training-time approaches present fundamental limitations. All five methods—data curation (TinyStories), fine-tuning (MCTune), architecture-level control (Nie et al.), instruction tuning (ReadCtrl), and fine-tuning with alignment (Malik et al.)—require substantial computational resources, labeled training data, and lock the model into complexity levels observed during training. Critically, complexity targets must be specified during training rather than adapted dynamically based on individual learner proficiency.
 
 \subsection{Decoding-Time Control through Probability Manipulation}
 
@@ -90,9 +86,9 @@ While these decoding-time methods demonstrate the effectiveness of probability m
 
 \subsection{Research Gap and Contributions}
 
-Existing approaches to controllable generation exhibit a fundamental trade-off: fine-tuning methods (MCTune) provide precise control but require substantial resources and lack the flexibility of inference-time controlling, while decoding-time methods (DExperts, FUDGE) enable inference-time control but require training auxiliary models (expert models or predictors) and target general attributes rather than linguistic complexity. Additionally, no prior work addresses inference-time complexity control for small language models (sub-4B parameters) through predefined vocabulary manipulation mechanisms suitable for resource-constrained deployments.
+Existing approaches to controllable generation exhibit a fundamental trade-off: training-time methods (MCTune, ReadCtrl, Malik et al.) provide precise control but require substantial computational resources and lock complexity targets at training time, while decoding-time methods (DExperts, FUDGE) enable inference-time control but require training auxiliary models and target general attributes rather than linguistic complexity. Additionally, no prior work addresses inference-time complexity control for small language models (sub-4B parameters) through predefined vocabulary manipulation mechanisms suitable for resource-constrained deployments.
 
-This work explores a novel approach that combines inference-time contextual prompting with probability weighting via vocabulary-aware logits processors, enabling real-time complexity control without model retraining or auxiliary model training. Unlike MCTune's fine-tuning paradigm, our methodology applies soft constraints through probability amplification for target vocabulary tokens from the A1 "Starters" curriculum. Unlike DExperts and FUDGE which learn probability models for attribute control, our approach employs direct vocabulary probability amplification using predefined A1 word lists, eliminating training overhead.
+This work explores a novel approach that combines inference-time contextual prompting with probability weighting via vocabulary-aware logits processors, enabling inference-time complexity control without model retraining or auxiliary model training. Unlike MCTune's fine-tuning paradigm, our methodology applies soft constraints through probability amplification for target vocabulary tokens from the A1 "Starters" curriculum, complementary to—rather than a replacement for—contextual prompting. Unlike DExperts and FUDGE which learn probability models for attribute control, our approach employs direct vocabulary probability amplification using predefined A1 word lists, eliminating training overhead.
 
 \section{Method}
 The experimental setup is presented next, describing the evaluated models and configurations as well as the proposed interventions.
@@ -100,12 +96,12 @@ The experimental setup is presented next, describing the evaluated models and co
 \subsection{Experimental design}
 A factorial experiment was conducted to systematically evaluate the effectiveness of two inference-time interventions for controlling text complexity in Small Language Models. The experimental design was the following:
 \begin{itemize}
-    \item \textbf{Models (4):} 
+    \item \textbf{Models (4):}
     \begin{itemize}
-        \item Phi-3-mini (3.8B parameters) 
-        \item Qwen2.5 (0.5B) 
-        \item Qwen3 (0.6B) 
-        \item  TinyLlama (1.1B)  
+        \item Phi-3-mini (3.8B parameters) \cite{abdin2024phi3}
+        \item Qwen2.5 (0.5B) \cite{qwen2024qwen25}
+        \item Qwen3 (0.6B) \cite{qwen2025qwen3}
+        \item TinyLlama (1.1B) \cite{zhang2024tinyllama}
     \end{itemize}
     \item \textbf{System prompt:} 
     
@@ -140,11 +136,26 @@ All prompts were designed so the responses could potentially have a variability 
 
 \subsection{Intervention Methodologies}
 \subsubsection{Probability Weighting Intervention}
-The probability weighting intervention implements soft vocabulary constraints through real-time manipulation of token generation probabilities during the decoding process. The mechanism operates as follows:
+The probability weighting intervention implements soft vocabulary constraints through inference-time manipulation of token generation probabilities during the decoding process. The mechanism operates as follows:
 
 \textbf{Vocabulary Selection}: A target vocabulary was compiled from the Cambridge English A1 "Starters word list", comprising 494 word entries including basic words (e.g., "happy", "dog", "school"). This vocabulary represents the expected lexical knowledge of A1-level English learners. Special tokens, like end tokens (\texttt{<|im\_end|>,<|endoftext|>}), were included in the list to avoid long answers due to this weighting.
 
-\textbf{Token-Level Weighting}: Each word in the vocabulary is tokenized using the model's tokenizer, producing one or more subword tokens depending on the model's vocabulary. The weighting intervention operates at the token level: bias values are applied to the token IDs resulting from this tokenization process, not to whole words directly. For example, the word "afternoon" may tokenize to ["after", "noon"], and both resulting token IDs receive the weight bias.
+\textbf{Token-Level Weighting}: Each word in the vocabulary is tokenized using the model's tokenizer, producing one or more subword tokens depending on the model's vocabulary. The weighting intervention operates at the token level: bias values are applied to the token IDs resulting from this tokenization process, not to whole words directly. For example, the word "afternoon" may tokenize to ["after", "noon"], and both resulting token IDs receive the weight bias. Crucially, the boost is applied at \emph{every} decoding step: when a multi-token word spans several steps, each constituent sub-token independently receives the additive bias. Algorithm~\ref{alg:weighting} summarises the per-step procedure. Adding $\log(\alpha)$ in log-space is equivalent to multiplying the token's probability by $\alpha$ before renormalisation, which is the standard soft-constraint logits-processor pattern.
+
+\begin{algorithm}[h]
+\caption{Vocabulary Probability Weighting (per decoding step)}
+\label{alg:weighting}
+\begin{algorithmic}[1]
+\Require $\text{logits} \in \mathbb{R}^{|V|}$ \ (raw token scores at each decoding step)
+\Require $V_{A1}$ \ (set of token IDs from A1 vocabulary); $\alpha = 1.5$ \ (boost factor)
+\For{each decoding step}
+    \For{$\text{token\_id} \in V_{A1}$}
+        \State $\text{logits}[\text{token\_id}] \mathrel{+}= \log(\alpha)$ \hfill $\triangleright$ multiply probability by $\alpha$ before renorm.
+    \EndFor
+    \State $\text{next\_token} \gets \text{sample}\!\left(\text{softmax}(\text{logits})\right)$
+\EndFor
+\end{algorithmic}
+\end{algorithm}
 
 
 \subsubsection{Basic weight exploration}
@@ -173,7 +184,7 @@ The context prompt establishes explicit simplification constraints: audience spe
 
 
 \subsection{Metrics}
-Two types of metrics were selected for complexity evaluation: primary metrics with formulas that evaluate and secondary count metrics that add insights on the generation as reference.
+Two types of metrics were selected for complexity evaluation: primary metrics that evaluate complexity and secondary count metrics that add insights on the generation as reference.
 \subsubsection{Primary Readability Metrics}
 Text complexity was evaluated using four established readability formulas, selected to provide comprehensive coverage of different complexity dimensions while minimizing metric redundancy. Every presented metric is ascending in complexity; in the context of this work, the aim is getting low values:
 
@@ -242,18 +253,28 @@ Two supplementary metrics provide additional information on response characteris
 % \caption{\label{tab:a1-targets} Target ranges for A1 English learner text generation. Primary metrics assess readability complexity; secondary statistics measure response characteristics.}
 % \end{table}
 
-\subsubsection{Computational enviroment}
+\subsubsection{Human Evaluation}
+To complement automatic readability metrics, a human evaluation was conducted on the subset of configurations that achieved the best automatic complexity scores. The evaluation covered the top four configurations by a composite normalized metric: \textit{Phi3-prompted}, \textit{Phi3-weighted+prompted}, \textit{Qwen3-prompted}, and \textit{Qwen3-weighted+prompted} (60 responses total, 15 per configuration). Three annotators rated each response on a 1--5 scale across three dimensions:
+\begin{itemize}
+    \item \textbf{Correctness}: factual accuracy and completeness of the response
+    \item \textbf{Simplicity}: appropriateness of vocabulary and sentence structure for young A1 learners
+    \item \textbf{Naturalness}: fluency and coherence of the generated text
+\end{itemize}
+The identity of the model was anonymized and the rows were randomized to prevent bias from the evaluation.
+
+\subsubsection{Computational environment}
 All experiments were conducted on a single machine with the following setup:
 
 \begin{itemize}
     \item \textbf{Hardware}: MacBook Pro M2 (2022), 8-core CPU, 8GB unified memory
     \item \textbf{Software}: llama-cpp-python ($\geq$0.2.0) for GGUF model inference, Python 3.12
     \item \textbf{Readability Computation}: textstat ($\geq$0.7.3) for standard readability metrics
-    \item \textbf{Acceleration}: Metal Performance Shaders (MPS) backend enabled for Phi3 (full GPU offload); Qwen2, Qwen3, and TinyLlama ran on CPU
+    \item \textbf{Generation parameters}: All models used identical decoding settings: temperature 0.7, top-$k$ 50, top-$p$ 0.95, maximum output length 200 tokens. No repetition penalty was applied.
+    \item \textbf{Acceleration}: Metal Performance Shaders (MPS) backend enabled for Phi3 (full GPU offload); Qwen2.5, Qwen3, and TinyLlama ran on CPU
 \end{itemize}
 
 \section{Results}
-The results show a clear heterogeneity over the different models, an aggregate performance analysis is used to observe the clear impact of prompt base interventions. To study the effects of weighting added to the prompting intervention, a model specific case study shows this clear variety of results depending on the model
+The results show a clear heterogeneity over the different models, an aggregate performance analysis is used to observe the clear impact of prompt-based interventions. To study the effects of weighting added to the prompting intervention, a model specific case study shows this clear variety of results depending on the model
 
 \subsection{Aggregate Performance Across Models}
 
@@ -267,11 +288,11 @@ Tables~\ref{tab:table1a} and~\ref{tab:table1b} present the median performance me
 \hline
 Control   & 9.13  & 10.98 & 11.55 & 5.08 \\
 Weighting & 9.47  & 11.33 & 11.21 & 5.31 \\
-Prompting & 4.84* & 6.09  & 8.16  & 3.29 \\
-Both      & 4.93* & 6.72  & 8.68  & 3.54 \\
+Prompting & 4.84* & 6.09  & 8.16  & 3.29* \\
+Both      & 4.93* & 6.72  & 8.68  & 3.54* \\
 \hline
 \end{tabular}
-\caption{Primary Readability Metrics by Configuration (All Models Combined, n=60). *Meets A1 target (FK $\leq$ 5.0)}
+\caption{Primary Readability Metrics by Configuration (All Models Combined, n=60). *Meets A1 target (FK $\leq$ 5.0; Spache $\leq$ 4.0)}
 \label{tab:table1a}
 \end{center}
 \end{table}
@@ -322,7 +343,7 @@ Phi3      & FK          & 3.41 & -0.83 & -19.6  \\
           & Words       & 66.0 & 0.0  & 0.0  \\
           & Difficult & 3.0  & 0.0  & 0.0  \\
 \hline
-Qwen2     & FK          & 6.34  & +0.62 & +10.8 \\
+Qwen2.5   & FK          & 6.34  & +0.62 & +10.8 \\
           & GF          & 8.11 & +0.78 & +10.6 \\
           & SMOG        & 8.84  & 0.0 & 0.0  \\
           & Spa.        & 4.02  & +0.20 & +5.2 \\
@@ -354,7 +375,7 @@ TinyLlama & FK          & 5.98  & -1.20 & -16.7 \\
 
 \textbf{Phi3 (3.8B)} demonstrated positive complementary effects between interventions, with the combined intervention achieving a $20\%$ FK reduction beyond prompting alone. The intervention maintained identical word count and difficult word count to prompting alone, indicating efficient complexity reduction without compensatory verbosity or vocabulary substitution effects.
 
-\textbf{Qwen2 (0.5B)} exhibited a negative interaction, with the combined intervention underperforming prompting alone across primary readability metrics. This represents an $11\%$ increase in FK complexity when adding vocabulary weighting to prompting. The intervention triggered modest compensatory verbosity ($5\%$ word count increase) with no change in difficult word count. This pattern suggests fundamental architectural incompatibility between vocabulary constraints and instruction-following in this model.
+\textbf{Qwen2.5 (0.5B)} exhibited a negative interaction, with the combined intervention underperforming prompting alone across primary readability metrics. This represents an $11\%$ increase in FK complexity when adding vocabulary weighting to prompting. The intervention triggered modest compensatory verbosity ($5\%$ word count increase) with no change in difficult word count. This pattern suggests fundamental architectural incompatibility between vocabulary constraints and instruction-following in this model.
 
 \textbf{Qwen3 (0.6B)} demonstrated strong positive interaction across most metrics, achieving the lowest absolute complexity of any configuration tested (FK: 2.80). The combined intervention achieved a $25\%$ FK reduction beyond prompting alone while dramatically reducing word count by $32\%$, indicating efficient simplification without compensatory verbosity. This model's unique responsiveness to standalone vocabulary weighting (the only model achieving A1 targets with weighting alone) suggests that its training data or architectural design predisposes it to benefit from lexical constraints.
 
@@ -366,13 +387,59 @@ Across all models, the combined intervention produced $5\%$ fewer words than pro
 
  \begin{itemize}
      \item \textbf{Beneficial} (Qwen3, Phi3, TinyLlama): Vocabulary constraints yield net complexity reduction, with Qwen3 achieving dramatic word count reduction ($32\%$), Phi3 showing efficient complexity reduction without verbosity changes, and TinyLlama reducing FK complexity despite severe verbosity ($68\%$ increase)
-     \item \textbf{Detrimental} (Qwen2): Compensatory verbosity triggers output instability and complexity increases across primary metrics
+     \item \textbf{Detrimental} (Qwen2.5): Compensatory verbosity triggers output instability and complexity increases across primary metrics
  \end{itemize}
 
 These findings indicate that intervention effectiveness is highly model-dependent, with Qwen3 representing the configuration where vocabulary weighting provides the strongest benefits across all readability measures while dramatically reducing verbosity.
 
+\subsection{Human Evaluation Results}
+
+Table~\ref{tab:human-eval} presents average human ratings across the four best-performing configurations. Phi3 consistently outperformed Qwen3 on Correctness and Naturalness, while Qwen3 achieved higher Simplicity scores, aligning with its lower automatic readability values.
+
+\begin{table}[!ht]
+\begin{center}
+\begin{tabular}{lccc}
+\hline
+\textbf{Config.} & \textbf{Correct.} & \textbf{Simple.} & \textbf{Natural.} \\
+\hline
+Phi3-P           & 4.18 & 3.18 & 4.16 \\
+Phi3-W+P  & \textbf{4.40} & 3.38 & \textbf{4.45} \\
+Qwen3-P          & 3.36 & 3.55 & 3.60 \\
+Qwen3-W+P & 3.40 & \textbf{3.78} & 3.47 \\
+\hline
+\end{tabular}
+\caption{Human Evaluation Results (1--5 scale, n=15 per configuration). Bold indicates best score per dimension. W: Weighted P: Prompted}
+\label{tab:human-eval}
+\end{center}
+\end{table}
+
+The results reveal a trade-off not captured by automatic metrics: Qwen3's higher simplicity comes at the cost of correctness and naturalness. Qualitative inspection identified two failure modes unique to Qwen3: (1) visible \texttt{<think>} reasoning tokens in several responses, indicating incomplete output filtering; and (2) semantically circular responses (e.g., defining ``big'' as ``large in size, but not necessarily so big''), which score well on readability formulas but poorly on human correctness judgement. Phi3's \textit{weighted+prompted} configuration achieved the best overall human evaluation profile, combining acceptable simplicity (3.38) with the highest correctness (4.40) and naturalness (4.45).
+
+\subsubsection{Automatic Metric Alignment with Human Simplicity}
+
+To assess whether automatic readability metrics reliably capture human simplicity perception, the configuration-level rankings were compared across metrics. The human simplicity ranking (Qwen3-W+P $>$ Qwen3-P $>$ Phi3-W+P $>$ Phi3-P) was compared against the orderings produced by each automatic metric. Flesch-Kincaid Grade achieved perfect rank agreement with human simplicity judgements across all four configurations. Gunning Fog closely matched human rankings, with only the two Phi3 configurations swapping positions (values of 5.69 vs.\ 5.60, a difference within natural variation). Spache Readability disagreed on the two Qwen3 configurations, ranking Qwen3-P as simpler than Qwen3-W+P, likely because Qwen3-W+P produces shorter but lexically denser responses that Spache penalizes more heavily. These results suggest that Flesch-Kincaid Grade and Gunning Fog Index are the most reliable proxies for perceived simplicity at the configuration level among the four readability metrics evaluated.
+
+At the response level ($n=60$), Spearman correlations between automatic readability metrics and human simplicity ratings are moderate at best (Table~\ref{tab:metric-correlation}). Gunning Fog and Spache Readability show the strongest individual-response alignment ($\rho = -0.53$ and $\rho = -0.51$, respectively), while Flesch-Kincaid Grade achieves only weak-to-moderate response-level alignment ($\rho = -0.40$) and SMOG near-zero correlation ($\rho = -0.15$). All correlations are negative because readability formulas increase with complexity while human simplicity ratings increase with simplicity. Gunning Fog is the most consistent metric across both levels of analysis, while Flesch-Kincaid Grade's perfect configuration-level rank agreement does not extend to individual response assessment ($\rho = -0.40$), suggesting it is better suited for comparative system evaluation than per-response quality estimation. SMOG shows weak agreement at both levels and should not be treated as a reliable proxy for perceived simplicity. No automatic metric achieves strong alignment with human simplicity ratings at the individual response level, underscoring that human evaluation remains necessary for deployment decisions.
+
+\begin{table}[!ht]
+\begin{center}
+\begin{tabular}{lc}
+\hline
+\textbf{Metric} & \textbf{Spearman $\rho$} \\
+\hline
+FK   & $-0.40$ \\
+GF   & $-0.53$ \\
+SMOG & $-0.15$ \\
+Spa. & $-0.51$ \\
+\hline
+\end{tabular}
+\caption{Spearman correlation between automatic readability metrics and human simplicity ratings at the response level ($n=60$). Negative values reflect that higher complexity scores correspond to lower human simplicity ratings.}
+\label{tab:metric-correlation}
+\end{center}
+\end{table}
+
 \section{Discussion}
-Two main points are visible regarding the impact of the control mechanisms used. The effects on primary metrics, and the unwanted effect of verbosity generated on the weighting scenario.
+Two main points are visible regarding the impact of the control mechanisms used: the effects on primary metrics, and the unwanted effect of verbosity generated on the weighting scenario. A third point concerns the reliability of automatic readability metrics as proxies for human-judged simplicity.
 
 \subsection{Implications of Intervention Mechanisms}
 
@@ -384,21 +451,48 @@ The dominance of contextual prompting over vocabulary weighting suggests that in
 
 The minimal aggregate benefit of combining interventions (5\% fewer words, no change in difficult words) indicates that prompting already captures most achievable simplification. This suggests that instruction-tuning creates strong semantic priors that are difficult to modulate through token-level probability adjustments alone. For practitioners, this implies that prompt engineering should be prioritized over decoding manipulation for complexity control tasks.
 
+Human evaluation of the top four configurations reinforces this finding while revealing a trade-off invisible to automatic metrics: Phi3-W+P achieves the best overall human evaluation profile (Correctness: 4.40, Naturalness: 4.45), while Qwen3-W+P achieves the highest Simplicity score (3.78) at the cost of substantially lower Correctness (3.40) and Naturalness (3.47). This dissociation indicates that while prompt engineering reliably drives simplification, the choice of model architecture determines whether simplification comes at the expense of pedagogical quality.
+
 \subsubsection{Architectural implications on Intervention Effectiveness}
 
-The substantial heterogeneity in interaction patterns—ranging from negative (Qwen2: $+11\%$ FK) to positive (Qwen3: $-25\%$ FK)—challenges the assumption of universal controllability mechanisms. Three architectural factors appear to determine intervention responsiveness:
+The substantial heterogeneity in interaction patterns—ranging from negative (Qwen2.5: $+11\%$ FK) to positive (Qwen3: $-25\%$ FK)—challenges the assumption of universal controllability mechanisms. Three architectural factors appear to determine intervention responsiveness:
 
 \textbf{1. Instruction-following capability.} Models with strong instruction-following (Phi3) show positive benefit from vocabulary weighting ($20\%$ FK reduction), while models with weak instruction-following (TinyLlama) exhibit positive interaction effects for FK but severe compensatory verbosity. This suggests that vocabulary constraints can enhance instruction-tuning when architecturally compatible, though may trigger compensatory mechanisms in weaker models.
 
-\textbf{2. Training data composition.} Qwen3's unique positive response to standalone vocabulary weighting ($9\%$ FK reduction) and efficient simplification without compensatory verbosity distinguishes it from other tested architectures. This pattern suggests that certain pre-training regimes may predispose models to benefit from lexical constraints.
+\textbf{2. Training data composition.} Qwen3's unique positive response to standalone vocabulary weighting ($9\%$ FK reduction) and low absolute readability scores distinguish it from other tested architectures. However, human evaluation reveals that Qwen3's strong automatic metric performance partially reflects two failure modes: visible \texttt{<think>} reasoning tokens appearing in several responses (indicating incomplete output filtering from its chain-of-thought pre-training), and semantically circular definitions (e.g., defining ``big'' as ``large in size, but not necessarily so big'') that score well on readability formulas but are pedagogically ineffective. This suggests that certain pre-training regimes may predispose models to benefit from lexical constraints while simultaneously introducing quality failure modes that automatic readability metrics cannot detect.
 
-\textbf{3. Architectural stability under constraints.} Qwen2's output instability and complexity increases under combined interventions suggest architectural limitations in handling conflicting generation constraints. This implies that not all small model architectures are suitable for multi-constraint generation tasks.
+\textbf{3. Architectural stability under constraints.} Qwen2.5's output instability and complexity increases under combined interventions suggest architectural limitations in handling conflicting generation constraints. This implies that not all small model architectures are suitable for multi-constraint generation tasks.
 
 \subsection{Compensatory Verbosity as a Design Constraint}
 
 The $7\%$ aggregate word count increase under standalone vocabulary weighting reveals a fundamental tension in constrained generation: when lexical choices are restricted without semantic guidance, models compensate through syntactic elaboration. This compensation represents a critical challenge for soft constraint satisfaction in language models.
 
-The observation that Qwen3 resisted compensatory verbosity while TinyLlama exhibited severe ($68\%$) word count increases suggests that this behavior is not universal but architecture-dependent. This has important implications for vocabulary-based intervention design: lexical constraints must be paired with explicit contextual guidance to prevent compensatory sentence lengthening. Standalone vocabulary manipulation is insufficient for complexity control in most architectures.
+The observation that Qwen3 resisted compensatory verbosity while TinyLlama exhibited severe ($68\%$) word count increases suggests that this behavior is not universal but architecture-dependent. This has important implications for vocabulary-based intervention design: lexical constraints must be paired with explicit contextual guidance to prevent compensatory sentence lengthening. Across the architectures tested, standalone vocabulary manipulation was insufficient to achieve A1-level complexity without explicit prompting, though the degree of insufficiency varied: Qwen3 showed meaningful FK reduction ($9\%$) with weighting alone, while the remaining models showed negligible or negative effects.
+
+Notably, Qwen3's resistance to compensatory verbosity does not guarantee pedagogical quality, as evidenced by its lower human correctness and naturalness scores relative to Phi3 despite achieving the shortest, lowest-complexity outputs.
+
+\subsection{Automatic Metric Reliability for Educational Deployment}
+
+The alignment analysis between automatic readability metrics and human simplicity judgements reveals important limitations for deployment decisions. At the configuration level, Flesch-Kincaid Grade achieves perfect rank agreement with human simplicity, and Gunning Fog closely matches human rankings. However, this agreement does not extend to individual response assessment.
+
+At the response level ($n=60$), Spearman correlations are moderate at best: Gunning Fog ($\rho=-0.53$) and Spache ($\rho=-0.51$) provide the strongest individual-response alignment, while Flesch-Kincaid achieves only weak-to-moderate agreement ($\rho=-0.40$) and SMOG shows near-zero correlation ($\rho=-0.15$). SMOG should therefore not be used as a proxy for perceived simplicity in educational contexts; Flesch-Kincaid Grade is better suited for comparative system evaluation than per-response quality estimation.
+
+A further limitation is illustrated by Qwen3's failure modes: circular definitions receive low readability scores (indicating apparent simplicity) while human annotators penalize them for correctness and naturalness. Readability formulas cannot detect semantic quality failures, reinforcing that human evaluation is necessary when selecting configurations for educational deployment.
+
+\section{Conclusion}
+
+This study demonstrates the viability of inference-time complexity control for Small Language Models in educational applications, with two key contributions:
+
+\textbf{1. Understanding of intervention mechanisms:} Contextual prompting operates through high-level semantic constraints that leverage instruction-tuning, while vocabulary weighting provides low-level probability manipulation that shows architecture-dependent effects. The minimal aggregate benefit of combining interventions (5\% fewer words, no change in difficult words) masks substantial model-level heterogeneity, indicating that these mechanisms synergize only in specific architectures.
+
+\textbf{2. Architectural heterogeneity:} Intervention responsiveness is not a universal property but depends critically on instruction-following capability, training data composition, and architectural stability under constraints. This challenges the assumption that complexity control techniques generalize uniformly across model families and necessitates architecture-specific validation.
+
+Human evaluation of the top configurations reveals a critical trade-off for practitioners: Qwen3 achieves the highest automatic simplicity scores and lowest readability grade levels, but human annotators consistently preferred Phi3 responses for correctness and naturalness. Qualitative inspection identified two failure modes unique to Qwen3---visible \texttt{<think>} reasoning tokens and semantically circular definitions---that score well on readability formulas but represent pedagogical failures. Phi3's \textit{weighted+prompted} configuration achieved the best overall human evaluation profile, combining acceptable simplicity (3.38) with the highest correctness (4.40) and naturalness (4.45), making it the recommended configuration for educational deployment despite not achieving the lowest automatic metric scores.
+
+This dissociation between automatic complexity scores and human-judged quality underscores that readability formulas alone are insufficient for educational deployment decisions. Among automatic metrics, Gunning Fog Index provides the most consistent alignment with human simplicity judgements across both configuration-level and individual response-level analysis, while SMOG should not be used as a proxy for perceived simplicity given its near-zero response-level correlation ($\rho=-0.15$) with human ratings.
+
+For deploying Small Language Models in resource-constrained educational contexts, the findings suggest: prioritizing prompt engineering over decoding manipulation; conducting architecture-specific validation with attention to compensatory verbosity and quality failure modes; supplementing automatic readability metrics with human evaluation to capture the simplicity--correctness trade-off; and preferring Gunning Fog over SMOG for automatic complexity monitoring.
+
 
 \section{Limitations and Future Directions}
 
@@ -406,7 +500,7 @@ Although the previous results show that inference-time complexity control is pos
 
 \textbf{Sample Size:} The current sample of 15 prompts per model provides preliminary evidence but further exploration is required. Future work should expand the prompt set to include diverse A1-level interaction types (conversation, error correction, cultural topics).
 
-\textbf{Semantic Correctness:} The evaluation framework measures text complexity exclusively, with no quantitative assessment of semantic correctness, factual accuracy, or response completeness. Simpler text may sacrifice important information or introduce factual errors. Future work must incorporate content quality metrics through human evaluation protocols or automated semantic coherence measures.
+\textbf{Semantic Correctness:} A human evaluation on the top four configurations partially addresses this limitation, revealing a trade-off between automatic simplicity scores and human-judged correctness. However, the evaluation is limited in scope (two models, 15 prompts each), and broader coverage across all models and prompt types remains future work. Automated semantic coherence measures (e.g., BERTScore against reference answers) could scale this assessment.
 
 \textbf{Vocabulary Optimization:} The target vocabulary was selected based on established educational standards but was not systematically optimized for the experimental task. Future work should explore the completeness of this list, evaluating whether the selected vocabulary contains sufficient words to generate complete and coherent sentences.
 
@@ -417,18 +511,6 @@ Although the previous results show that inference-time complexity control is pos
 \textbf{Weight Factor Optimization:} The 1.5× weight factor was selected based on preliminary exploration of three discrete values (1.5×, 2.0×, 4.0×). A more systematic optimization approach exploring the continuous weight factor space (e.g., 1.1-2.0×) with finer granularity could identify model-specific optimal values. Additionally, adaptive weight scheduling—varying the weight factor during generation based on context—remains unexplored and may provide superior control compared to static weight application. Future work should also investigate whether different weight factors interact differently with prompting interventions across models.
 
 \textbf{Multi-Turn Dialogue:} The experimental design evaluated single-turn question-answering scenarios. Educational applications frequently require multi-turn dialogue, where complexity control must maintain consistency across conversation history.
-
-\section{Conclusion}
-
-This study demonstrates the viability of inference-time complexity control for Small Language Models in educational applications, with two key contributions:
-
-\textbf{1. Understanding of intervention mechanisms:} Contextual prompting operates through high-level semantic constraints that leverage instruction-tuning, while vocabulary weighting provides low-level probability manipulation that shows architecture-dependent effects. The minimal aggregate benefit of combining interventions (5\% fewer words, no change in difficult words) masks substantial model-level heterogeneity, indicating that these mechanisms synergize only in specific architectures.
-
-\textbf{2. Architectural heterogeneity:} Intervention responsiveness is not a universal property but depends critically on instruction-following capability, training data composition, and architectural stability under constraints. This challenges the assumption that complexity control techniques generalize uniformly across model families and necessitates architecture-specific validation.
-
-For deploying Small Language Models in resource-constrained contexts, the findings suggest prioritizing prompt engineering over decoding manipulation and conducting architecture-specific validation before deployment with attention to compensatory verbosity.
-
-Future work should address the semantic correctness limitation through human evaluation and expand to multi-turn dialogue contexts to establish the broader applicability of these findings.
 
 \section{Ethics Statement}
 
@@ -444,8 +526,3 @@ This work addresses educational equity by enabling deployment of language learni
 \bibliographystyle{lrec2026-natbib}
 \bibliography{references}
 \end{document}
-
-%%% Local Variables:
-%%% mode: latex
-%%% TeX-master: t
-%%% End:
