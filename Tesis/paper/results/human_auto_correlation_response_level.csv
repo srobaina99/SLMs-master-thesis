@@ -1,0 +1,5 @@
+auto_metric,spearman_rho
+flesch_kincaid_grade,-0.3997
+gunning_fog,-0.5298
+smog_index,-0.1482
+spache_readability,-0.5076
