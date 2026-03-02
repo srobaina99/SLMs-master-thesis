@@ -13,11 +13,11 @@ import os
 
 # Add project root to path
 current_dir = os.path.dirname(os.path.abspath(__file__))
-project_root = os.path.dirname(os.path.dirname(current_dir))
+project_root = os.path.dirname(current_dir)
 sys.path.insert(0, project_root)
 
-from src.evaluation.experiment_framework.experiments.factorial_experiment import FactorialExperiment
-from src.evaluation.experiment_framework.experiments.experiment_configs import STANDARD_PROMPTS
+from src.framework.experiments.factorial_experiment import FactorialExperiment
+from src.framework.experiments.experiment_configs import STANDARD_PROMPTS
 from datetime import datetime
 
 
@@ -30,7 +30,7 @@ def main():
     
     # Create experiment runner
     experiment = FactorialExperiment(
-        results_dir="src/evaluation/experiment_framework/results"
+        results_dir="results"
     )
     
     # Run beam search experiment with first 5 prompts

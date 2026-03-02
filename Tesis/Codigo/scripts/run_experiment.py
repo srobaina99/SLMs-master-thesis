@@ -10,8 +10,8 @@ import os
 project_root = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 sys.path.append(project_root)
 
-from src.evaluation.experiment_framework.core.experiment_runner import ExperimentRunner, run_quick_factorial_test, run_single_model_test
-from src.evaluation.experiment_framework.experiments.experiment_configs import STANDARD_PROMPTS
+from src.framework.core.experiment_runner import ExperimentRunner, run_quick_factorial_test, run_single_model_test
+from src.framework.experiments.experiment_configs import STANDARD_PROMPTS
 
 def main():
     """
@@ -132,7 +132,7 @@ def main():
         results_file = runner.run_single_model_experiment(experiment, prompts, generate_plots=generate_plots)
     
     elif experiment == 'demo':
-        from src.evaluation.experiment_framework.demo_factorial_experiment import main as run_demo
+        from src.framework.demo_factorial_experiment import main as run_demo
         run_demo()
         return
     
