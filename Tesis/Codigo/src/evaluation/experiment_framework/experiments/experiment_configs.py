@@ -23,7 +23,7 @@ STANDARD_PROMPTS = [
     "What is the difference between 'big' and 'large'?",
     "Can you tell me about your favorite animal?",
     "What colors do you see in a rainbow?",
-    "Can you describe what happens in the morning?"
+    "Can you describe what happens in the morning?",
     "What does 'happy' mean?",
     "How do you say goodbye in English?",
     "What is the weather like today?",
