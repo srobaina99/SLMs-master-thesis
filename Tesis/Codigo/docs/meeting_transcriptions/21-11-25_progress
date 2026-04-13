@@ -1,0 +1,47 @@
+# Reunión tutores
+
+Fri, 21 Nov 25 · srobaina99@gmail.com
+
+### Estado del Proyecto
+
+- Experimentos con beam search completados
+  - Probado con 4 y 8 beams usando Qwen 3
+  - Dos métodos de selección: ratio de palabras (A1) vs probabilidad máxima (Max Pro)
+  - A1 ratio consistentemente superior - menos varianza, resultados más estables
+  - Baseline (prompting + peso) superado en consistencia pero no en mediana
+- Métricas utilizadas: 4 índices diferentes
+  - Gunning Fog y SQUASH tienen listas de palabras complejas (léxicos)
+  - Otros dos basados en características como sílabas y longitud
+  - Variabilidad notable entre métricas para evaluar métodos
+
+### Experimentos Pendientes
+
+- Pools de intervenciones planificados:
+  - Beam search con hiperparámetros
+  - Pesos + context prompting
+  - Solo prompting (zero shot, one shot, few shots)
+- Conjunto de datos test separado necesario
+  - Evitar sobreajuste a métricas actuales
+  - Preparar preguntas no vistas anteriormente
+- Cuarto pool propuesto: selección por métricas automáticas
+  - Elegir beam basado en mejor índice de legibilidad
+  - Riesgo de sobreajuste pero lógicamente coherente
+
+### Análisis y Validación
+
+- Evaluación humana planificada
+  - Blind test con docente de inglés
+  - Comparación de 4 candidatos finales ordenados por simplicidad
+  - Validar si métricas automáticas coinciden con criterio humano
+- Revisión de índices necesaria
+  - Clasificar métodos léxicos vs no léxicos
+  - Analizar por qué SMOG da resultados distintos
+  - Consultar tesis de estudiantes anteriores para referencias
+
+### Próximos Pasos
+
+- Reunión programada para principios febrero 2025
+- Escritura de tesis:
+  - Leer tesis del grupo como referencia
+  - Estructura similar al paper pero más extendida
+  - Estado del arte más completo requerido

@@ -1,0 +1,626 @@
+# Paper Assessment: "Inference-Time Complexity Control for SLMs" for READIxTSAR @ LREC 2026
+
+**Date:** 2026-02-23
+**Paper:** paper/simple-SLM-FINAL-SUBMISSION.tex
+**Workshop:** READIxTSAR — Joint Workshop on Readability and Text Simplification @ LREC 2026
+
+---
+
+## Workshop Understanding
+
+READIxTSAR is a merged event from READI and TSAR communities. Key topics:
+- Controllable text simplification and text generation of adapted contents
+- Measuring and evaluating readability and text complexity
+- LLMs for text simplification, text adaptation and readability
+- Evaluation of ATS systems
+- Educational devices and smart technologies for supporting reading and learning
+
+**Requirements:** 4-8 pages content (excluding references/acknowledgments/ethics/limitations), double-blind, LREC 2026 stylesheet.
+
+---
+
+## Scorecard
+
+| Dimension               | Score   | Verdict                      |
+|-------------------------|---------|------------------------------|
+| Topical Fit             | 9/10    | Excellent match              |
+| Methodological Rigor    | 4.5/10  | Significant weaknesses       |
+| Writing Quality         | 6.5/10  | Needs revision               |
+| Related Work Coverage   | 3/10    | Critically undercited        |
+| Novelty                 | 6/10    | Stronger once RCTG vs ATS framed correctly |
+| Significance            | 5/10    | Meaningful niche, modest execution |
+| Submission Compliance   | PASS    | Borderline on page count     |
+
+---
+
+## 1. Topical Fit (9/10) — Excellent
+
+The paper directly addresses 5 of 11 workshop topics: controllable text simplification,
+readability measurement, LLMs for text adaptation, evaluation of ATS systems, and educational
+technology. The focus on small, deployable models for resource-constrained educational settings
+is timely and would genuinely interest the READIxTSAR audience.
+
+The only minor concern: the paper generates simplified text rather than simplifying existing
+text, but the CFP explicitly includes "text generation of adapted contents" so this is in scope.
+
+---
+
+## 2. Methodological Rigor (4.5/10) — Major Concerns
+
+### Critical issues
+
+- **No inferential statistics anywhere.** All results are descriptive (medians, percentages)
+  with no confidence intervals, p-values, effect sizes, or statistical tests. With stochastic
+  decoding (temperature=0.7), observed differences may be within noise range.
+
+- **Single run per cell.** Each of the 240 observations is a single stochastic generation.
+  Without repeated runs, findings are unreproducible.
+
+- **No inter-annotator agreement** reported for the 3-annotator human evaluation. This is a
+  critical omission — non-negotiable for papers reporting human judgments.
+
+- **Response-level metric-human correlations are weak** (FK: -0.40, SMOG: -0.15) but omitted
+  from the paper. Only configuration-level rank agreement (n=4, statistically meaningless) is
+  reported, giving an overly optimistic picture of metric reliability.
+
+- **Length confound uncontrolled.** Shorter responses mechanically score lower on readability
+  formulas. The paper does not disentangle genuine simplification from brevity artifacts.
+
+### Moderate issues
+
+- All four readability metrics are highly correlated formula-based indices from the 1940s-70s;
+  no modern NLP-based complexity metrics used.
+- A1 vocabulary coverage rate is never measured despite being the direct target of the
+  weighting intervention.
+- Weight factor selected on the same 15-prompt set used for the main experiment (risk of
+  overfitting; should use a separate validation set).
+- The 15-prompt count in the paper conflicts with 16 prompts in experiment_configs.py.
+
+---
+
+## 3. Writing Quality (6.5/10) — Needs Polish
+
+### Strengths
+- Clear factorial design description
+- Effective motivating example in introduction
+- Well-structured tables
+
+### Key issues
+
+- **Abstract is too results-heavy.** Reads as compressed results section rather than
+  foregrounding contributions. Same issue flagged by prior LREC reviewers and not fixed.
+
+- **Terminology inconsistency:** "probability amplification" / "probability boosting" /
+  "probability weighting" / "weight boosting" all refer to the same mechanism throughout the
+  paper. Pick one term.
+
+- **Conclusion references "future human evaluation" as if it hasn't been done.** This appears
+  carried over from the prior submission without updating. The paper already has human eval.
+
+- **Space misallocation:** Readability metric formulas consume ~0.75 pages for well-known
+  formulas that could be condensed to brief descriptions with citations. Meanwhile, Discussion
+  and Conclusion are underdeveloped.
+
+- Grammatical issues throughout: contractions in formal writing ("that's"), comma splices,
+  sentence fragments (Discussion opening paragraph).
+
+- **Missing "Prompting Only" baseline column in Table 2.** This was explicitly requested by
+  a prior reviewer and still not added.
+
+- "real-time" is used to mean "at inference time" — flagged by prior reviewer as incorrect
+  usage, still present.
+
+- Large blocks of commented-out text in source (lines 52-61, 246-261) should be removed.
+
+---
+
+## 4. Related Work Coverage (3/10) — Critical Gap
+
+This is the paper's most urgent problem. The related work cites only 5 NLP papers and
+completely omits literature on readability-controlled text generation and the broader
+readability/simplification field that this workshop covers.
+
+Note on task framing: this paper does Readability-Controlled Text Generation (RCTG) —
+generating simple text from a prompt — not classical Automatic Text Simplification (ATS),
+which rewrites existing complex text. The citations below are tiered accordingly. See
+Section 7 for per-paper task analysis.
+
+Note: Nie et al. (2023), already cited in Section 2.1, IS an RCTG paper (keywords → sentence
+with hard CEFR-level vocab constraints, training-time). Its task differs from this paper
+(keywords-to-sentence vs. question-to-answer, hard vs. soft constraints), but it is not ATS.
+The assessment that the paper "cites zero RCTG papers" is therefore wrong — Nie et al. is
+one. However, it is narrow (structured keyword input) and training-time, so the gaps
+identified below remain valid.
+
+### Tier 1 — Critical: same task as this paper (RCTG), missing entirely
+
+- **Malik et al. (2024) — From Tarzan to Tolkien: Controlling Language Proficiency Level**
+  ACL Findings 2024. https://aclanthology.org/2024.findings-acl.926/
+  Generates new educational content at target CEFR levels (A1–C2) for language learners —
+  the same task formulation as this paper. Finds that sub-7B models struggle at A1. This
+  paper directly addresses that gap with inference-time interventions. Not citing it is the
+  most significant novelty-positioning gap in the current draft.
+
+- **ReadCtrl (Tran et al., 2024) — Readability-Controlled Instruction Learning**
+  arXiv:2406.09205. https://aclanthology.org/2025.in2writing-1.3/
+  Fine-tunes Mistral-7B to generate text at continuous readability levels via instruction
+  tuning. Same task as this paper, training-time approach. Provides the direct
+  training-time vs. inference-time contrast the paper needs to sharpen its contribution.
+
+### Tier 2 — Mandatory for venue credibility: ATS papers named in the workshop CFP
+
+These are ATS papers (rewriting existing text, not generating from scratch). They must
+be cited because reviewers at this workshop will expect them, but should be introduced
+with explicit acknowledgment of the task distinction.
+
+- **Kew et al. (2023) — BLESS: Benchmarking Large Language Models on Sentence Simplification**
+  EMNLP 2023. https://aclanthology.org/2023.emnlp-main.821/
+  Benchmarks 44 LLMs on sentence rewriting. Establishes that instruction-tuned LLMs respond
+  to simplification prompts without fine-tuning — the methodological premise this paper
+  builds on. *Explicitly named in the workshop CFP.*
+
+- **Farajidizaji et al. (2024) — Is It Possible to Modify Text to a Target Readability Level?**
+  LREC-COLING 2024. https://aclanthology.org/2024.lrec-main.815/
+  Zero-shot GPT-3.5/GPT-4 prompted to rewrite existing texts to numerical readability targets.
+  Methodological surface similarity is high (prompting for readability targets) but the task
+  is ATS. Their finding that "readability is bounded by source text complexity" contrasts
+  favorably with this paper's generation approach, which has no such bound.
+  *Explicitly named in the workshop CFP.*
+
+- **Cripwell et al. (2023) — Context-Aware Document Simplification**
+  ACL Findings 2023. https://aclanthology.org/2023.findings-acl.834/
+  Document-level ATS using discourse context. Weakest fit for this specific paper — the
+  "context" concept is different (discourse coherence vs. generation-guiding prompts). Cite
+  in one sentence alongside Kew et al. as ATS landscape background; do not frame as
+  closely related. *Explicitly named in the workshop CFP.*
+
+### Tier 3 — Important: ATS papers with findings directly applicable to this paper's results
+
+- **Barayan et al. (2025) — Analysing Zero-Shot Readability-Controlled Sentence Simplification**
+  COLING 2025. https://aclanthology.org/2025.coling-main.452/
+  ATS task, but two findings directly corroborate this paper: (1) LLMs struggle to rewrite
+  to A1 level, which contrasts with this paper showing A1 generation is more achievable;
+  (2) "formula-based metrics misrepresent perceived simplicity" — directly supports this
+  paper's human evaluation finding. Best cited in the human evaluation discussion section.
+
+- **Agrawal & Carpuat (2023) — Controlling Pre-trained LMs for Grade-Specific Simplification**
+  EMNLP 2023. https://aclanthology.org/2023.emnlp-main.790/
+  Fine-tuned model for grade-level ATS. Belongs alongside MCTune in the existing
+  training-time methods subsection as another grade-specific training-time approach.
+
+### Missing model citations (mandatory for reproducibility)
+
+- **TinyLlama** — Zhang et al. (2024). arXiv:2401.02385
+- **Phi-3-mini** — Abdin et al. (2024). arXiv:2404.14219
+- **Qwen2.5** — Qwen Team (2024). arXiv:2412.15115
+- **Qwen3** — Qwen Team (2025). arXiv:2505.09388
+
+### Missing contextual references
+
+- TSAR 2025 Shared Task Findings — Readability-Controlled Text Simplification.
+  https://aclanthology.org/2025.tsar-1.8/
+  Community benchmark context; prompting-based approaches outperform fine-tuned systems,
+  consistent with this paper's findings.
+
+- arXiv:2511.05080 (Nov 2025) — Architectural heterogeneity in LLM readability control.
+  Directly parallels the paper's architectural heterogeneity discussion section.
+
+### Fundamental problem
+
+The paper cites one RCTG paper (Nie et al., 2023 — keywords-to-sentence generation with CEFR
+vocabulary constraints) but misses the two most relevant RCTG comparisons: Malik et al. (same
+open-ended generation task, language learners, CEFR levels, but large models) and ReadCtrl
+(same generation task, training-time approach). Without these, the paper cannot anchor its
+novelty claim against the closest prior work. Additionally, the three ATS papers named in the
+CFP (Kew, Farajidizaji, Cripwell) are absent, signalling unfamiliarity with the venue's
+community regardless of the task distinction.
+
+---
+
+## 5. Novelty & Significance
+
+**Novelty: 6/10** (revised from 4/10 once the task distinction is properly articulated)
+
+What is genuinely novel:
+- The 2×2 factorial separating prompting from decoding manipulation for RCTG (not ATS) is
+  not replicated elsewhere.
+- Malik et al. (2024) — the closest prior work on the same task — uses only prompting and
+  fine-tuning with large models, and finds sub-7B models fail at A1. This paper's logit
+  weighting intervention is novel in the generation setting and directly addresses that gap.
+- Demonstrating A1-level generation with 0.6B parameters (Qwen3) is a concrete,
+  reproducible result in a regime prior work found infeasible.
+- ReadCtrl achieves generation-level readability control only via fine-tuning (Mistral-7B);
+  this paper is the first to do so at inference time on sub-4B models.
+
+What is not novel (still applies):
+- Vocabulary-based logits boosting is a documented HuggingFace feature; similar soft-penalty
+  approaches have been applied to ATS (MDPI Symmetry 2025).
+- Prompting dominance over decoding manipulation is consistent with existing CTG literature
+  and TSAR 2025 shared task results.
+- Architectural heterogeneity in controllability was studied in arXiv:2511.05080 (Nov 2025)
+  for larger models — differentiation via the sub-4B focus is still needed.
+
+**Significance: 5/10**
+
+Strengths:
+- SLMs for educational text generation is genuinely underserved — most work uses large models.
+- Sub-1B and ~1B models for resource-constrained deployments is a relevant practical niche.
+- 2x2 factorial design is methodologically clean for a workshop paper.
+
+Weaknesses:
+- No SARI metric — but SARI measures quality of rewriting operations (add/keep/delete)
+  against reference simplifications, so it does not apply to this generation task. The
+  weakness is the absence of any generation-appropriate cross-study metric (e.g., BERTScore
+  against reference A1 answers, or A1 vocabulary coverage rate).
+- No external generation baselines — only compares against no-intervention control. A
+  zero-shot GPT-4 condition or a ReadCtrl-style fine-tuned model would provide meaningful
+  cross-system comparison.
+- "Educational application" framing is thin: no actual deployment, student interaction, or
+  pedagogical evaluation.
+
+---
+
+## 6. Submission Compliance
+
+| Requirement                          | Status      | Notes                                      |
+|--------------------------------------|-------------|-------------------------------------------|
+| `[review]` option enabled            | PASS        | Line 5; hides author names in PDF         |
+| Author names anonymized              | PASS        | Suppressed by review mode                 |
+| No self-identifying text             | PASS        | Generic project description only          |
+| No self-citations                    | PASS        | All citations are third-party             |
+| No non-anonymized repo links         | PASS        | None present                              |
+| 4-8 pages content                    | BORDERLINE  | ~8 pages estimated — compile to verify    |
+| LREC 2026 document class             | PASS        | article 10pt A4                           |
+| LREC 2026 stylesheet                 | PASS        | lrec2026.sty with review option           |
+| All required sections present        | PASS        | Intro, Related Work, Method, Results, etc.|
+| Limitations section                  | PASS        | 7 items, comprehensive                    |
+| Ethics statement                     | PASS        | 3 considerations                          |
+| No appendices                        | PASS        | None present                              |
+| Bibliography style                   | PASS        | lrec2026-natbib                           |
+
+**Note:** Commented-out text in lines 52-53 contains project name andANII/Uruguay funding
+details. These don't appear in the PDF but should be removed from the .tex source before
+submission.
+
+---
+
+## Priority Action Items
+
+### Must-Do (likely needed for acceptance)
+
+1. **Restructure and expand Related Work** with a new subsection "Readability-Controlled
+   Text Generation" (distinct from ATS). Priority order:
+   - Add **Malik et al. (2024)** and **ReadCtrl** as Tier 1 (same task — RCTG). These anchor
+     the novelty claim and provide the training-time vs. inference-time contrast.
+   - Add **Kew et al. (2023)**, **Farajidizaji et al. (2024)**, and **Cripwell et al. (2023)**
+     as Tier 2 (ATS, CFP-named, cite with explicit task distinction).
+   - Add **Barayan et al. (2025)** in the human evaluation discussion for metric reliability.
+   - Add **Agrawal & Carpuat (2023)** to the existing training-time methods subsection.
+   See Section 7 for exact recommended framing and the full restructuring proposal.
+
+2. **Add model citations.** Cite TinyLlama, Phi-3, Qwen2.5, and Qwen3 technical reports.
+
+3. **Add statistical tests.** At minimum non-parametric tests (Wilcoxon signed-rank) for
+   key comparisons. Report confidence intervals and effect sizes.
+
+4. **Report inter-annotator agreement** for human evaluation (Krippendorff's alpha or ICC).
+
+5. **Include response-level metric-human correlations** alongside configuration-level analysis,
+   with appropriate caveats about the weak alignment (FK: -0.40, SMOG: -0.15).
+
+### Should-Do (substantially improves chances)
+
+6. ~~**Rewrite the abstract** to lead with contribution and significance, not a litany of
+   percentages. ~150 words max.~~ **DONE** (2026-02-23)
+
+7. **Standardize terminology** — pick one term for the vocabulary weighting mechanism and
+   use it consistently throughout.
+
+8. ~~**Fix the Conclusion** to reference the completed human evaluation and highlight the
+   simplicity-correctness trade-off as the key practitioner insight.~~ **DONE** (2026-02-23)
+
+9. **Condense readability metric formulas** (currently ~0.75 pages) to brief descriptions
+   with citations, freeing space for expanded Discussion.
+
+10. **Add the "Prompting Only" column to Table 2** for direct readability (per prior reviewer
+    request that was never addressed).
+
+### Nice-to-Have
+
+11. Add a generation-appropriate cross-study metric: BERTScore against reference A1 answers,
+    or A1 vocabulary coverage rate (% of response tokens on the A1 word list). SARI is not
+    applicable to this task (it measures rewriting operations against reference simplifications).
+12. Run multiple trials per cell (3-5 minimum) to characterize generation variance.
+13. Add at least one external simplification baseline (e.g., a zero-shot GPT-4 condition).
+14. Control for the length-readability confound by analyzing per-sentence complexity.
+15. Engage explicitly with arXiv:2511.05080 to differentiate the sub-4B SLM focus.
+
+---
+
+## 7. Deep Analysis: Applicability of Suggested References
+
+### The core task distinction
+
+Before analyzing each paper, it is essential to be precise about what this paper actually does,
+because most of the suggested related work does a fundamentally different thing.
+
+**This paper's task — Readability-Controlled Text Generation (RCTG):**
+- Input: A natural language question/prompt ("What does 'library' mean?")
+- Output: A newly generated response produced at A1 complexity level
+- No source text exists to preserve meaning from; meaning comes from the model's world knowledge
+- Correctness is a first-class concern (the model can hallucinate or be semantically circular)
+- Length reduction is a legitimate simplification strategy
+
+**Classic Automatic Text Simplification (ATS):**
+- Input: An existing complex sentence or document
+- Output: A simplified version of that specific text
+- Semantic fidelity to a source is the primary constraint
+- Standard metric: SARI (measures add/keep/delete operations against reference simplifications)
+- Hallucination is not a concern — the content is fixed
+
+These tasks share the same goal (lower readability scores) but differ structurally. The key
+consequence: SARI does not apply to this paper's task, readability improvement cannot be
+correlated with source-text difficulty, and content deletion is not a "failure mode" here.
+This distinction should be explicitly named in the paper's Related Work section — it is a
+genuine positioning contribution, not a gap to apologize for.
+
+---
+
+### Per-paper analysis
+
+---
+
+#### Kew et al. (2023) — BLESS
+**Task type:** ATS. They take benchmark sentences (ASSET, TurkCorpus, Newsela) and prompt
+44 LLMs (0-shot and few-shot) to simplify them, evaluating with SARI and readability metrics.
+
+**How it applies:**
+BLESS does not share this paper's task formulation. Its sentences already exist; the model
+rewrites them. However, BLESS is highly relevant for two indirect reasons:
+1. It establishes that instruction-tuned LLMs respond to simplification prompts without
+   fine-tuning, which is the methodological premise this paper builds on.
+2. It is the canonical LLM simplification benchmark and the paper reviewers will use to
+   contextualize this work.
+
+**Recommended framing in Related Work:**
+Cite as background showing LLM prompting is effective for readability adaptation, and
+explicitly distinguish: "Unlike BLESS, which studies LLM-based rewriting of existing texts,
+this work addresses generating simple text from scratch — a structurally distinct task where
+source-fidelity constraints do not apply."
+
+**Relevance tier: Mandatory for venue credibility, cite with explicit task distinction.**
+
+---
+
+#### Farajidizaji et al. (2024) — Is It Possible to Modify Text to a Target Readability Level?
+**Task type:** ATS variant. They use GPT-3.5 and GPT-4 (zero-shot) to rewrite existing texts
+toward specific numerical readability targets. The inputs are existing sentences from Wikipedia
+and news corpora.
+
+**How it applies:**
+This is the CFP-named paper most often confused with being directly comparable to this paper,
+and the one requiring the most careful handling. The methodological surface similarity is high
+(zero-shot prompting, target readability, formula-based evaluation), but the task is ATS.
+
+Two findings from Farajidizaji et al. are relevant despite the task difference:
+1. "Final readability correlates with source text readability" — for ATS this is a limitation;
+   for this paper it is irrelevant (no source text), which actually makes RCTG more tractable.
+   This contrast strengthens the motivation for generating simple text rather than simplifying
+   existing text.
+2. They use GPT-3.5/GPT-4, large proprietary models. This paper demonstrates the same
+   prompting mechanism works with sub-4B SLMs, which is a meaningful extension.
+
+**Recommended framing:**
+"Farajidizaji et al. (2024) examine whether prompting GPT-4 can shift existing texts to target
+readability levels, finding that simplification is bounded by source text complexity. We address
+the complementary generation setting — where no source text exists — and extend these findings
+to sub-4B models."
+
+**Relevance tier: High for CFP credibility, explicitly reframe as methodologically related
+but task-distinct.**
+
+---
+
+#### Cripwell et al. (2023) — Context-Aware Document Simplification
+**Task type:** ATS at document level. They simplify existing complex documents (WikiLarge)
+while preserving inter-sentence coherence using document-level context during decoding.
+
+**How it applies:**
+This is the weakest fit of the three CFP-named papers for this specific work. Their "context"
+is discourse context between sentences in a document being simplified; the paper's "context"
+is a system/user prompt conditioning generation style. These are different uses of the same
+word. The task (rewriting documents), the scale (document vs. single response), and the
+methodology (discourse coherence vs. logit manipulation) all differ.
+
+The honest assessment: this paper should cite Cripwell et al. only as background for the
+broader ATS-with-LLMs landscape. A forced discussion of it as "closely related" would read
+as padding to venue-naive reviewers.
+
+**Recommended framing:**
+A single mention in a broader ATS context sentence: "LLMs have been applied to sentence-level
+(Kew et al., 2023) and document-level simplification (Cripwell et al., 2023) through
+prompting, establishing the viability of inference-time readability adaptation."
+
+**Relevance tier: Cite briefly for venue credibility only. Do not frame as closely related.**
+
+---
+
+#### Barayan et al. (2025) — Zero-Shot Readability-Controlled Sentence Simplification
+**Task type:** ATS. They prompt Llama-2, GPT-3.5, and Claude to simplify ASSET/MultiSim
+sentences to specific CEFR levels (A1–C2) in a zero-shot setting.
+
+**How it applies:**
+Barayan et al. is important not for its task (ATS) but for two findings that directly parallel
+and corroborate this paper's human evaluation results:
+
+1. "All tested models struggle to simplify sentences especially to the lowest levels (A1/A2)"
+   — For ATS this is a failure. This paper finds that GENERATING A1 text (not rewriting to A1)
+   is more achievable, supporting the argument that the generation framing is better suited
+   to educational chatbots than rewriting.
+
+2. "Standard evaluation metrics often misinterpret simplification operations" — This directly
+   corroborates this paper's human evaluation section finding that automatic metrics diverge
+   from human judgment (simplicity scores vs. correctness/naturalness). Citing Barayan et al.
+   here would strengthen that section with external evidence.
+
+**Recommended framing:**
+Cite in the Related Work for metric reliability concerns: "Barayan et al. (2025) show that
+zero-shot LLMs struggle to rewrite text to A1 level, and that formula-based metrics
+misrepresent perceived simplicity — a concern our human evaluation corroborates in the
+generation setting."
+
+**Relevance tier: Cite for human evaluation and metric reliability discussion. Note task
+distinction when introduced.**
+
+---
+
+#### Agrawal & Carpuat (2023) — Grade-Specific Text Simplification
+**Task type:** ATS. They fine-tune a model on Wikipedia revision histories to simplify text
+to specific grade levels (3rd–12th), using edit operations and grade-level conditioning.
+
+**How it applies:**
+This is a training-time approach to grade-level ATS. It belongs in the same category as
+MCTune, TinyStories, and Nie et al. that the paper already discusses — training-time methods
+that require substantial resources and fix complexity at training time. Adding it to the
+existing training-time methods subsection would be natural and honest.
+
+The one differentiation worth noting: Agrawal & Carpuat work with grade-level targets (a
+continuous numerical scale), not CEFR levels, and they focus on rewriting. The paper targets
+CEFR A1 specifically via generation. This is a meaningful distinction to articulate.
+
+**Recommended framing:**
+Add alongside MCTune in the training-time section: "Agrawal & Carpuat (2023) extend
+grade-specific fine-tuning to multiple complexity levels through edit-operation conditioning,
+demonstrating precise control but requiring per-level training data."
+
+**Relevance tier: Relevant, add to existing training-time methods section.**
+
+---
+
+#### Malik et al. (2024) — From Tarzan to Tolkien
+**Task type:** GENERATION — the same as this paper. They generate new educational content
+(not rewrite existing text) at specified CEFR levels (A1–C2) for language learners, using
+GPT-4, GPT-3.5, and several fine-tuned open-source models.
+
+**How it applies:**
+This is the most directly comparable prior work to this paper. The task formulation is nearly
+identical: generate text for language learners at a specific CEFR level using prompting or
+fine-tuning. Two findings are directly relevant:
+
+1. "GPT-4 prompting achieves the best CEFR-level control" — consistent with this paper's
+   finding that contextual prompting is the dominant mechanism.
+2. "Smaller open-source models struggle at extreme levels (A1)" — this paper directly
+   contradicts and nuances this: with vocabulary-weighted logits and appropriate prompts,
+   sub-4B SLMs (Qwen3-0.6B, Phi3-3.8B) do achieve A1 targets. This is the most meaningful
+   novelty claim relative to prior work.
+
+Not citing Malik et al. is the most significant gap in the related work from a novelty
+positioning standpoint. The paper's contribution is much clearer when stated as: "Malik et al.
+show that SLMs struggle to generate A1 content through prompting alone; we demonstrate that
+targeted inference-time interventions (vocabulary logit weighting) can close this gap."
+
+**Recommended framing:**
+Add a dedicated subsection "Readability-Controlled Text Generation" (distinct from the ATS
+literature): "Malik et al. (2024) investigate CEFR-level content generation for language
+learners across model scales, finding that sub-7B models consistently underperform at extreme
+proficiency levels. Our work specifically targets this sub-4B regime and demonstrates that
+combined prompting and vocabulary weighting interventions enable A1-level generation in models
+as small as 0.6B parameters."
+
+**Relevance tier: Critical. The single most important missing citation for novelty positioning.**
+
+---
+
+#### ReadCtrl (Tran et al., 2024) — Readability-Controlled Instruction Learning
+**Task type:** GENERATION — the same as this paper. They fine-tune Mistral-7B (and other
+models) on instruction-following data augmented with target readability levels, enabling
+generation at near-continuous readability scores.
+
+**How it applies:**
+ReadCtrl is the only other training-time paper that addresses the same task as this paper
+(generation, not ATS). It belongs in a new "training-time approaches to readability-controlled
+generation" discussion alongside MCTune — which currently covers only ATS approaches.
+
+The key methodological contrast is direct: ReadCtrl achieves strong readability control via
+fine-tuning (requires training infrastructure, model retraining per domain), while this paper
+achieves comparable results at inference time (no training, works with any instruction-tuned
+model). ReadCtrl uses Mistral-7B (~7B parameters); this paper works with sub-4B models.
+
+This contrast sharpens the paper's contribution significantly: "ReadCtrl demonstrates that
+fine-tuned 7B models can achieve reliable readability control in generation; we investigate
+whether inference-time interventions can achieve comparable control in 6× smaller models
+without any model training."
+
+**Recommended framing:**
+Add to training-time methods section with explicit task-match note: "ReadCtrl (Tran et al.,
+2024) addresses the same generation task through instruction tuning, conditioning Mistral-7B
+on target readability scores during training. Unlike ReadCtrl's training-time approach, our
+method requires no model modification and operates entirely at inference time."
+
+**Relevance tier: Critical for training-time vs. inference-time framing of contributions.**
+
+---
+
+### Revised related work structure recommendation
+
+Given the task distinction analysis, the Related Work section should be restructured as:
+
+**2.1 Training-Time Complexity Control**
+- For ATS: TinyStories, MCTune, Agrawal & Carpuat (2023) [add]
+- For RCTG: Nie et al. [already present — narrow keywords-to-sentence task], ReadCtrl [add]
+- Shared limitation: complexity targets fixed at training time; no inference-time flexibility
+
+**2.2 Decoding-Time Control through Probability Manipulation**
+- DExperts, FUDGE [already present]
+- Limitation: require training auxiliary models; target general attributes, not readability
+
+**2.3 Readability-Controlled Text Generation with LLMs** [new subsection — key addition]
+- Malik et al. (2024) [add] — CEFR-level generation, large models, SLMs struggle at A1
+- ReadCtrl [now also fits here as a fine-tuned generation approach]
+- Farajidizaji et al. (2024) [add] — zero-shot prompting for readability targets (ATS variant)
+- Briefly note: BLESS (Kew et al., 2023), Barayan et al. (2025) as ATS-oriented work showing
+  LLM prompting is viable for readability adaptation but in the rewriting paradigm
+
+**2.4 Research Gap and Contributions** [already present, revise to explicitly contrast with 2.3]
+
+This restructuring:
+1. Acknowledges the text simplification literature without misrepresenting the task
+2. Creates a precise home for the paper in "readability-controlled generation" literature
+3. Makes Malik et al. the most important comparison point, sharpening novelty
+4. Correctly positions ReadCtrl as a training-time competitor for the same task
+5. Is honest about the task distinction with ATS work, which reviewers will respect
+
+---
+
+### Revised novelty assessment
+
+With the task distinction properly articulated, the paper's novelty score should be revised
+upward to ~6/10:
+
+- Prior work on CEFR-level generation (Malik et al.) uses large models and doesn't explore
+  inference-time decoding manipulation — the logit weighting contribution is genuinely novel
+  in this generation context.
+- ReadCtrl needs fine-tuning; this paper achieves comparable results inference-only — a
+  meaningful practical contribution for resource-constrained deployments.
+- The 2×2 factorial separating prompting from decoding manipulation for generation (not ATS)
+  is not replicated elsewhere.
+- The sub-4B SLM focus is genuinely underserved, and demonstrating A1 achievability with
+  0.6B parameters directly addresses Malik et al.'s finding that small models struggle.
+
+The paper's contribution, properly framed, is: "We demonstrate that inference-time
+interventions can unlock A1-level text generation from sub-4B SLMs, a regime where prior
+work (Malik et al.) found such control infeasible."
+
+---
+
+## Bottom Line
+
+The paper addresses a genuinely relevant topic for READIxTSAR and has a clean experimental
+design. However, the critically missing related work (especially papers named in the CFP),
+absence of statistical testing, and lack of engagement with the text simplification
+community's standard practices represent serious risks for acceptance. The most impactful
+improvements are items 1-5 above, which are achievable within a revision cycle.
+
+The strongest selling point for this venue is the sub-4B SLM focus for resource-constrained
+educational deployments — this angle should be emphasized more strongly in the rewrite, as
+it genuinely differentiates the work from larger-model text simplification research.

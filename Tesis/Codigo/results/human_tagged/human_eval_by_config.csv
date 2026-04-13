@@ -1,0 +1,5 @@
+config_name,n_responses,avg_correctitud,avg_simpleza,avg_naturalidad
+Phi3_prompted,15,4.177,3.179,4.155
+Phi3_weighted_prompted,15,4.399,3.377,4.445
+Qwen3_prompted,15,3.355,3.554,3.6
+Qwen3_weighted_prompted,15,3.4,3.778,3.467
