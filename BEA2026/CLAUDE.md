@@ -54,13 +54,21 @@ BEA2026/
 ├── CLAUDE.md                    # This file — onboarding and structure only
 ├── feature_experiments.py       # Main experiment runner (cached, incremental)
 ├── word_length_baseline.py      # Initial word-length-only baseline
+├── tune_xgb.py                  # XGBoost hyperparameter tuning
+├── ablation_es.py               # Feature ablation study (Spanish)
+├── test_es_features.py          # Feature testing (Spanish)
+├── test_de_features.py          # Feature testing (German)
 ├── finetune/                    # mDeBERTa fine-tuning pipeline (Colab-ready)
 │   ├── train.py                 # Training + prediction + ensemble script
+│   ├── train_final.py           # Final training script
 │   └── spec.md                  # Design spec for the fine-tuning approach
 ├── results/
-│   └── results_cache.csv        # Auto-generated experiment metrics (do not edit manually)
+│   ├── results_cache.csv        # Auto-generated experiment metrics (do not edit manually)
+│   ├── tune_xgb_es.csv          # XGBoost tuning results (Spanish)
+│   └── tune_xgb_de.csv          # XGBoost tuning results (German)
 ├── predictions/                 # Best model prediction CSVs by track/split/L1
-│   └── {track}/dev/{es,de}/
+│   ├── closed/{dev,test}/{es,de}/
+│   └── closed 2/               # Alternative submission predictions
 └── vocab-difficulty/            # Official shared task repo (British Council)
     ├── data/{train,dev}/{es,de,cn}/
     ├── models/                  # Fine-tuned baselines (download from HF)
@@ -69,6 +77,8 @@ BEA2026/
     ├── finetune.py / predict.py / evaluate.py / run_pipeline.py
     └── environment.yml
 ```
+
+> **Note:** Submission deadline was March 27, 2026. Results announced April 3, 2026. System description paper due April 24, 2026.
 
 ## Experiment Workflow
 

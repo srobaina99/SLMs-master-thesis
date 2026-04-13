@@ -1,6 +1,6 @@
 # Experiment Results Log
 
-**Current best:** `mdeberta_ensemble` (ES RMSE 1.120, **beats XLM-R baseline by 17.5%**)
+**Current best:** `mdeberta_embed_ensemble` (ES RMSE 1.103, **beats XLM-R baseline by 18.7%**)
 
 ## Baseline to beat
 
@@ -157,7 +157,7 @@ Syllable count was tested with linear regression and removed. It performed worse
 
 ## mDeBERTa fine-tuning (script: `finetune/train.py`)
 
-### #17 — mdeberta_ensemble (**current best, beats baseline**)
+### #17 — mdeberta_ensemble (ES only, without embed_cosine)
 **Model:** `microsoft/mdeberta-v3-base` fine-tuned for regression (`num_labels=1`)
 **Input format:** `wlen={N} | nedit={N} | pos={POS} | clue={N} | L1_word [SEP] L1_context [SEP] clue [SEP] en_word`
 **Training config:** lr=2e-5, cosine scheduler, 10% warmup, 10 epochs + early stopping (patience 3), batch=32, weight_decay=0.01, fp16, target scaling (zero-mean/unit-variance), max_length=256
@@ -171,6 +171,23 @@ Syllable count was tested with linear regression and removed. It performed worse
 | **mdeberta_ensemble** | **1.120** | **0.834** |
 
 **Notes:** Massive improvement over all feature-based models. Beats XLM-R closed baseline (1.357) by **17.5%** and the open baseline (1.206) by **7.1%**. Key differences vs baseline: (1) mDeBERTa instead of XLM-R, (2) feature-enriched input with computed features as text tokens, (3) target scaling, (4) cosine LR schedule, (5) 3-seed ensemble. Each individual seed already beats the baseline. Ensemble reduces variance and gains ~0.02 RMSE over best single seed.
+
+### #20 — mdeberta_embed_ensemble (**current best, beats baseline by 18.7%**)
+**Model:** `microsoft/mdeberta-v3-base` fine-tuned for regression (`num_labels=1`)
+**Input format:** `wlen={N} | nedit={N} | pos={POS} | clue={N} | esim={N} | L1_word [SEP] L1_context [SEP] clue [SEP] en_word`
+**New feature:** `esim` = cosine similarity between LaBSE embeddings of `en_target_word` and `L1_source_word`
+**Training config:** Same as #17
+**L1s:** ES (DE, CN pending)
+**Ensemble:** 3-seed average (seeds 10, 42, 123)
+
+| Experiment | ES RMSE | ES Pearson |
+|---|---|---|
+| mdeberta_seed10 | 1.178 | 0.789 |
+| mdeberta_seed42 | 1.137 | 0.821 |
+| mdeberta_seed123 | 1.172 | 0.826 |
+| **mdeberta_embed_ensemble** | **1.103** | **0.827** |
+
+**Notes:** Adding `esim` improved ES ensemble RMSE from 1.120 (#17) to **1.103** (1.5% improvement). Beats XLM-R closed baseline (1.357) by **18.7%** and the open baseline (1.206) by **8.5%**. DE and CN runs are pending — expect even larger gains for CN where the embedding feature had the most impact in XGBoost experiments.
 
 ## Key insights
 

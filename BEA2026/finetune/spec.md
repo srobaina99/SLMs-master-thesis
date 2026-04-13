@@ -13,10 +13,10 @@ Fine-tune `microsoft/mdeberta-v3-base` on feature-enriched text inputs for vocab
 Prepend computed features as text tokens before the standard baseline concatenation:
 
 ```
-wlen=4 | nedit=0.75 | pos=noun | clue=0.25 | lapso </s> El eclipse solar... </s> s___ </s> span
+wlen=4 | nedit=0.75 | pos=noun | clue=0.25 | esim=0.812 | lapso </s> El eclipse solar... </s> s___ </s> span
 ```
 
-### Features (all derived from provided data — no external resources)
+### Features
 
 | Feature | Source | Computation |
 |---------|--------|-------------|
@@ -24,6 +24,7 @@ wlen=4 | nedit=0.75 | pos=noun | clue=0.25 | lapso </s> El eclipse solar... </s>
 | `nedit` | `en_target_word`, `L1_source_word` | `levenshtein(en, l1) / max(len(en), len(l1), 1)` |
 | `pos` | `en_target_pos` | POS tag as text (e.g., `noun`) |
 | `clue` | `en_target_clue`, `en_target_word` | `non_underscore_chars / len(word)` |
+| `esim` | `en_target_word`, `L1_source_word` | Cosine similarity of LaBSE embeddings (cross-lingual semantic similarity) |
 
 ## Training Configuration
 
@@ -39,7 +40,7 @@ wlen=4 | nedit=0.75 | pos=noun | clue=0.25 | lapso </s> El eclipse solar... </s>
 | Weight decay | 0.01 |
 | Max sequence length | 256 (sufficient for these inputs) |
 | Seeds | 10, 42, 123 |
-| L1s | ES, DE |
+| L1s | ES, DE, CN |
 
 ## Ensemble
 
@@ -55,7 +56,7 @@ Simple averaging of 3-seed predictions per L1. No stacking or meta-learner.
 ## Output
 
 - Per-seed prediction CSVs (for analysis)
-- Averaged ensemble prediction CSVs in submission format: `predictions/closed/{dev,test}/{es,de}/mdeberta_ensemble_preds.csv`
+- Averaged ensemble prediction CSVs in submission format: `predictions/closed/{dev,test}/{es,de,cn}/mdeberta_ensemble_preds.csv`
 - Evaluation metrics printed to console
 
 ## Success Criteria
