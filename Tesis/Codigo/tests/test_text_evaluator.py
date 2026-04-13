@@ -49,11 +49,10 @@ class TestGetGradeLevelIndices:
         result = self.evaluator.get_grade_level_indices(SIMPLE_TEXT)
         assert isinstance(result, dict)
 
-    def test_returns_all_three_keys(self):
+    def test_returns_all_keys(self):
         result = self.evaluator.get_grade_level_indices(SIMPLE_TEXT)
         assert "flesch_kincaid_grade" in result
         assert "gunning_fog" in result
-        assert "smog_index" in result
 
     def test_values_are_floats(self):
         result = self.evaluator.get_grade_level_indices(SIMPLE_TEXT)
@@ -64,7 +63,6 @@ class TestGetGradeLevelIndices:
         result = self.evaluator.get_grade_level_indices("")
         assert result["flesch_kincaid_grade"] == 0.0
         assert result["gunning_fog"] == 0.0
-        assert result["smog_index"] == 0.0
 
     def test_whitespace_only_returns_zeros(self):
         result = self.evaluator.get_grade_level_indices("   \n\t  ")

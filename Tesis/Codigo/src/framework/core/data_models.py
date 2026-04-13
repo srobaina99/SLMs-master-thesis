@@ -76,12 +76,14 @@ class ExperimentResult:
     
     # Performance metrics
     response_time_seconds: float
-    
-    # PRIMARY TEXT COMPLEXITY METRICS (4 metrics, non-redundant)
-    # Grade Level Indices (3)
+
+    # Generation status
+    generation_successful: bool = True
+
+    # PRIMARY TEXT COMPLEXITY METRICS (3 metrics, non-redundant)
+    # Grade Level Indices (2)
     flesch_kincaid_grade: float = 0.0  # Sentence structure & syllabic complexity
     gunning_fog: float = 0.0  # Polysyllabic word emphasis
-    smog_index: float = 0.0  # Polysyllable density
     # Readability Scores (1)
     spache_readability: float = 0.0  # Primary-grade vocabulary (A1-focused)
     
@@ -107,14 +109,15 @@ class ExperimentResult:
     notes: Optional[str] = None
     
     @classmethod
-    def create_from_response(cls, 
+    def create_from_response(cls,
                            prompt: str,
                            response: str,
                            config: ExperimentConfig,
                            response_time: float,
                            text_metrics: Dict[str, Any],
                            experiment_name: str = "default",
-                           cleaned_response: str = "") -> 'ExperimentResult':
+                           cleaned_response: str = "",
+                           generation_successful: bool = True) -> 'ExperimentResult':
         """Create ExperimentResult from response data and metrics."""
         
         # Extract metrics safely with defaults
@@ -145,12 +148,12 @@ class ExperimentResult:
             enable_thinking=config.enable_thinking,
             temperature=config.temperature,
             response_time_seconds=response_time,
-            
+            generation_successful=generation_successful,
+
             # PRIMARY METRICS - Grade level indices
             flesch_kincaid_grade=grade_indices.get('flesch_kincaid_grade', 0.0),
             gunning_fog=grade_indices.get('gunning_fog', 0.0),
-            smog_index=grade_indices.get('smog_index', 0.0),
-            
+
             # PRIMARY METRICS - Readability scores
             spache_readability=readability_scores.get('spache_readability', 0.0),
             
@@ -169,6 +172,7 @@ class ExperimentResult:
                                  text_metrics: Dict[str, Any],
                                  experiment_name: str = "default",
                                  cleaned_response: str = "",
+                                 generation_successful: bool = True,
                                  beam_selection_method: str = "a1_ratio",
                                  beam_a1_ratio: float = 0.0,
                                  beam_a1_count: int = 0,
@@ -176,7 +180,7 @@ class ExperimentResult:
                                  beam_cumulative_logprob: float = 0.0,
                                  beam_width: int = 4) -> 'ExperimentResult':
         """Create ExperimentResult from beam search response data."""
-        
+
         # Create base result first
         result = cls.create_from_response(
             prompt=prompt,
@@ -185,7 +189,8 @@ class ExperimentResult:
             response_time=response_time,
             text_metrics=text_metrics,
             experiment_name=experiment_name,
-            cleaned_response=cleaned_response
+            cleaned_response=cleaned_response,
+            generation_successful=generation_successful
         )
         
         # Add beam-specific fields
@@ -266,10 +271,12 @@ class ExperimentDataManager:
         spec_columns = [
             # Experiment configuration
             'model', 'config_weighting', 'config_prompting', 'weight_factor', 'prompt_id',
+            # Generation status
+            'generation_successful',
             # Response data
             'answer', 'time_spent',
-            # PRIMARY METRICS: Grade Level Indices (3)
-            'flesch_kincaid_grade', 'gunning_fog', 'smog_index',
+            # PRIMARY METRICS: Grade Level Indices (2)
+            'flesch_kincaid_grade', 'gunning_fog',
             # PRIMARY METRICS: Readability Scores (1)
             'spache_readability',
             # SECONDARY STATISTICS (2)
@@ -295,7 +302,7 @@ class ExperimentDataManager:
         numeric_columns = [
             'response_time_seconds',
             # PRIMARY METRICS
-            'flesch_kincaid_grade', 'gunning_fog', 'smog_index', 'spache_readability',
+            'flesch_kincaid_grade', 'gunning_fog', 'spache_readability',
             # SECONDARY STATISTICS
             'word_count', 'difficult_words'
         ]

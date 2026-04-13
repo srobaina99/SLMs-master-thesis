@@ -15,23 +15,61 @@ from src.framework.core.data_models import ExperimentConfig
 
 
 # Standard prompts for English learning experiments
+# Grounded in CEFR 2001 §4.2 thematic areas (van Ek & Trim, Threshold Level 1990)
+# and CEFR 2020 Companion Volume A1 descriptors.
+# See: https://rm.coe.int/16802fc1bf (CEFR 2001)
+#      https://rm.coe.int/common-european-framework-of-reference-for-languages-learning-teaching/16809ea0d4 (CEFR 2020)
 STANDARD_PROMPTS = [
+    # 13. Language
     "What does the word 'library' mean?",
+    # 1. Personal identification (CEFR 2020 A1: "Can introduce him/herself")
     "How do I introduce myself in English?",
-    "What is a dog?",
+    # 10. Food and drink
     "Can you explain what 'breakfast' is?",
+    # 13. Language
     "What is the difference between 'big' and 'large'?",
-    "Can you tell me about your favorite animal?",
-    "What colors do you see in a rainbow?",
+    # 3. Daily life
     "Can you describe what happens in the morning?",
+    # 13. Language
     "What does 'happy' mean?",
+    # 1. Personal identification (CEFR 2020 A1 descriptor)
     "How do you say goodbye in English?",
+    # 14. Weather
     "What is the weather like today?",
+    # 6. Relations with other people
     "What is a 'friend'?",
+    # 8. Education (CEFR 2020 educational domain)
     "What do you do at school?",
+    # 13. Language
     "What is the difference between 'hot' and 'cold'?",
+    # 6. Relations with other people (CEFR 2020: "people he/she knows")
     "Can you describe your family?",
-    "What foods do you eat for lunch?"
+    # 10. Food and drink
+    "What foods do you eat for lunch?",
+    # 2. House and home, environment
+    "What rooms are in a house?",
+    # 2. House and home, environment (pets as part of domestic life)
+    "What animals can be pets?",
+    # 4. Free time, entertainment
+    "What do you do on the weekend?",
+    # 4. Free time, entertainment
+    "What can people do for fun?",
+    # 5. Travel
+    "How do people travel to school or work?",
+    # 7. Health and body care
+    "What do you do when you feel sick?",
+    # 9. Shopping
+    "How do I ask for something at a shop?",
+    # 11. Services
+    "What happens when you go to the doctor?",
+    # 12. Places
+    "What can you see in a town?",
+    # 3. Daily life
+    "What does a person do every day?",
+    # 1. Personal identification - occupation (CEFR 2020 occupational domain)
+    "What do people do at work?",
+    # 13. Language
+    "What is the difference between 'this' and 'that'?",
 ]
 
 # Model configurations for factorial experiment

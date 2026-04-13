@@ -161,10 +161,9 @@ def plot_all_metrics(csv_path: str, output_subdir: str = 'plots',
             # Performance metric
             'time_spent',
             
-            # PRIMARY METRICS: Grade Level Indices (3)
+            # PRIMARY METRICS: Grade Level Indices (2)
             'flesch_kincaid_grade',
             'gunning_fog',
-            'smog_index',
             
             # PRIMARY METRICS: Readability Scores (1)
             'spache_readability',
@@ -284,7 +283,6 @@ def plot_aggregate_across_models(results_base_dir: Path, output_subdir: str = 'p
         metrics = [
             'flesch_kincaid_grade',
             'gunning_fog',
-            'smog_index',
             'spache_readability',
             'word_count',
             'difficult_words'
@@ -306,7 +304,6 @@ def plot_aggregate_across_models(results_base_dir: Path, output_subdir: str = 'p
     metric_targets = {
         'flesch_kincaid_grade': 5.0,
         'gunning_fog': 6.0,
-        'smog_index': 7.0,
         'spache_readability': 4.0
     }
     

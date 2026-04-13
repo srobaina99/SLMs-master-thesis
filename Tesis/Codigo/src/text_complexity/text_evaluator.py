@@ -158,25 +158,27 @@ class TextEvaluator:
         Includes only non-redundant metrics selected for A1 learner assessment:
         - Flesch-Kincaid Grade Level: Sentence structure & syllabic complexity
         - Gunning Fog Index: Polysyllabic word emphasis
-        - SMOG Index: Polysyllable density, reliable for short texts
-        
+
+        Note: SMOG Index was removed because it requires 30+ sentences to produce
+        meaningful values. Typical experiment outputs are 1-3 sentences, causing
+        SMOG to return 0.0 for nearly all responses (both successful and failed),
+        making it useless for discriminating between conditions.
+
         Args:
             text (str): Text to analyze
-            
+
         Returns:
             Dict[str, float]: Dictionary containing primary grade level metrics
         """
         if not text or not text.strip():
             return {
                 'flesch_kincaid_grade': 0.0,
-                'gunning_fog': 0.0,
-                'smog_index': 0.0
+                'gunning_fog': 0.0
             }
-        
+
         return {
             'flesch_kincaid_grade': round(textstat.flesch_kincaid_grade(text), 2),
-            'gunning_fog': round(textstat.gunning_fog(text), 2),
-            'smog_index': round(textstat.smog_index(text), 2)
+            'gunning_fog': round(textstat.gunning_fog(text), 2)
         }
     
     def get_readability_scores(self, text: str) -> Dict[str, float]:
@@ -251,14 +253,13 @@ class TextEvaluator:
         """
         Perform comprehensive text evaluation with selected metrics for A1 learner assessment.
         
-        Returns 4 primary metrics + 2 secondary statistics, eliminating redundancy:
-        
-        Primary Metrics (4):
+        Returns 3 primary metrics + 2 secondary statistics, eliminating redundancy:
+
+        Primary Metrics (3):
         - Flesch-Kincaid Grade Level
         - Gunning Fog Index
-        - SMOG Index
         - Spache Readability
-        
+
         Secondary Statistics (2):
         - Word Count
         - Difficult Words Count
@@ -302,7 +303,6 @@ class TextEvaluator:
         grades = analysis['grade_level_indices']
         print(f"  • Flesch-Kincaid Grade Level: {grades['flesch_kincaid_grade']} (target: ≤5.0)")
         print(f"  • Gunning Fog Index: {grades['gunning_fog']} (target: ≤6.0)")
-        print(f"  • SMOG Index: {grades['smog_index']} (target: ≤7.0)")
         
         # Primary Metrics - Readability Scores
         print("\n📖 PRIMARY METRICS - READABILITY SCORES:")

@@ -159,7 +159,7 @@ class TestDataManagerRoundTrip:
         spec_columns = [
             "model", "config_weighting", "config_prompting", "weight_factor", "prompt_id",
             "answer", "time_spent",
-            "flesch_kincaid_grade", "gunning_fog", "smog_index",
+            "flesch_kincaid_grade", "gunning_fog",
             "spache_readability",
             "word_count", "difficult_words",
         ]

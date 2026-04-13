@@ -118,7 +118,6 @@ def canned_text_metrics():
         "grade_level_indices": {
             "flesch_kincaid_grade": 2.5,
             "gunning_fog": 3.1,
-            "smog_index": 1.0,
         },
         "readability_scores": {
             "spache_readability": 1.8,

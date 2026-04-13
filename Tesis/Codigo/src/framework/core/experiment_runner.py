@@ -97,7 +97,7 @@ class ExperimentRunner:
         Run factorial experiment for a single model only.
         
         Args:
-            model_name: Name of model to test ("Qwen2", "Qwen3", "TinyLlama", "Phi3", "SmolLM")
+            model_name: Name of model to test ("Qwen2", "Qwen3", "TinyLlama", "Phi3")
             prompts: List of prompts to test (uses STANDARD_PROMPTS if None)
             experiment_name: Name for experiment (auto-generated if None)
             generate_plots: Whether to automatically generate visualization plots
@@ -164,7 +164,7 @@ class ExperimentRunner:
         Returns:
             Dictionary mapping model names to their results file paths
         """
-        all_models = ['Qwen2', 'Qwen3', 'TinyLlama', 'Phi3', 'SmolLM']
+        all_models = ['Qwen2', 'Qwen3', 'TinyLlama', 'Phi3']
         
         # Use standard prompts if none provided
         if prompts is None:
@@ -216,18 +216,20 @@ class ExperimentRunner:
                                     prompts: Optional[List[str]] = None,
                                     weight_factors: List[float] = [1.5, 2.0, 4.0],
                                     experiment_name: str = "multi_weight_experiment",
-                                    generate_plots: bool = True) -> str:
+                                    generate_plots: bool = True,
+                                    model_filter: Optional[str] = None) -> str:
         """
         Run experiment testing multiple weight factors.
-        
+
         Tests different weighting strengths to understand the effect of weight_factor parameter.
-        
+
         Args:
             prompts: List of prompts to test (uses STANDARD_PROMPTS if None)
             weight_factors: List of weight factors to test (default: [1.5, 2.0, 4.0])
             experiment_name: Name for this experiment run
             generate_plots: Whether to automatically generate visualization plots
-            
+            model_filter: If provided, only run for this model (e.g. "Qwen3")
+
         Returns:
             Path to saved results file in specification format
         """
@@ -242,7 +244,7 @@ class ExperimentRunner:
             print(f"📝 Using {len(prompts)} custom prompts")
         
         # Run the multi-weight experiment
-        df = self.factorial_experiment.run_multi_weight_experiment(prompts, weight_factors, experiment_name)
+        df = self.factorial_experiment.run_multi_weight_experiment(prompts, weight_factors, experiment_name, model_filter=model_filter)
         
         # Save results
         files = self.factorial_experiment.save_results(experiment_name)

@@ -11,6 +11,7 @@ This provides a reusable foundation for all GGUF-based models, handling:
 All future llama.cpp models should extend this class.
 """
 
+import math
 import os
 import sys
 import time
@@ -102,6 +103,7 @@ class LlamaCppBaseWrapper(BaseModelWrapper):
                 n_ctx=self.n_ctx,
                 n_threads=self.n_threads,
                 n_gpu_layers=self.n_gpu_layers,
+                seed=42,
                 verbose=False
             )
             self.model_loaded = True
@@ -132,17 +134,18 @@ class LlamaCppBaseWrapper(BaseModelWrapper):
         return self.llm.tokenize(text.encode('utf-8'))
     
     @abstractmethod
-    def _format_prompt(self, user_input: str, system_prompt: str) -> str:
+    def _format_prompt(self, user_input: str, system_prompt: str, enable_thinking: bool = False) -> str:
         """
         Format prompt using model-specific template.
-        
+
         Args:
             user_input: User's message
             system_prompt: System instruction
-            
+            enable_thinking: Whether to enable thinking/reasoning mode (model-specific)
+
         Returns:
             Formatted prompt string
-            
+
         Example for ChatML (Qwen):
             <|im_start|>system
             {system_prompt}<|im_end|>
@@ -197,10 +200,10 @@ class LlamaCppBaseWrapper(BaseModelWrapper):
         logit_bias = {}
         for word in vocab:
             try:
-                # Tokenize the word
-                tokens = self.llm.tokenize(word.encode('utf-8'))
+                # Tokenize with space prefix to get mid-sentence token IDs
+                tokens = self.llm.tokenize((" " + word).encode('utf-8'), add_bos=False)
                 for token_id in tokens:
-                    logit_bias[token_id] = weight_factor
+                    logit_bias[token_id] = math.log(weight_factor)
             except Exception as e:
                 # Skip words that fail to tokenize
                 continue
@@ -236,7 +239,7 @@ class LlamaCppBaseWrapper(BaseModelWrapper):
                 final_prompt = self._add_simplification_context(prompt)
             
             # Format prompt with model-specific template
-            formatted_prompt = self._format_prompt(final_prompt, config.system_prompt)
+            formatted_prompt = self._format_prompt(final_prompt, config.system_prompt, config.enable_thinking)
             
             # Create logit_bias for probability weighting if enabled
             logit_bias = {}

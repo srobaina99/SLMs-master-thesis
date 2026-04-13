@@ -33,7 +33,6 @@ def plot_weights_comparison(df, output_dir):
     metrics = [
         ('flesch_kincaid_grade', 'Flesch-Kincaid Grade Level', 5.0),
         ('gunning_fog', 'Gunning Fog Index', 6.0),
-        ('smog_index', 'SMOG Index', 7.0),
         ('spache_readability', 'Spache Readability', 4.0),
         ('word_count', 'Word Count', 60),
         ('difficult_words', 'Difficult Words', None)

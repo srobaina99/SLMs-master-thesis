@@ -133,7 +133,6 @@ class TestExperimentResult:
         )
         assert result.flesch_kincaid_grade == 2.5
         assert result.gunning_fog == 3.1
-        assert result.smog_index == 1.0
         assert result.spache_readability == 1.8
         assert result.word_count == 22
         assert result.difficult_words == 1
@@ -194,7 +193,7 @@ class TestExperimentResult:
     def test_to_dict_contains_all_primary_metric_keys(self, sample_result):
         d = sample_result.to_dict()
         primary_keys = [
-            "flesch_kincaid_grade", "gunning_fog", "smog_index",
+            "flesch_kincaid_grade", "gunning_fog",
             "spache_readability", "word_count", "difficult_words",
         ]
         for key in primary_keys:
@@ -338,7 +337,7 @@ class TestExperimentDataManager:
         manager.add_result(sample_result)
         stats = manager.get_summary_stats()
         expected_metrics = [
-            "flesch_kincaid_grade", "gunning_fog", "smog_index",
+            "flesch_kincaid_grade", "gunning_fog",
             "spache_readability", "word_count",
         ]
         for metric in expected_metrics:

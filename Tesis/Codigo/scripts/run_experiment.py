@@ -50,6 +50,9 @@ def main():
                        help='Number of prompts to use (e.g., "5", "10", "all"). If not specified, will prompt interactively.')
     parser.add_argument('--weights', type=str, default='1.5,2.0,4.0',
                        help='Comma-separated weight factors for multi_weight experiment (default: "1.5,2.0,4.0")')
+    parser.add_argument('--model', type=str, default=None,
+                       choices=['Phi3', 'phi3', 'Qwen2', 'qwen2', 'Qwen3', 'qwen3', 'TinyLlama', 'tinyllama'],
+                       help='Restrict multi_weight experiment to a single model')
     
     args = parser.parse_args()
     
@@ -99,11 +102,13 @@ def main():
         num_prompts = get_prompts_count()
         prompts = STANDARD_PROMPTS[:num_prompts]
         
+        model_filter = normalize_model_name(args.model) if args.model else None
         runner = ExperimentRunner()
         results_file = runner.run_multi_weight_experiment(
-            prompts, 
+            prompts,
             weight_factors=weight_factors,
-            generate_plots=generate_plots
+            generate_plots=generate_plots,
+            model_filter=model_filter
         )
     
     elif experiment == 'all':

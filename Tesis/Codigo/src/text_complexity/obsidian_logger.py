@@ -115,7 +115,6 @@ class ObsidianExperimentLogger:
             content += "## 🎓 Grade Level Indices\n\n"
             content += f"- **Flesch-Kincaid Grade:** {grades['flesch_kincaid_grade']}\n"
             content += f"- **Gunning Fog Index:** {grades['gunning_fog']}\n"
-            content += f"- **SMOG Index:** {grades['smog_index']}\n"
             content += f"- **Automated Readability Index:** {grades['automated_readability_index']}\n"
             content += f"- **Coleman-Liau Index:** {grades['coleman_liau_index']}\n"
             content += f"- **Dale-Chall Score:** {grades['dale_chall_readability_score']}\n\n"

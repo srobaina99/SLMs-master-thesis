@@ -57,29 +57,27 @@ class Qwen3LlamaCppWrapper(LlamaCppBaseWrapper):
             timeout_seconds=300
         )
     
-    def _format_prompt(self, user_input: str, system_prompt: str) -> str:
+    def _format_prompt(self, user_input: str, system_prompt: str, enable_thinking: bool = False) -> str:
         """
         Format prompt using Qwen's ChatML template.
-        
-        ChatML format:
-        <|im_start|>system
-        {system_prompt}<|im_end|>
-        <|im_start|>user
-        {user_input}<|im_end|>
-        <|im_start|>assistant
-        
+
+        When enable_thinking is False, appends /nothink to the user message
+        to disable Qwen3's thinking mode. When True, appends /think.
+
         Args:
             user_input: User's message
             system_prompt: System instruction
-            
+            enable_thinking: Whether to enable Qwen3's thinking mode
+
         Returns:
             Formatted ChatML prompt
         """
+        thinking_tag = "/think" if enable_thinking else "/nothink"
         return (
             f"<|im_start|>system\n"
             f"{system_prompt}<|im_end|>\n"
             f"<|im_start|>user\n"
-            f"{user_input}<|im_end|>\n"
+            f"{user_input} {thinking_tag}<|im_end|>\n"
             f"<|im_start|>assistant\n"
         )
     
@@ -190,7 +188,7 @@ class Qwen3LlamaCppWrapper(LlamaCppBaseWrapper):
                 final_prompt = self._add_simplification_context(prompt)
             
             # Format prompt with model-specific template
-            formatted_prompt = self._format_prompt(final_prompt, config.system_prompt)
+            formatted_prompt = self._format_prompt(final_prompt, config.system_prompt, config.enable_thinking)
             
             # Initialize beam search generator
             beam_generator = BeamSearchGenerator(

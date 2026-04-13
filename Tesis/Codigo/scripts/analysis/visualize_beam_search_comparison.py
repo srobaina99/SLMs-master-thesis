@@ -6,12 +6,11 @@ Compares three conditions:
 2. Beam Search (A1 Ratio): Highest A1 word ratio selection
 3. Beam Search (Max Prob): Highest cumulative log probability selection
 
-Plots Flesch-Kincaid Grade, Gunning Fog, SMOG, and Spache metrics with A1 target thresholds.
+Plots Flesch-Kincaid Grade, Gunning Fog, and Spache metrics with A1 target thresholds.
 
 A1 Target Thresholds:
 - Flesch-Kincaid Grade: ≤5.0
 - Gunning Fog Index: ≤6.0
-- SMOG Index: ≤7.0
 - Spache Readability: ≤4.0
 """
 
@@ -97,12 +96,11 @@ def create_comparison_plots(df: pd.DataFrame, output_dir: str = None) -> None:
     metrics = {
         'flesch_kincaid_grade': ('Flesch-Kincaid Grade Level', 5.0),
         'gunning_fog': ('Gunning Fog Index', 6.0),
-        'smog_index': ('SMOG Index', 7.0),
         'spache_readability': ('Spache Readability', 4.0)
     }
-    
-    # Create 2x2 subplot figure
-    fig, axes = plt.subplots(2, 2, figsize=(14, 10))
+
+    # Create 1x3 subplot figure
+    fig, axes = plt.subplots(1, 3, figsize=(18, 6))
     fig.suptitle('Beam Search vs Baseline Comparison\n(Qwen3 Model, First 5 Prompts)', 
                  fontsize=16, fontweight='bold')
     
@@ -169,12 +167,11 @@ def print_summary_statistics(df: pd.DataFrame) -> None:
     print("SUMMARY STATISTICS BY METHOD")
     print("="*80)
     
-    metrics = ['flesch_kincaid_grade', 'gunning_fog', 'smog_index', 'spache_readability', 
+    metrics = ['flesch_kincaid_grade', 'gunning_fog', 'spache_readability',
                'word_count']
     metric_names = {
         'flesch_kincaid_grade': 'FK Grade',
         'gunning_fog': 'Gunning Fog',
-        'smog_index': 'SMOG',
         'spache_readability': 'Spache',
         'word_count': 'Words'
     }

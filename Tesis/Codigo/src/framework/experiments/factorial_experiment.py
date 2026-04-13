@@ -138,7 +138,7 @@ class FactorialExperiment:
                             text_metrics = model_wrapper.text_evaluator.evaluate_text_comprehensive(
                                 response_data['cleaned_response']
                             )
-                            
+
                             # Create experiment result
                             result = ExperimentResult.create_from_response(
                                 prompt=prompt,
@@ -147,21 +147,22 @@ class FactorialExperiment:
                                 response_time=response_data['time_spent'],
                                 text_metrics=text_metrics,
                                 experiment_name=config.experiment_name,
-                                cleaned_response=response_data['cleaned_response']
+                                cleaned_response=response_data['cleaned_response'],
+                                generation_successful=True
                             )
-                            
+
                             # Update progress bar with success
-                            pbar.set_postfix(model=model_name, 
-                                           status="✅", 
+                            pbar.set_postfix(model=model_name,
+                                           status="✅",
                                            time=f"{response_data['time_spent']:.1f}s")
-                            
+
                         else:
-                            # Create result for failed/timeout generation
+                            # Create result for failed/timeout generation with empty metrics
                             empty_metrics = self.text_evaluator.evaluate_text_comprehensive("")
-                            
+
                             # Use None for response if it was a timeout or failure
                             response_value = response_data['response'] if response_data['response'] is not None else None
-                            
+
                             result = ExperimentResult.create_from_response(
                                 prompt=prompt,
                                 response=response_value,
@@ -169,17 +170,18 @@ class FactorialExperiment:
                                 response_time=response_data['time_spent'],
                                 text_metrics=empty_metrics,
                                 experiment_name=config.experiment_name,
-                                cleaned_response=response_data['cleaned_response']
+                                cleaned_response=response_data['cleaned_response'],
+                                generation_successful=False
                             )
-                            
+
                             # Update progress bar with failure/timeout
                             if "timed out" in response_data['error_message'].lower():
-                                pbar.set_postfix(model=model_name, 
-                                               status="⏰", 
+                                pbar.set_postfix(model=model_name,
+                                               status="⏰",
                                                time=f"{response_data['time_spent']:.0f}s")
                             else:
-                                pbar.set_postfix(model=model_name, 
-                                               status="❌", 
+                                pbar.set_postfix(model=model_name,
+                                               status="❌",
                                                error="Failed")
                         
                         results.append(result)
@@ -268,7 +270,7 @@ class FactorialExperiment:
                         text_metrics = model_wrapper.text_evaluator.evaluate_text_comprehensive(
                             response_data['cleaned_response']
                         )
-                        
+
                         result = ExperimentResult.create_from_response(
                             prompt=prompt,
                             response=response_data['response'],
@@ -276,20 +278,21 @@ class FactorialExperiment:
                             response_time=response_data['time_spent'],
                             text_metrics=text_metrics,
                             experiment_name=config.experiment_name,
-                            cleaned_response=response_data['cleaned_response']
+                            cleaned_response=response_data['cleaned_response'],
+                            generation_successful=True
                         )
-                        
+
                         # Update progress bar with success
-                        pbar.set_postfix(config=config_short, 
-                                       status="✅", 
+                        pbar.set_postfix(config=config_short,
+                                       status="✅",
                                        time=f"{response_data['time_spent']:.1f}s")
-                        
+
                     else:
                         empty_metrics = self.text_evaluator.evaluate_text_comprehensive("")
-                        
+
                         # Use None for response if it was a timeout or failure
                         response_value = response_data['response'] if response_data['response'] is not None else None
-                        
+
                         result = ExperimentResult.create_from_response(
                             prompt=prompt,
                             response=response_value,
@@ -297,17 +300,18 @@ class FactorialExperiment:
                             response_time=response_data['time_spent'],
                             text_metrics=empty_metrics,
                             experiment_name=config.experiment_name,
-                            cleaned_response=response_data['cleaned_response']
+                            cleaned_response=response_data['cleaned_response'],
+                            generation_successful=False
                         )
-                        
+
                         # Update progress bar with failure/timeout
                         if "timed out" in response_data['error_message'].lower():
-                            pbar.set_postfix(config=config_short, 
-                                           status="⏰", 
+                            pbar.set_postfix(config=config_short,
+                                           status="⏰",
                                            time=f"{response_data['time_spent']:.0f}s")
                         else:
-                            pbar.set_postfix(config=config_short, 
-                                           status="❌", 
+                            pbar.set_postfix(config=config_short,
+                                           status="❌",
                                            error="Failed")
                     
                     results.append(result)
@@ -421,36 +425,46 @@ class FactorialExperiment:
     def run_multi_weight_experiment(self,
                                     prompts: Optional[List[str]] = None,
                                     weight_factors: List[float] = [1.5, 2.0, 4.0],
-                                    experiment_name: str = "multi_weight_experiment") -> pd.DataFrame:
+                                    experiment_name: str = "multi_weight_experiment",
+                                    model_filter: Optional[str] = None) -> pd.DataFrame:
         """
         Run experiment testing multiple weight factors.
-        
+
         Tests different weighting strengths to understand the effect of weight_factor parameter.
         For each model, tests:
         - Control (no interventions)
         - Prompting only
         - Weighting with each weight factor (alone and with prompting)
-        
+
         Args:
             prompts: List of prompts to test (uses STANDARD_PROMPTS if None)
             weight_factors: List of weight factors to test (default: [1.5, 2.0, 4.0])
             experiment_name: Name for this experiment run
-            
+            model_filter: If provided, only run for this model (e.g. "Qwen3")
+
         Returns:
             DataFrame with all results in specification format
         """
         if prompts is None:
             prompts = STANDARD_PROMPTS
-        
+
+        if model_filter is not None:
+            if model_filter not in self._model_classes:
+                raise ValueError(f"Model '{model_filter}' not available. Choose from: {list(self._model_classes.keys())}")
+            active_model_classes = {model_filter: self._model_classes[model_filter]}
+        else:
+            active_model_classes = self._model_classes
+
         configs = create_multi_weight_configs(weight_factors)
-        
+        configs = [c for c in configs if c.model_name in active_model_classes]
+
         # Calculate total experiments: models × len(weight_factors) × prompts
         configs_per_model = len(weight_factors)  # Only weighted configs
-        total_configs = len(self._model_classes) * configs_per_model
-        
+        total_configs = len(active_model_classes) * configs_per_model
+
         print(f"\n🚀 Starting multi-weight experiment: {experiment_name}")
         print(f"📝 Testing {len(prompts)} prompts")
-        print(f"🤖 Using {len(self._model_classes)} models")
+        print(f"🤖 Using {len(active_model_classes)} models")
         print(f"⚖️  Testing {len(weight_factors)} weight factors: {weight_factors}")
         print(f"⚙️  {configs_per_model} configurations per model (weighted only)")
         print(f"📊 Total experiments: {len(prompts)} × {total_configs} = {len(prompts) * total_configs}")
@@ -490,7 +504,7 @@ class FactorialExperiment:
                         text_metrics = model_wrapper.text_evaluator.evaluate_text_comprehensive(
                             response_data['cleaned_response']
                         )
-                        
+
                         # Create experiment result
                         result = ExperimentResult.create_from_response(
                             prompt=prompt,
@@ -499,21 +513,22 @@ class FactorialExperiment:
                             response_time=response_data['time_spent'],
                             text_metrics=text_metrics,
                             experiment_name=config.experiment_name,
-                            cleaned_response=response_data['cleaned_response']
+                            cleaned_response=response_data['cleaned_response'],
+                            generation_successful=True
                         )
-                        
+
                         # Update progress bar with success
-                        pbar.set_postfix(model=config.model_name, 
+                        pbar.set_postfix(model=config.model_name,
                                        weight=weight_info,
-                                       status="✅", 
+                                       status="✅",
                                        time=f"{response_data['time_spent']:.1f}s")
-                        
+
                     else:
-                        # Create result for failed/timeout generation
+                        # Create result for failed/timeout generation with empty metrics
                         empty_metrics = self.text_evaluator.evaluate_text_comprehensive("")
-                        
+
                         response_value = response_data['response'] if response_data['response'] is not None else None
-                        
+
                         result = ExperimentResult.create_from_response(
                             prompt=prompt,
                             response=response_value,
@@ -521,19 +536,20 @@ class FactorialExperiment:
                             response_time=response_data['time_spent'],
                             text_metrics=empty_metrics,
                             experiment_name=config.experiment_name,
-                            cleaned_response=response_data['cleaned_response']
+                            cleaned_response=response_data['cleaned_response'],
+                            generation_successful=False
                         )
-                        
+
                         # Update progress bar with failure/timeout
                         if "timed out" in response_data['error_message'].lower():
-                            pbar.set_postfix(model=config.model_name, 
+                            pbar.set_postfix(model=config.model_name,
                                            weight=weight_info,
-                                           status="⏰", 
+                                           status="⏰",
                                            time=f"{response_data['time_spent']:.0f}s")
                         else:
-                            pbar.set_postfix(model=config.model_name, 
+                            pbar.set_postfix(model=config.model_name,
                                            weight=weight_info,
-                                           status="❌", 
+                                           status="❌",
                                            error="Failed")
                     
                     results.append(result)
@@ -636,7 +652,7 @@ class FactorialExperiment:
                         text_metrics = qwen3_wrapper.text_evaluator.evaluate_text_comprehensive(
                             beam_response_data['response']
                         )
-                        
+
                         # Create experiment result with beam-specific fields
                         result = ExperimentResult.create_from_beam_response(
                             prompt=prompt,
@@ -662,7 +678,7 @@ class FactorialExperiment:
                     else:
                         # Create result for failed generation
                         empty_metrics = self.text_evaluator.evaluate_text_comprehensive("")
-                        
+
                         result = ExperimentResult.create_from_beam_response(
                             prompt=prompt,
                             response="",
@@ -671,6 +687,7 @@ class FactorialExperiment:
                             text_metrics=empty_metrics,
                             experiment_name=config.experiment_name,
                             cleaned_response="",
+                            generation_successful=False,
                             beam_selection_method=selection_method,
                             beam_a1_ratio=0.0,
                             beam_a1_count=0,

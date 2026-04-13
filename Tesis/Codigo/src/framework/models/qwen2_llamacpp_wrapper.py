@@ -55,7 +55,7 @@ class Qwen2LlamaCppWrapper(LlamaCppBaseWrapper):
             timeout_seconds=300
         )
     
-    def _format_prompt(self, user_input: str, system_prompt: str) -> str:
+    def _format_prompt(self, user_input: str, system_prompt: str, enable_thinking: bool = False) -> str:
         """
         Format prompt using Qwen's ChatML template.
         
