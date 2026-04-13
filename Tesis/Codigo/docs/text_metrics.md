@@ -91,24 +91,11 @@ Where:
 
 ---
 
-#### 3. SMOG Index (Simple Measure of Gobbledygook)
+#### ~~3. SMOG Index~~ (REMOVED)
 
-**What it measures:** Reading difficulty based on polysyllabic word density. Considered highly accurate for technical and medical texts.
+**Status: Removed from the experiment framework.**
 
-**Formula:**
-
-```
-SMOG Grade = 3 + √(Polysyllable Count in 30 sentences)
-```
-
-**Interpretation:**
-
-- **7-9**: Junior high school
-- **10-12**: High school
-- **13-16**: College
-- **17+**: Graduate school
-
-**Why included:** Highly reliable for short texts and less sensitive to sentence length variations than Flesch-Kincaid. Provides robust polysyllable-based assessment. SMOG Grade ≤7 is **TARGET for A1 learners**.
+SMOG Index requires a minimum of 30 sentences to produce statistically valid results. Typical experiment outputs are 1-3 sentences (~30-60 words), causing `textstat.smog_index()` to return 0.0 for nearly all responses. This made SMOG unable to discriminate between experimental conditions or between successful and failed generations. The metric was removed from `TextEvaluator`, `ExperimentResult`, and all visualization scripts.
 
 ---
 
@@ -275,10 +262,10 @@ The following metrics were considered but excluded from the final analysis:
 
 ## Usage in Code
 
-All metrics are calculated using the `TextEvaluator` class in `src/evaluation/text_complexity/text_evaluator.py`, which wraps the `textstat` library:
+All metrics are calculated using the `TextEvaluator` class in `src/text_complexity/text_evaluator.py`, which wraps the `textstat` library:
 
 ```python
-from src.evaluation.text_complexity.text_evaluator import TextEvaluator
+from src.text_complexity.text_evaluator import TextEvaluator
 
 evaluator = TextEvaluator()
 text = "The cat sat on the mat."

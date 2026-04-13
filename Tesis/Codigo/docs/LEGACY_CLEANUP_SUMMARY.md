@@ -28,16 +28,17 @@
 
 ## ✅ Current Model Architecture
 
-### **Active Wrappers (6 files)**
+### **Active Wrappers (7 files)**
 
 ```
-src/evaluation/experiment_framework/models/
+src/framework/models/
 ├── base_model.py                    # Abstract base for all wrappers
 ├── llamacpp_base.py                 # Reusable llama.cpp base class
 ├── qwen2_llamacpp_wrapper.py        # Qwen2-0.5B (llama.cpp)
 ├── qwen3_llamacpp_wrapper.py        # Qwen3-0.6B (llama.cpp)
+├── phi3_llamacpp_wrapper.py         # Phi3-3.8B (llama.cpp, GPU)
 ├── tinyllama_llamacpp_wrapper.py    # TinyLlama-1.1B (llama.cpp)
-└── tinystories_wrapper.py           # TinyStories-33M (Transformers, not migrated)
+└── beam_search_generator.py         # Beam search with A1-ratio selection
 ```
 
 ### **Model Status**
@@ -46,8 +47,10 @@ src/evaluation/experiment_framework/models/
 |-------|---------|--------|-------------|
 | **Qwen2-0.5B** | llama.cpp GGUF | ✅ Production | 0.6-1.0s/response |
 | **Qwen3-0.6B** | llama.cpp GGUF | ✅ Production | ~98 tok/s |
+| **Phi3-3.8B** | llama.cpp GGUF | ✅ Production (GPU) | ~18 tok/s |
 | **TinyLlama-1.1B** | llama.cpp GGUF | ✅ Production | 1.3-3.1s/response |
-| **TinyStories-33M** | Transformers | ⏳ Legacy | ~15 tok/s |
+
+> **Note:** TinyStories-33M (Transformers) has been moved to `legacy/tinystories_wrapper.py` and is no longer part of the active framework.
 
 ---
 
@@ -108,12 +111,12 @@ from src.evaluation.experiment_framework.models import (
 
 **After:**
 ```python
-from src.evaluation.experiment_framework.models import (
+from src.framework.models import (
     BaseModelWrapper,
+    Phi3LlamaCppWrapper,
     Qwen2LlamaCppWrapper,
     Qwen3LlamaCppWrapper,
-    TinyLlamaLlamaCppWrapper,
-    TinyStoriesWrapper
+    TinyLlamaLlamaCppWrapper
 )
 ```
 
@@ -232,9 +235,9 @@ All new models should follow the llama.cpp pattern:
 - **Migration Guide:** `docs/LLAMACPP_MIGRATION_GUIDE.md`
 - **Weekly Progress:** `docs/weekly_progress/week_29-09.md`
 - **Integration Tests:**
-  - `scripts/test_qwen2_llamacpp_integration.py`
-  - `scripts/test_qwen3_llamacpp_integration.py`
-  - `scripts/test_tinyllama_llamacpp_integration.py`
+  - `scripts/legacy_tests/test_qwen2_llamacpp_integration.py`
+  - `scripts/legacy_tests/test_qwen3_llamacpp_integration.py`
+  - `scripts/legacy_tests/test_tinyllama_llamacpp_integration.py`
 
 ---
 
@@ -248,9 +251,9 @@ All new models should follow the llama.cpp pattern:
 
 ### **Future (Optional)**
 
-1. **Migrate TinyStories** to llama.cpp (low priority, smallest model)
-2. **Add new models** (SmolLM, Phi-3, Gemma) using llama.cpp
-3. **Remove Transformers dependency** from `requirements.txt` (if TinyStories migrated)
+1. **Phi-3 added** to the framework using llama.cpp with GPU acceleration ✅
+2. TinyStories moved to `legacy/` — no longer part of active framework
+3. Consider removing Transformers dependency from `requirements.txt`
 
 ---
 

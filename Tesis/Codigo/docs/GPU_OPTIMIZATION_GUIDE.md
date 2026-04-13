@@ -37,7 +37,7 @@ In llama.cpp, the `n_gpu_layers` parameter controls GPU offloading:
 ### Test Methodology
 
 **Hardware:** MacBook M2  
-**Models Tested:** Phi-3 (3.8B), SmolLM (1.7B), Qwen3 (0.6B)  
+**Models Tested:** Phi-3 (3.8B), SmolLM (1.7B, no longer in active framework), Qwen3 (0.6B)  
 **Test:** Simple generation ("What is 2+2?", 10 tokens)  
 **Configurations:** `n_gpu_layers=0` (CPU) vs `n_gpu_layers=-1` (GPU)
 
@@ -150,7 +150,7 @@ Speedup Factor
 
 ### Current Configuration
 
-**File:** `src/evaluation/experiment_framework/models/*_llamacpp_wrapper.py`
+**File:** `src/framework/models/*_llamacpp_wrapper.py`
 
 ```python
 # Phi-3: Full GPU offloading (ENABLED)
@@ -212,7 +212,6 @@ load_tensors: offloaded 32/32 layers to GPU
 | Model | Size | Layers | Recommended Setting | Rationale |
 |-------|------|--------|---------------------|-----------|
 | **Phi-3** | 2.2GB | 32 | `n_gpu_layers=-1` | 73x speedup essential |
-| **SmolLM** | 1.0GB | 24 | `n_gpu_layers=0` | Already fast (0.3s) |
 | **Qwen3** | 409MB | 28 | `n_gpu_layers=0` | Already optimal (0.1s) |
 | **Qwen2** | 409MB | ? | `n_gpu_layers=0` | Similar to Qwen3 |
 | **TinyLlama** | 608MB | ? | `n_gpu_layers=0` | Small model |
@@ -257,7 +256,9 @@ Track these metrics to evaluate GPU offloading:
 
 ---
 
-**Summary:** GPU offloading via `n_gpu_layers=-1` provides massive speedups (73x) for large models (>2GB) but offers no benefit for small models (<1GB) already fast on CPU. Current configuration is optimal: Phi-3 uses GPU, others use CPU.
+**Summary:** GPU offloading via `n_gpu_layers=-1` provides massive speedups (73x) for large models (>2GB) but offers no benefit for small models (<1GB) already fast on CPU. Current configuration is optimal: Phi-3 uses GPU, others (Qwen2, Qwen3, TinyLlama) use CPU.
+
+> **Note:** SmolLM benchmark data above is historical — SmolLM was tested during evaluation but is not part of the active experiment framework (no wrapper in `src/framework/models/`).
 
 
 

@@ -52,9 +52,9 @@ You are a helpful English teacher for beginner students. Answer with a paragraph
 - **Prompts**: First 5 from STANDARD_PROMPTS (5 total experiments × 2 selection methods = 10 results)
 - **Total time**: ~76 seconds
 - **Results saved**: 
-  - Specification format: `src/evaluation/experiment_framework/results/Qwen3/Qwen3_beam_search_specification_1111_1929.csv`
-  - Full data: `src/evaluation/experiment_framework/results/Qwen3/full_data/Qwen3_beam_search_full_1111_1929.csv`
-  - Visualization: `src/evaluation/experiment_framework/results/Qwen3/beam_search_comparison_1111_1936.png`
+  - Specification format: `results/Qwen3/Qwen3_beam_search_specification_1111_1929.csv`
+  - Full data: `results/Qwen3/full_data/Qwen3_beam_search_full_1111_1929.csv`
+  - Visualization: `results/Qwen3/beam_search_comparison_1111_1936.png`
 
 ### Performance Metrics
 
@@ -93,16 +93,16 @@ You are a helpful English teacher for beginner students. Answer with a paragraph
 ## Files Created/Modified
 
 ### New Files
-- `src/evaluation/experiment_framework/models/beam_search_generator.py` - Beam search implementation
+- `src/framework/models/beam_search_generator.py` - Beam search implementation
 - `scripts/run_beam_search_experiment.py` - Experiment runner script
-- `scripts/visualize_beam_search_comparison.py` - Visualization script
+- `scripts/analysis/visualize_beam_search_comparison.py` - Visualization script
 
 ### Modified Files
-- `src/evaluation/text_complexity/text_evaluator.py` - Added content word detection
-- `src/evaluation/experiment_framework/core/data_models.py` - Added beam search result fields
-- `src/evaluation/experiment_framework/experiments/experiment_configs.py` - Added beam search configs
-- `src/evaluation/experiment_framework/models/qwen3_llamacpp_wrapper.py` - Added beam search method
-- `src/evaluation/experiment_framework/experiments/factorial_experiment.py` - Added experiment runner method
+- `src/text_complexity/text_evaluator.py` - Added content word detection
+- `src/framework/core/data_models.py` - Added beam search result fields
+- `src/framework/experiments/experiment_configs.py` - Added beam search configs
+- `src/framework/models/qwen3_llamacpp_wrapper.py` - Added beam search method
+- `src/framework/experiments/factorial_experiment.py` - Added experiment runner method
 
 ## Usage
 

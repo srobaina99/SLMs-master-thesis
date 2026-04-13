@@ -93,7 +93,7 @@ This guide provides comprehensive specifications for Small Language Models (SLMs
 
 ### 4. SmolLM-1.7B-Instruct
 
-**Status:** ✅ Integrated and tested
+**Status:** ❌ Not integrated (benchmarked but no active wrapper in `src/framework/models/`)
 
 | Specification | Value |
 |--------------|-------|
@@ -316,7 +316,7 @@ This guide provides comprehensive specifications for Small Language Models (SLMs
 | Size Class | Models | CPU Viable | GPU Benefit | Use Case |
 |------------|--------|------------|-------------|----------|
 | **Tiny** (<1GB) | Qwen2 (0.5B), Qwen3 (0.6B) | ✅ Excellent | ❌ None | Fast iteration |
-| **Small** (1-1.5GB) | TinyLlama (1.1B), Llama3.2-1B 🆕, SmolLM (1.7B) | ✅ Good | ⚠️ Minimal | Balanced experiments |
+| **Small** (1-1.5GB) | TinyLlama (1.1B), Llama3.2-1B 🆕 | ✅ Good | ⚠️ Minimal | Balanced experiments |
 | **Medium** (2-4GB) | Llama3.2-3B 🆕, Phi-3 (3.8B) | ❌ Too slow | ✅ Required | Quality focus |
 | **Large** (>4GB) | Mistral-7B | ❌ Impossible | ⚠️ Still slow | Not recommended |
 
@@ -372,7 +372,7 @@ Model Size?
 - **Processor:** Apple M1/M2 or equivalent
 - **RAM:** 8 GB (16 GB recommended)
 - **Storage:** 5 GB free space
-- **Models:** Qwen2, Qwen3, TinyLlama, SmolLM
+- **Models:** Qwen2, Qwen3, TinyLlama
 
 ### GPU Requirements (for Phi-3)
 
@@ -437,7 +437,7 @@ When adding a new SLM to the codebase:
 **Rationale:** Best reasoning, but requires GPU acceleration
 
 ### Model Diversity
-**Best:** All currently integrated (Qwen2, Qwen3, SmolLM, TinyLlama, Phi-3)  
+**Best:** All currently integrated (Qwen2, Qwen3, TinyLlama, Phi-3)  
 **Rationale:** Covers range from 0.5B to 3.8B, different architectures
 
 ### Future Addition Priority

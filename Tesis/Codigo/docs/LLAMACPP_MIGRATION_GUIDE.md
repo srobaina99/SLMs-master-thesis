@@ -4,7 +4,7 @@
 
 This guide documents the pattern for migrating models to llama.cpp GGUF backend for **4.4x faster inference** and **57% less memory** usage.
 
-**Status:** Qwen3-0.6B migrated ✅
+**Status:** All 4 models migrated ✅ (Qwen3, Qwen2, Phi3, TinyLlama)
 
 ---
 
@@ -32,17 +32,16 @@ This guide documents the pattern for migrating models to llama.cpp GGUF backend 
 ### Class Hierarchy
 ```
 BaseModelWrapper (abstract)
-    ├── LlamaCppBaseWrapper (abstract, reusable)
-    │   ├── Qwen3LlamaCppWrapper ✅
-    │   ├── SmolLMLlamaCppWrapper (planned)
-    │   ├── Phi3LlamaCppWrapper (planned)
-    │   └── Gemma2BLlamaCppWrapper (planned)
-    └── [Legacy Transformers wrappers]
+    └── LlamaCppBaseWrapper (abstract, reusable)
+        ├── Qwen3LlamaCppWrapper ✅
+        ├── Qwen2LlamaCppWrapper ✅
+        ├── Phi3LlamaCppWrapper ✅ (GPU, n_gpu_layers=-1)
+        └── TinyLlamaLlamaCppWrapper ✅
 ```
 
 ### Key Components
 
-1. **`LlamaCppBaseWrapper`** (`src/evaluation/experiment_framework/models/llamacpp_base.py`)
+1. **`LlamaCppBaseWrapper`** (`src/framework/models/llamacpp_base.py`)
    - Reusable base class for all GGUF models
    - Handles model loading, logit_bias, response extraction
    - Subclasses only implement model-specific templates
@@ -103,7 +102,7 @@ print(f'Downloaded to: {path}')
 
 ### Step 3: Create Model Wrapper
 
-**Template:** `src/evaluation/experiment_framework/models/{model_name}_llamacpp_wrapper.py`
+**Template:** `src/framework/models/{model_name}_llamacpp_wrapper.py`
 
 ```python
 """
@@ -151,7 +150,7 @@ class {ModelName}LlamaCppWrapper(LlamaCppBaseWrapper):
             timeout_seconds=300
         )
     
-    def _format_prompt(self, user_input: str, system_prompt: str) -> str:
+    def _format_prompt(self, user_input: str, system_prompt: str, enable_thinking: bool = False) -> str:
         """
         Format prompt using model-specific template.
         
@@ -204,7 +203,7 @@ class {ModelName}LlamaCppWrapper(LlamaCppBaseWrapper):
 
 ### Step 4: Update Module Exports
 
-**File:** `src/evaluation/experiment_framework/models/__init__.py`
+**File:** `src/framework/models/__init__.py`
 
 ```python
 from .{model_name}_llamacpp_wrapper import {ModelName}LlamaCppWrapper
@@ -217,10 +216,10 @@ __all__ = [
 
 ### Step 5: Update Experiment Configuration
 
-**File:** `src/evaluation/experiment_framework/experiments/factorial_experiment.py`
+**File:** `src/framework/experiments/factorial_experiment.py`
 
 ```python
-from src.evaluation.experiment_framework.models import (
+from src.framework.models import (
     # ... existing imports ...
     {ModelName}LlamaCppWrapper
 )
@@ -233,7 +232,7 @@ class FactorialExperiment:
         }
 ```
 
-**File:** `src/evaluation/experiment_framework/experiments/experiment_configs.py`
+**File:** `src/framework/experiments/experiment_configs.py`
 
 ```python
 MODEL_CONFIGS = {
@@ -255,8 +254,8 @@ import sys
 import os
 sys.path.append(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 
-from src.evaluation.experiment_framework.models import {ModelName}LlamaCppWrapper
-from src.evaluation.experiment_framework.core.data_models import ExperimentConfig
+from src.framework.models import {ModelName}LlamaCppWrapper
+from src.framework.core.data_models import ExperimentConfig
 
 def test_{model_name}_llamacpp():
     print("\n" + "="*60)
@@ -280,11 +279,11 @@ def test_{model_name}_llamacpp():
                 system_prompt=system_prompt,
                 config_weighting=weighting,
                 config_prompting=prompting,
-                weight_factor=2.0,
+                weight_factor=1.5,
                 temperature=0.7,
                 top_k=50,
                 top_p=0.95,
-                max_new_tokens=512
+                max_new_tokens=200
             )
             
             result = wrapper.generate_response(test_prompt, config)
@@ -417,16 +416,13 @@ def _get_stop_tokens(self) -> List[str]:
 
 ---
 
-## Next Models to Migrate
+## Migration Status
 
-### Priority 1 (High Impact)
-- [ ] **Qwen2-0.5B** — Baseline comparison with Qwen3
-- [ ] **TinyLlama-1.1B** — Already uses llama.cpp, just needs wrapper refactor
-
-### Priority 2 (New Models)
-- [ ] **SmolLM-1.7B** — Ultra-efficient architecture
-- [ ] **Phi-3-mini-3.8B** — Best quality/size ratio
-- [ ] **Gemma-2B** — Google's lightweight model
+All target models have been migrated:
+- [x] **Qwen3-0.6B** — First migration, ChatML template
+- [x] **Qwen2-0.5B** — ChatML template
+- [x] **Phi-3-mini-3.8B** — Custom Phi3 template, requires GPU (`n_gpu_layers=-1`)
+- [x] **TinyLlama-1.1B** — TinyLlama template
 
 ### Resources
 - [llama.cpp GitHub](https://github.com/ggerganov/llama.cpp)
@@ -436,5 +432,5 @@ def _get_stop_tokens(self) -> List[str]:
 
 ---
 
-**Last Updated:** 2025-10-04  
-**Status:** Qwen3 migration complete ✅
+**Last Updated:** 2026-04-08  
+**Status:** All 4 models migrated ✅ (Qwen3, Qwen2, Phi3, TinyLlama)

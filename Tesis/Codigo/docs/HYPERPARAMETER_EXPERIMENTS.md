@@ -130,18 +130,20 @@ A1_ratio = (Count of A1 words × 1.5) / Count of content words
 
 | Weight Factor | Logit Bias Applied | Description            |
 | ------------- | ------------------ | ---------------------- |
-| **1.0** | +0.0               | No weighting (control) |
-| **1.3** | +0.26              | Light weighting        |
-| **1.5** | +0.41              | Current baseline       |
-| **2.0** | +0.69              | Moderate weighting     |
-| **2.5** | +0.92              | Strong weighting       |
-| **3.0** | +1.10              | Very strong weighting  |
-| **4.0** | +1.39              | Maximum weighting      |
+| **1.0** | +1.0 (2.7x prob)   | Light weighting        |
+| **1.3** | +1.3 (3.7x prob)   | Moderate weighting     |
+| **1.5** | +1.5 (4.5x prob)   | Current baseline       |
+| **2.0** | +2.0 (7.4x prob)   | Strong weighting       |
+| **2.5** | +2.5 (12.2x prob)  | Very strong weighting  |
+| **3.0** | +3.0 (20.1x prob)  | Heavy weighting        |
+| **4.0** | +4.0 (54.6x prob)  | Maximum weighting      |
 
 **Logit Bias Calculation:**
 
+> **Note:** The spec originally described `logit_bias = log(weight_factor)`, but the actual implementation at `llamacpp_base.py:203` applies `weight_factor` directly as the logit bias (no `log()` transform). This means the actual probability multipliers are much stronger than a `log()` formula would produce. See `docs/WEIGHTING_MECHANISM.md` for the full analysis.
+
 ```python
-logit_bias = log(weight_factor)
+logit_bias = weight_factor  # applied directly, no log() transform
 ```
 
 **Generation Parameters:**
@@ -237,26 +239,27 @@ Each experiment will generate:
 
 ### Phase 1: Prompting Strategy (Estimated: 30 minutes)
 
-```bash
-python scripts/run_prompting_experiment.py --shots 0,1,3
-```
+> **Note:** No dedicated prompting experiment script exists yet. This would require a new script.
 
 ### Phase 2: Beam Search Width (Estimated: 10 minutes)
 
 ```bash
-python scripts/run_beam_search_experiment.py --beam-width 4,8,10
+python scripts/run_beam_search_experiment.py
 ```
 
 ### Phase 3: Logit Bias Weighting (Estimated: 15 minutes)
 
 ```bash
-python scripts/run_weight_experiment.py --weights 1.0,1.3,1.5,2.0,2.5,3.0,4.0
+python scripts/run_experiment.py --experiment multi_weight --weights 1.5,2.0,4.0 --prompts 5
 ```
+
+The default weight factors are `[1.5, 2.0, 4.0]`.
 
 ### Phase 4: Comparative Analysis
 
 ```bash
-python scripts/visualize_hyperparameter_comparison.py
+python scripts/analysis/visualize_weights_comparison.py
+python scripts/analysis/visualize_beam_search_comparison.py
 ```
 
 ---
@@ -291,21 +294,20 @@ python scripts/visualize_hyperparameter_comparison.py
 
 ### Experiment Scripts
 
-- `scripts/run_prompting_experiment.py` - Prompting strategy variations
-- `scripts/run_beam_search_experiment.py` - Beam width variations (already exists)
-- `scripts/run_weight_experiment.py` - Logit bias weight variations
+- `scripts/run_experiment.py` - Main experiment runner (supports `--experiment multi_weight`)
+- `scripts/run_beam_search_experiment.py` - Beam width variations
 
 ### Visualization Scripts
 
-- `scripts/visualize_hyperparameter_comparison.py` - Cross-experiment comparison
-- `scripts/visualize_beam_search_comparison.py` - Beam search specific (already exists)
+- `scripts/analysis/visualize_weights_comparison.py` - Weight factor comparison
+- `scripts/analysis/visualize_beam_search_comparison.py` - Beam search comparison
+- `scripts/analysis/visualize_multi_weight.py` - Per-model weight comparison
+- `scripts/analysis/visualize_multi_weight_combined.py` - All models by weight factor
 
 ### Results Location
 
-- `src/evaluation/experiment_framework/results/Qwen3/`
-  - `prompting_experiment_*.csv`
-  - `beam_search_*.csv`
-  - `weight_experiment_*.csv`
+- `results/Qwen3/` - Model-specific results
+- `results/multi/` - Multi-weight experiment results
 
 ---
 

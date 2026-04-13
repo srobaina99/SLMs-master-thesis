@@ -9,7 +9,7 @@ In particular, the aim of this work is to evaluate the difficulty of the answers
 * Qwen 2
 * Qwen 3
 * TinyLlama
-* TinyStories
+* Phi3
 
 Two intervention methods are employed to control the difficulty of the output, plus a control:
 
@@ -17,7 +17,7 @@ Two intervention methods are employed to control the difficulty of the output, p
 
 This intervention gives higher probability to words included in the vocabulary of the target students (non-English speakers with little to no experience with the language). Specifically, the vocabulary in `Tesis/Codigo/data/vocabularies/filtered_starters_vocab.txt` is used.
 
-The altering of the weights is performed by the class `ProbabilityWeightingLogitsProcessor` found in `probability_processor.py`.
+The altering of the weights is performed by the `_create_logit_bias()` method in `src/framework/models/llamacpp_base.py`, which builds a `logit_bias` dictionary mapping A1 vocabulary token IDs to the `weight_factor` value, passed directly to the llama.cpp inference call.
 
 * **Prompt the models with the proper context**
 
@@ -27,12 +27,12 @@ The model is prompted to use simple words so a young non-English speaking studen
 
 ## 1. Experiment
 
-The first experiment aims to compare the answers of the different models using the multiple approaches while measuring difficulty metrics defined in the class `TextEvaluator` found in `text_evaluator.py`.
+The first experiment aims to compare the answers of the different models using the multiple approaches while measuring difficulty metrics defined in the class `TextEvaluator` found in `src/text_complexity/text_evaluator.py`.
 
 The experiment will be conducted for multiple prompts, and each model (with its multiple variations) will generate an output. The data will be structured in a flat CSV format with one observation per row for easy statistical analysis:
 
 **CSV Structure:**
-- **model**: Name of the base model (Qwen2, Qwen3, TinyLlama, TinyStories)
+- **model**: Name of the base model (Qwen2, Qwen3, TinyLlama, Phi3)
 - **config_weighting**: Boolean flag for probability weighting intervention
 - **config_prompting**: Boolean flag for context prompting intervention  
 - **prompt_id**: Identifier for the specific prompt used
