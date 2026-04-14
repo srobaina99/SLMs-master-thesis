@@ -15,7 +15,10 @@
 
 # ============================================================
 # Multi-weight experiment on ClusterUY
-# Tests weight factors [1.5, 2.0, 4.0] across all 4 models
+# Tests weight factors [1.5, 2.0, 3.0, 4.0, 5.0] across all 4 models
+#
+# Ref: https://www.cluster.uy/ayuda/como_ejecutar/
+# Ref: https://www.cluster.uy/ayuda/tips/
 # ============================================================
 
 echo "========================================"
@@ -24,23 +27,13 @@ echo "Node: $SLURM_NODELIST"
 echo "Start time: $(date)"
 echo "========================================"
 
-# Use scratch for faster I/O
-export SCRATCH_DIR="/scratch/$USER/multiweight_$SLURM_JOB_ID"
-mkdir -p "$SCRATCH_DIR"
-
-# ---- 1. Activate environment ----
-# Option A: Conda (uncomment if using conda)
-# source ~/miniconda3/etc/profile.d/conda.sh
-# conda activate thesis
-
-# Option B: Virtualenv (uncomment if using venv)
-# source ~/envs/thesis/bin/activate
+# ---- 1. Activate conda environment ----
+source ~/miniconda3/etc/profile.d/conda.sh
+conda activate thesis
 
 # ---- 2. Set project paths ----
-# IMPORTANT: Update this to your actual project path on ClusterUY
 PROJECT_DIR="$HOME/SLMs-master-thesis/Tesis/Codigo"
 cd "$PROJECT_DIR" || { echo "ERROR: Project dir not found"; exit 1; }
-
 export PYTHONPATH="$PROJECT_DIR:$PYTHONPATH"
 
 # ---- 3. Verify GPU is available ----
@@ -49,16 +42,7 @@ echo "GPU info:"
 nvidia-smi
 echo ""
 
-# ---- 4. Copy GGUF models to scratch for faster loading ----
-# Uncomment and adjust if you store models locally
-# MODELS_DIR="$HOME/models"
-# if [ -d "$MODELS_DIR" ]; then
-#     echo "Copying models to scratch..."
-#     cp -r "$MODELS_DIR" "$SCRATCH_DIR/models"
-#     export MODELS_PATH="$SCRATCH_DIR/models"
-# fi
-
-# ---- 5. Run the multi-weight experiment ----
+# ---- 4. Run the multi-weight experiment ----
 echo "Starting multi-weight experiment..."
 echo "Weight factors: 1.5, 2.0, 3.0, 4.0, 5.0"
 echo "Using all 25 prompts"
@@ -69,9 +53,6 @@ python scripts/run_experiment.py \
     --weights "1.5,2.0,3.0,4.0,5.0" \
     --prompts all \
     --no-plots
-
-# ---- 6. Copy results back from scratch if needed ----
-# Results are saved to $PROJECT_DIR/results/ by default
 
 echo ""
 echo "========================================"
