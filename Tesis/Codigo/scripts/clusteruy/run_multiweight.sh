@@ -14,11 +14,11 @@
 #SBATCH --mail-user=CHANGE_ME@example.com
 
 # ============================================================
-# Multi-weight experiment on ClusterUY
+# Multi-weight experiment on ClusterUY (Singularity)
 # Tests weight factors [1.5, 2.0, 3.0, 4.0, 5.0] across all 4 models
 #
 # Ref: https://www.cluster.uy/ayuda/como_ejecutar/
-# Ref: https://www.cluster.uy/ayuda/tips/
+# Ref: https://www.cluster.uy/ayuda/singularity/
 # ============================================================
 
 echo "========================================"
@@ -27,32 +27,34 @@ echo "Node: $SLURM_NODELIST"
 echo "Start time: $(date)"
 echo "========================================"
 
-# ---- 1. Activate conda environment ----
-source ~/miniconda3/etc/profile.d/conda.sh
-conda activate thesis
-
-# ---- 2. Set project paths ----
+# ---- 1. Set paths ----
 PROJECT_DIR="$HOME/SLMs-master-thesis/Tesis/Codigo"
-cd "$PROJECT_DIR" || { echo "ERROR: Project dir not found"; exit 1; }
-export PYTHONPATH="$PROJECT_DIR:$PYTHONPATH"
+SIF_IMAGE="$HOME/slm-thesis.sif"
 
-# ---- 3. Verify GPU is available ----
+cd "$PROJECT_DIR" || { echo "ERROR: Project dir not found"; exit 1; }
+
+# ---- 2. Verify GPU is available ----
 echo ""
 echo "GPU info:"
 nvidia-smi
 echo ""
 
-# ---- 4. Run the multi-weight experiment ----
+# ---- 3. Run the multi-weight experiment ----
+# --nv: expose NVIDIA GPU inside the container
+# --bind: mount project directory into /workspace
 echo "Starting multi-weight experiment..."
 echo "Weight factors: 1.5, 2.0, 3.0, 4.0, 5.0"
 echo "Using all 25 prompts"
 echo ""
 
-python scripts/run_experiment.py \
-    --experiment multi_weight \
-    --weights "1.5,2.0,3.0,4.0,5.0" \
-    --prompts all \
-    --no-plots
+singularity exec --nv \
+    --bind "$PROJECT_DIR":/workspace \
+    "$SIF_IMAGE" \
+    python /workspace/scripts/run_experiment.py \
+        --experiment multi_weight \
+        --weights "1.5,2.0,3.0,4.0,5.0" \
+        --prompts all \
+        --no-plots
 
 echo ""
 echo "========================================"

@@ -1,95 +1,46 @@
 #!/bin/bash
 # ============================================================
-# One-time environment setup for ClusterUY
+# ClusterUY setup — pull Singularity image
 #
-# IMPORTANT: Run this inside an interactive session (1 hour),
-# NOT on the login node. See CLUSTERUY_GUIDE.md for details.
+# Run this on the LOGIN NODE (it's just a file download).
+# See CLUSTERUY_GUIDE.md for the full workflow.
 #
-# Safe to re-run: each step checks if it was already completed.
+# Prerequisites:
+#   - Docker image already pushed to Docker Hub
+#     (see build_and_push.sh for local build instructions)
 #
-# Ref: https://www.cluster.uy/ayuda/primeros_pasos/
-# Ref: https://www.cluster.uy/ayuda/lista_software/
+# Ref: https://www.cluster.uy/ayuda/singularity/
 # ============================================================
 
 set -e
 
-PROJECT_DIR="$HOME/SLMs-master-thesis/Tesis/Codigo"
-
-echo "Setting up thesis environment on ClusterUY..."
-
-# ---- 1. Install Miniconda ----
-# ClusterUY runs CentOS 7 (glibc 2.17). The latest Miniconda requires
-# glibc >= 2.28, so we use the py310_23.1.0-1 release which is the last
-# version compatible with CentOS 7.
-if [ -d "$HOME/miniconda3" ]; then
-    echo "[1/6] Miniconda already installed. Skipping."
-else
-    echo "[1/6] Installing Miniconda (py310_23.1.0-1 for CentOS 7 compatibility)..."
-    wget https://repo.anaconda.com/miniconda/Miniconda3-py310_23.1.0-1-Linux-x86_64.sh -O /tmp/miniconda.sh
-    bash /tmp/miniconda.sh -b -p "$HOME/miniconda3"
-    rm /tmp/miniconda.sh
-    "$HOME/miniconda3/bin/conda" init bash
+if [ -z "$1" ]; then
+    echo "Usage: bash setup_env.sh <dockerhub_username>"
+    echo "Example: bash setup_env.sh srobaina99"
+    exit 1
 fi
 
-# Ensure conda is available in this shell
-source "$HOME/miniconda3/etc/profile.d/conda.sh"
+DOCKER_USER="$1"
+IMAGE_NAME="$DOCKER_USER/slm-thesis:latest"
+SIF_PATH="$HOME/slm-thesis.sif"
 
-# ---- 2. Create conda environment ----
-if conda env list | grep -q "^thesis "; then
-    echo "[2/6] Conda environment 'thesis' already exists. Skipping."
-else
-    echo "[2/6] Creating 'thesis' conda environment (Python 3.10)..."
-    conda create -n thesis python=3.10 -y
+if [ -f "$SIF_PATH" ]; then
+    echo "Singularity image already exists at $SIF_PATH"
+    echo "To re-pull, delete it first: rm $SIF_PATH"
+    exit 0
 fi
 
-conda activate thesis
-
-# ---- 3. Install PyTorch with CUDA 12.1 ----
-# Plain pip install torch installs CPU-only.
-if python -c "import torch; assert torch.cuda.is_available()" 2>/dev/null; then
-    echo "[3/6] PyTorch with CUDA already installed. Skipping."
-else
-    echo "[3/6] Installing PyTorch with CUDA 12.1..."
-    pip install torch torchvision torchaudio --index-url https://download.pytorch.org/whl/cu121
-fi
-
-# ---- 4. Install llama-cpp-python with CUDA ----
-# Prebuilt wheel avoids compiling from source (requires C++17 / GCC 8+,
-# takes >30 min, and often times out in interactive sessions).
-if python -c "from llama_cpp import Llama" 2>/dev/null; then
-    echo "[4/6] llama-cpp-python already installed. Skipping."
-else
-    echo "[4/6] Installing llama-cpp-python (prebuilt CUDA 12.1 wheel)..."
-    pip install llama-cpp-python --extra-index-url https://abetlen.github.io/llama-cpp-python/whl/cu121
-fi
-
-# ---- 5. Install compiled packages via conda ----
-# Avoids CentOS 7 build toolchain issues (old GCC, missing Cython, etc.)
-if python -c "import pandas; import matplotlib; import seaborn" 2>/dev/null; then
-    echo "[5/6] Conda packages already installed. Skipping."
-else
-    echo "[5/6] Installing conda packages (pandas, numpy, matplotlib, seaborn)..."
-    conda install -y pandas numpy matplotlib seaborn pyarrow ipython -c conda-forge
-fi
-
-# ---- 6. Install remaining pip packages ----
-if python -c "import textstat; import transformers; import accelerate" 2>/dev/null; then
-    echo "[6/6] Pip packages already installed. Skipping."
-else
-    echo "[6/6] Installing pip packages..."
-    pip install textstat transformers accelerate sentencepiece safetensors Markdown
-fi
-
-# ---- Verify installation ----
-echo ""
-echo "Verifying installation..."
-python -c "import torch; print(f'  PyTorch: {torch.__version__}, CUDA available: {torch.cuda.is_available()}')"
-python -c "from llama_cpp import Llama; print('  llama-cpp-python: OK')"
-python -c "import textstat; print('  textstat: OK')"
-python -c "import pandas; print(f'  pandas: {pandas.__version__}')"
-python -c "import transformers; print(f'  transformers: {transformers.__version__}')"
+echo "Pulling Singularity image from Docker Hub: $IMAGE_NAME"
+echo "This may take a few minutes..."
+singularity pull --name "$SIF_PATH" "docker://$IMAGE_NAME"
 
 echo ""
 echo "============================================"
-echo "Setup complete! All steps verified."
+echo "Setup complete!"
 echo "============================================"
+echo "Image saved to: $SIF_PATH"
+echo ""
+echo "Test with:"
+echo "  interactivo -gpun"
+echo "  cd ~/SLMs-master-thesis/Tesis/Codigo"
+echo "  singularity exec --nv --bind \$(pwd):/workspace ~/slm-thesis.sif python /workspace/scripts/run_experiment.py --experiment multi_weight --weights '1.5,2.0' --prompts 2 --model Qwen3 --no-plots"

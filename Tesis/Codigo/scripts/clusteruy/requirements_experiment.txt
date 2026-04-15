@@ -1,0 +1,10 @@
+# Minimal dependencies for running experiments on ClusterUY
+# Install with: pip install -r requirements_experiment.txt
+#
+# Assumes torch and llama-cpp-python are already installed with CUDA support.
+# See CLUSTERUY_GUIDE.md for full setup instructions.
+
+pandas==2.1.4
+tqdm==4.66.1
+textstat==0.7.4
+nltk==3.9.1
