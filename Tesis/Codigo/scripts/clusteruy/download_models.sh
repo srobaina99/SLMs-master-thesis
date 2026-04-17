@@ -47,7 +47,7 @@ download() {
     fi
 
     echo "[dl]   $filename  <-  $repo"
-    wget -q --show-progress -O "$dest" "$url"
+    wget -nv -O "$dest" "$url"
 }
 
 download "microsoft/Phi-3-mini-4k-instruct-gguf"  "Phi-3-mini-4k-instruct-q4.gguf"
