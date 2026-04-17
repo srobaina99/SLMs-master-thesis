@@ -1,11 +1,23 @@
 #!/bin/bash
+#SBATCH --job-name=dl_models
+#SBATCH --partition=besteffort
+#SBATCH --qos=besteffort
+#SBATCH --ntasks=1
+#SBATCH --cpus-per-task=2
+#SBATCH --mem=2048
+#SBATCH --time=01:00:00
+#SBATCH --output=dl_models_%j.out
+#SBATCH --error=dl_models_%j.err
+
 # ============================================================
-# Download GGUF model files from HuggingFace.
-# Run on the ClusterUY login node (file management, ~3.8 GB total).
+# Download GGUF model files from HuggingFace (~3.8 GB total).
 #
-# Usage:
-#   cd ~/SLMs-master-thesis/Tesis/Codigo
-#   bash scripts/clusteruy/download_models.sh
+# Submit as a batch job (recommended, survives SSH drops):
+#   cd ~/SLMs-master-thesis
+#   sbatch Tesis/Codigo/scripts/clusteruy/download_models.sh
+#
+# Or run directly on the login node:
+#   bash Tesis/Codigo/scripts/clusteruy/download_models.sh
 # ============================================================
 
 set -e
