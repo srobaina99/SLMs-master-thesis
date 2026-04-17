@@ -22,7 +22,17 @@
 
 set -e
 
-MODELS_DIR="$(cd "$(dirname "$0")/../.." && pwd)/models/gguf"
+# Resolve repo location: $SLURM_SUBMIT_DIR under sbatch (where sbatch was run
+# from), else the script's own directory. Under sbatch, $0 points at SLURM's
+# spool copy, not the repo — hence this branching.
+if [ -n "$SLURM_SUBMIT_DIR" ]; then
+    REPO_ROOT="$SLURM_SUBMIT_DIR"
+else
+    REPO_ROOT="$(cd "$(dirname "$0")/../../../.." && pwd)"
+fi
+
+MODELS_DIR="$REPO_ROOT/Tesis/Codigo/models/gguf"
+echo "Models will be saved to: $MODELS_DIR"
 mkdir -p "$MODELS_DIR"
 
 download() {
