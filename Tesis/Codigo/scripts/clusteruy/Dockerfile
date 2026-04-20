@@ -22,16 +22,21 @@ RUN ln -sf /usr/bin/python3.10 /usr/bin/python && \
     ln -sf /usr/bin/pip3 /usr/bin/pip
 
 # Make the CUDA driver stubs discoverable at link time. The devel image ships
-# /usr/local/cuda/lib64/stubs/libcuda.so for exactly this purpose, but it's not
-# on ld's default search path. Without it, any target that transitively depends
-# on libcuda.so.1 (the driver) fails to link.
+# /usr/local/cuda/lib64/stubs/libcuda.so, but:
+#   (a) libggml-cuda.so has a DT_NEEDED entry for libcuda.so.1 (the SONAME of
+#       the real driver), not libcuda.so, so we need a libcuda.so.1 symlink.
+#   (b) The stubs dir isn't on ld's default search path; we add it via LDFLAGS
+#       (-L and -rpath-link) so the linker can satisfy transitive deps when
+#       producing the auxiliary mtmd binaries.
+RUN ln -sf /usr/local/cuda/lib64/stubs/libcuda.so \
+           /usr/local/cuda/lib64/stubs/libcuda.so.1
+
 ENV LIBRARY_PATH=/usr/local/cuda/lib64/stubs:${LIBRARY_PATH}
+ENV LDFLAGS="-L/usr/local/cuda/lib64/stubs -Wl,-rpath-link,/usr/local/cuda/lib64/stubs"
 
 # 60 = P100 — the only GPU on ClusterUY. Multi-arch builds take 6× longer.
 # If we ever target a non-P100 cluster we can add archs back here.
-# LLAMA_BUILD_* flags skip auxiliary CLI tools, examples, server, and tests —
-# we only need the Python bindings (libllama.so + libggml*.so).
-ENV CMAKE_ARGS="-DGGML_CUDA=on -DCMAKE_CUDA_ARCHITECTURES=60 -DLLAMA_BUILD_TESTS=OFF -DLLAMA_BUILD_EXAMPLES=OFF -DLLAMA_BUILD_SERVER=OFF -DLLAMA_BUILD_TOOLS=OFF"
+ENV CMAKE_ARGS="-DGGML_CUDA=on -DCMAKE_CUDA_ARCHITECTURES=60"
 ENV FORCE_CMAKE=1
 
 # Build llama-cpp-python as a reusable wheel so stage 2 just installs it.
