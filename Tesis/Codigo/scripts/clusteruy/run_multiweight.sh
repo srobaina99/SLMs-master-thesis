@@ -11,7 +11,7 @@
 #SBATCH --output=multiweight_%j.out
 #SBATCH --error=multiweight_%j.err
 #SBATCH --mail-type=ALL
-#SBATCH --mail-user=CHANGE_ME@example.com
+#SBATCH --mail-user=srobaina99@gmail.com
 
 # ============================================================
 # Multi-weight experiment on ClusterUY (Singularity)
