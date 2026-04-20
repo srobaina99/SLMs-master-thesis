@@ -27,10 +27,11 @@ RUN ln -sf /usr/bin/python3.10 /usr/bin/python && \
 # on libcuda.so.1 (the driver) fails to link.
 ENV LIBRARY_PATH=/usr/local/cuda/lib64/stubs:${LIBRARY_PATH}
 
-# 60 = P100 (ClusterUY), 70 = V100, 75 = T4, 80 = A100, 86 = A10/RTX30, 89 = RTX40
+# 60 = P100 — the only GPU on ClusterUY. Multi-arch builds take 6× longer.
+# If we ever target a non-P100 cluster we can add archs back here.
 # LLAMA_BUILD_* flags skip auxiliary CLI tools, examples, server, and tests —
 # we only need the Python bindings (libllama.so + libggml*.so).
-ENV CMAKE_ARGS="-DGGML_CUDA=on -DCMAKE_CUDA_ARCHITECTURES=60;70;75;80;86;89 -DLLAMA_BUILD_TESTS=OFF -DLLAMA_BUILD_EXAMPLES=OFF -DLLAMA_BUILD_SERVER=OFF -DLLAMA_BUILD_TOOLS=OFF"
+ENV CMAKE_ARGS="-DGGML_CUDA=on -DCMAKE_CUDA_ARCHITECTURES=60 -DLLAMA_BUILD_TESTS=OFF -DLLAMA_BUILD_EXAMPLES=OFF -DLLAMA_BUILD_SERVER=OFF -DLLAMA_BUILD_TOOLS=OFF"
 ENV FORCE_CMAKE=1
 
 # Build llama-cpp-python as a reusable wheel so stage 2 just installs it.
