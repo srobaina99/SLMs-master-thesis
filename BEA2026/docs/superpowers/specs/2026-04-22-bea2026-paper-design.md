@@ -18,7 +18,7 @@ Alternate options to consider:
 
 ## Author list
 
-Default (matching the 2025 team): Santiago Robaina, Luis Chiruzzo, Aiala Rosá. Affiliation: Instituto de Computación, Facultad de Ingeniería, Universidad de la República, Montevideo, Uruguay.
+Santiago Robaina, Luis Chiruzzo, Aiala Rosá. Affiliation: Instituto de Computación, Facultad de Ingeniería, Universidad de la República, Montevideo, Uruguay.
 
 ## 1. Framing and narrative
 
@@ -27,9 +27,9 @@ Default (matching the 2025 team): Santiago Robaina, Luis Chiruzzo, Aiala Rosá. 
 Two threads held together:
 
 1. **Lightweight / efficiency** (motivation): the team works under a self-imposed constraint of affordable compute, reflecting the research environment in the Global South. Motivation restated from scratch in 2026 — no self-citation of prior RETUYT-INCO papers.
-2. **Feature-enriched small encoder** (technical contribution): we build a set of handcrafted string, morphological, POS, frequency, L1-specific, and cross-lingual semantic-similarity features. The same feature set is used in two settings: as inputs to an XGBoost regressor (§3), and as text tokens prepended to the mDeBERTa input (§4). The highest-impact single feature in both settings is a LaBSE cross-lingual cosine (`embed_cosine` in §3, rendered as the `esim` token in §4).
+2. **Feature-enriched small encoder**: we build a set of handcrafted string, morphological, POS, frequency, L1-specific, and cross-lingual semantic-similarity features. The same feature set is used in two settings: as inputs to an XGBoost regressor (§3), and as text tokens prepended to the mDeBERTa input (§4). The highest-impact single feature in both settings is a LaBSE cross-lingual cosine (`embed_cosine` in §3, rendered as the `esim` token in §4).
 
-No "two tracks", no "cross-pollination", no novel-mechanism claim — the paper describes what we did, plainly.
+the paper describes what we did, plainly.
 
 ### Section layout (progression)
 
@@ -42,9 +42,21 @@ Paraphrased: *Can a small multilingual encoder, fine-tuned with handcrafted feat
 
 ### Contribution preview (to state in §1)
 
-- Feature-only XGBoost (no neural fine-tuning) beats the XLM-R-base closed baseline on average across ES/DE/CN (1.273 vs 1.287 avg RMSE on dev).
-- mDeBERTa-v3-base (~86M params) fine-tuned with features prepended as input tokens beats the XLM-R-base closed baseline (278M params) by a wide margin on ES: 1.103 dev / 1.094 test RMSE vs 1.357 dev / 1.257 test baseline.
+- XGBoost over handcrafted features (no neural fine-tuning, CPU-only, ~tens of MB on disk) beats the XLM-R-base closed baseline on average across ES/DE/CN (1.273 vs 1.287 avg RMSE on dev).
+- A single fine-tune of mDeBERTa-v3-base (~276M total params, essentially the same size as XLM-R-base ~270M) with handcrafted features prepended as input tokens substantially beats the XLM-R-base closed baseline on ES: best single-seed 1.137 dev vs 1.357 baseline. This is an architectural-improvement result, not a size-reduction result.
+- Averaging three fine-tuned seeds adds a further ~0.02–0.03 dev RMSE gain on ES (ensemble 1.103 dev / 1.094 test), at the cost of 3× inference compute and memory.
 - Across both settings, the LaBSE cross-lingual cosine is the single highest-impact feature.
+
+### Parameter-count honesty (anchor numbers for the paper)
+
+| Model | Total params | Backbone | Embedding (250K × 768) | Source |
+|---|---|---|---|---|
+| XLM-RoBERTa-base (baseline) | ~270M | ~85M | ~192M | Conneau et al. 2020, model-config table |
+| mDeBERTa-v3-base (our per-seed model) | ~276M | 86M | ~190M | He et al. 2023 (arXiv:2111.09543), Table 5; HF card |
+| **3-seed mDeBERTa ensemble (our submitted ES system)** | **~828M** | 3 × 86M | 3 × ~190M | This work |
+| Feature-only XGBoost (our submitted XGBoost system) | ~0.1–1M booster weights | — | — | This work, via `xgboost` default tree ensemble |
+
+The paper must never write "86M vs 278M". The "86M" figure is the mDeBERTa backbone only, not the total, and XLM-R's backbone is about the same size. Total params are essentially equal (~276M vs ~270M). The 3-seed ensemble is ~3× the baseline at inference and should be named as such.
 
 ## 2. Section-by-section content plan
 
@@ -54,7 +66,6 @@ Paraphrased: *Can a small multilingual encoder, fine-tuned with handcrafted feat
 - State the task briefly: GLMM psychometric difficulty regression, three L1s (ES/DE/CN), closed and open tracks.
 - Introduce the self-imposed lightweight constraint (reframed from scratch — no self-citation of 2025/2024/2023 RETUYT papers). Motivate by Global South compute realities and privacy-constrained downstream applications.
 - Preview the two systems: XGBoost over handcrafted features (§3), and mDeBERTa fine-tuned with those same features prepended as input tokens (§4).
-- State the three contributions listed above.
 
 ### §2 Dataset & Task (~0.4 page)
 
@@ -83,11 +94,11 @@ Paraphrased: *Can a small multilingual encoder, fine-tuned with handcrafted feat
 
 ### §4 mDeBERTa fine-tuning (~1.0 page)
 
-- Model: `microsoft/mdeberta-v3-base`, ~86M effective params, fine-tuned for regression (`num_labels=1`).
+- Model: `microsoft/mdeberta-v3-base`, 86M backbone + ~190M embeddings = ~276M total params (He et al. 2023), fine-tuned for regression (`num_labels=1`). State the total, not just the backbone. Explicitly note that this is essentially the same total size as the XLM-R-base closed baseline (~270M).
 - **Input format** (verbatim): `wlen={N} | nedit={N} | pos={POS} | clue={N} | esim={N} | L1_word [SEP] L1_context [SEP] clue [SEP] en_word`. The five prepended feature tokens (`wlen`, `nedit`, `pos`, `clue`, `esim`) are the same features used by XGBoost in §3, rendered as text. `esim` is the LaBSE cosine (called `embed_cosine` in §3).
 - **Target scaling:** GLMM scores normalised to zero-mean/unit-variance at training time; predictions denormalised before RMSE computation.
 - **Training config:** lr=2e-5, cosine schedule with 10% warmup, 10 epochs + early stopping (patience 3), batch=32, weight_decay=0.01, fp16, max_length=256. Training on Google Colab T4.
-- **3-seed ensemble:** seeds {10, 42, 123}, prediction = mean of seed outputs. Report per-seed and ensemble numbers (T1).
+- **3-seed ensemble:** seeds {10, 42, 123}, prediction = mean of seed outputs. Report per-seed and ensemble numbers (T1). Explicitly disclose that the ensemble triples inference compute and memory (3 × ~276M params loaded; 3× forward passes per prediction), and that each individual seed already beats the XLM-R-base baseline on ES dev — the ensemble is a ~0.02–0.03 dev RMSE refinement on top, not the source of the gap to the baseline.
 - **Why ES only (one honest paragraph):** time and compute constraints for DE; for CN we additionally chose not to run because the handcrafted cognate/orthographic features and the `esim` token are designed for Latin-script L1s and are not expected to transfer to Mandarin (no orthographic overlap with English). Our CN submission is therefore XGBoost-only.
 - **`train_final.py` note:** the submitted ES ensemble was retrained on `train + dev` combined before predicting the test set, which is why the test RMSE (1.094) is not directly comparable to the dev RMSE (1.103). State this clearly.
 
@@ -102,7 +113,7 @@ Paraphrased: *Can a small multilingual encoder, fine-tuned with handcrafted feat
 
 ### §6 Conclusions and limitations (~0.3 page)
 
-- Restate the answer to the research question: yes, a feature-enriched ~86M encoder beats the 278M XLM-R-base closed baseline substantially on ES; feature engineering alone (XGBoost) already suffices to beat the baseline on average.
+- Restate the answer to the research question: yes, a feature-enriched same-size (~276M) mDeBERTa-v3-base encoder beats the XLM-R-base (~270M) closed baseline substantially on ES — at equal per-model parameter budget, this is an architectural + input-format improvement, not a size-reduction result. Feature engineering alone (XGBoost, CPU-only, sub-1M booster weights) already suffices to beat the XLM-R-base closed baseline on average across ES/DE/CN — that is where the lightweight narrative genuinely lands.
 - Limitations:
   - ES-only for the neural ensemble (time/compute; no transfer of Latin-script features to CN).
   - Breadth over depth: no per-L1 mDeBERTa hyperparameter search.
@@ -113,20 +124,23 @@ Paraphrased: *Can a small multilingual encoder, fine-tuned with handcrafted feat
 
 ### T1 — Dev results (main comparison table)
 
-Columns: Model | Params | ES RMSE | DE RMSE | CN RMSE | Avg RMSE
+Columns: Model | Params (total) | ES RMSE | DE RMSE | CN RMSE | Avg RMSE
 
-Rows (in this order):
+Rows (in this order), with explicit param counts:
 
-- XLM-RoBERTa-base (closed baseline, reference)
-- `full_xgb_v2_embed` (best XGBoost, our submitted XGBoost system)
-- mDeBERTa seed 10 (ES only, cells for DE/CN = "—")
-- mDeBERTa seed 42 (ES only)
-- mDeBERTa seed 123 (ES only)
-- **mDeBERTa ensemble (ES only)** — bold
+- XLM-RoBERTa-base, closed baseline (reference) | ~270M
+- `full_xgb_v2_embed`, best XGBoost | ~0.1M (booster weights)
+- mDeBERTa seed 10 | ~276M
+- mDeBERTa seed 42 | ~276M
+- mDeBERTa seed 123 | ~276M
+- **mDeBERTa 3-seed ensemble (our submitted ES system)** | **~828M at inference**
 
 Source: `results_log.md` exp #19 (XGBoost), #20 (mDeBERTa seeds and ensemble with `esim`).
 
-**Note:** Use experiment #20 numbers (the submitted `mdeberta_embed_ensemble` with `esim`), not #17. Double-check per-seed Pearson values if reporting Pearson — currently only ES RMSE is listed in the log.
+**Notes:**
+- Use experiment #20 numbers (the submitted `mdeberta_embed_ensemble` with `esim`), not #17. Double-check per-seed Pearson values if reporting Pearson — currently only ES RMSE is listed in the log.
+- Param counts must be stated as totals (not backbone-only). See the "Parameter-count honesty" table in §1.
+- Consider whether the XGBoost row should report model size in MB (on-disk) in addition to or instead of parameter count, since the two are not directly comparable across a decision-tree ensemble and a transformer. One defensible choice: state XGBoost size as "on-disk size: ~X MB" in the table and move the parameter count to prose. Decide during paper writing.
 
 ### T2 — Feature progression (XGBoost section)
 
@@ -141,7 +155,7 @@ Rows:
 5. + Tier-3 features | XGBoost | 1.464 | 1.421 | 1.257 | 1.381 | −0.151
 6. **+ `embed_cosine`** (LaBSE) | XGBoost | **1.350** | **1.339** | **1.181** | **1.290** | **−0.091**
 7. + L1-specific (v2) | XGBoost | 1.327 | 1.334 | 1.158 | 1.273 | −0.017
-8. XLM-R baseline (reference) | XLM-R-278M | 1.357 | 1.328 | 1.175 | 1.287 | —
+8. XLM-R baseline (reference) | XLM-R-base (~270M) | 1.357 | 1.328 | 1.175 | 1.287 | —
 
 Bold the `embed_cosine` row. Model column makes the LR→XGBoost transition explicit.
 
