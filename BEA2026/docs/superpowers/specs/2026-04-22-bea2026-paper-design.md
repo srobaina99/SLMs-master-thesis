@@ -38,7 +38,7 @@ the paper describes what we did, plainly.
 
 ### Research question
 
-Paraphrased: *Can a small multilingual encoder, fine-tuned with handcrafted features prepended as input tokens, match or beat a larger fine-tuned multilingual baseline on psychometric vocabulary difficulty prediction?*
+Paraphrased: *At equal parameter budget (~276M total), does fine-tuning a stronger multilingual encoder (mDeBERTa-v3-base) with handcrafted features prepended as input tokens beat the task's XLM-RoBERTa-base closed baseline? And separately: can an XGBoost regressor over those same handcrafted features — with no neural fine-tuning and no GPU — beat that same baseline?*
 
 ### Contribution preview (to state in §1)
 
@@ -106,9 +106,9 @@ The paper must never write "86M vs 278M". The "86M" figure is the mDeBERTa backb
 
 - Lead with **T1 (dev results)** and **T3 (test leaderboard slice)**.
 - Brief narrative (3–4 short paragraphs):
-  1. Feature-only XGBoost matches/beats the XLM-R dev baseline on all three L1s — the `embed_cosine` feature makes the difference, especially for CN where orthographic features are meaningless.
-  2. mDeBERTa ensemble substantially outperforms the feature-only model on ES (1.103 vs 1.327 dev RMSE).
-  3. On the official test leaderboard, ES mDeBERTa (1.094) places RETUYT-InCo near the middle of the ES closed track, beating the XLM-R test baseline (1.257) by 13.0%. XGBoost on CN (1.106) also beats the test baseline (1.140); DE is within noise of the baseline (1.260 vs 1.258); XGBoost on ES is below baseline (1.323 vs 1.257) — honest discussion of dev/test gap.
+  1. Feature-only XGBoost matches or beats the XLM-R-base dev baseline on all three L1s, using an on-disk model orders of magnitude smaller than a transformer and no GPU — the `embed_cosine` feature makes the difference, especially for CN where orthographic features are meaningless.
+  2. The 3-seed mDeBERTa ensemble substantially outperforms the feature-only model on ES (1.103 vs 1.327 dev RMSE), but note that mDeBERTa-v3-base (~276M) is the same size as XLM-R-base (~270M): the improvement is architectural and input-format, not a size reduction. Each individual seed already beats the XLM-R-base baseline; the ensemble is a ~0.02 RMSE refinement at 3× inference cost (~828M params loaded, 3× FLOPs).
+  3. On the official test leaderboard, the ES 3-seed mDeBERTa ensemble (1.094) places RETUYT-InCo near the middle of the ES closed track, beating the XLM-R-base test baseline (1.257) by 13.0%. XGBoost on CN (1.106) also beats the test baseline (1.140); DE is within noise of the baseline (1.260 vs 1.258); XGBoost on ES is below baseline (1.323 vs 1.257) — honest discussion of dev/test gap.
   4. Optional: 1–2 inline qualitative word examples from `examples.md` (hard vs easy words) if space permits, otherwise omit.
 
 ### §6 Conclusions and limitations (~0.3 page)
@@ -116,6 +116,7 @@ The paper must never write "86M vs 278M". The "86M" figure is the mDeBERTa backb
 - Restate the answer to the research question: yes, a feature-enriched same-size (~276M) mDeBERTa-v3-base encoder beats the XLM-R-base (~270M) closed baseline substantially on ES — at equal per-model parameter budget, this is an architectural + input-format improvement, not a size-reduction result. Feature engineering alone (XGBoost, CPU-only, sub-1M booster weights) already suffices to beat the XLM-R-base closed baseline on average across ES/DE/CN — that is where the lightweight narrative genuinely lands.
 - Limitations:
   - ES-only for the neural ensemble (time/compute; no transfer of Latin-script features to CN).
+  - **Inference cost of the ensemble:** the submitted ES system loads ~828M params (3 × ~276M) and runs 3× forward passes per prediction. This is ~3× the XLM-R-base baseline at inference — the ensemble is not efficient.
   - Breadth over depth: no per-L1 mDeBERTa hyperparameter search.
   - Dev/test distribution mismatch observed for XGBoost ES.
   - Did not explore open-track resources (external data, larger LLMs).
@@ -167,7 +168,7 @@ Columns: Track | L1 | System | RMSE | Pearson | Rank | Total teams | Δ vs basel
 
 Rows:
 
-- Closed | ES | mDeBERTa ensemble | 1.094 | 0.843 | (rank) | (total) | −13.0%
+- Closed | ES | mDeBERTa 3-seed ensemble (~828M at inference) | 1.094 | 0.843 | (rank) | (total) | −13.0%
 - Closed | ES | XGBoost | 1.323 | 0.713 | (rank) | (total) | +5.3%
 - Closed | DE | XGBoost | 1.260 | 0.713 | (rank) | (total) | +0.2%
 - Closed | CN | XGBoost | 1.106 | 0.754 | (rank) | (total) | −3.0%
