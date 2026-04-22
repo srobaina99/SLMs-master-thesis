@@ -12,38 +12,39 @@
 *RETUYT-INCO at BEA 2026 Shared Task: Feature-Enriched mDeBERTa for Cross-Lingual Word Difficulty Prediction*
 
 Alternate options to consider:
-- *RETUYT-INCO at BEA 2026 Shared Task: Two Lightweight Tracks for Psychometric Word Difficulty Prediction*
+
+- *RETUYT-INCO at BEA 2026 Shared Task: Handcrafted Features Prepended to a Small Multilingual Encoder for Word Difficulty Prediction*
 - *RETUYT-INCO at BEA 2026 Shared Task: When Handcrafted Features Meet a Small Multilingual Encoder*
 
-## Author list (to confirm)
+## Author list
 
-Default (matching the 2025 team): Santiago Góngora, Ignacio Sastre, Santiago Robaina, Ignacio Remersaro, Luis Chiruzzo, Aiala Rosá. Affiliation: Instituto de Computación, Facultad de Ingeniería, Universidad de la República, Montevideo, Uruguay.
-
-Corresponding author(s) to be confirmed.
+Default (matching the 2025 team): Santiago Robaina, Luis Chiruzzo, Aiala Rosá. Affiliation: Instituto de Computación, Facultad de Ingeniería, Universidad de la República, Montevideo, Uruguay.
 
 ## 1. Framing and narrative
 
-### Narrative angle (hybrid)
+### Narrative angle
 
 Two threads held together:
 
-1. **Lightweight / efficiency continuity** (motivation): the team works under a self-imposed constraint of sub-1B models and affordable compute, reflecting the research environment in the Global South. This motivation is restated from scratch in 2026 — no self-citation of prior RETUYT-INCO papers.
-2. **Feature→neural cross-pollination** (technical contribution): a LaBSE-derived cross-lingual similarity feature (`embed_cosine`) is discovered in the XGBoost track as the single highest-impact feature, then promoted into the mDeBERTa input as the `esim` text token. The two tracks inform each other sequentially.
+1. **Lightweight / efficiency** (motivation): the team works under a self-imposed constraint of affordable compute, reflecting the research environment in the Global South. Motivation restated from scratch in 2026 — no self-citation of prior RETUYT-INCO papers.
+2. **Feature-enriched small encoder** (technical contribution): we build a set of handcrafted string, morphological, POS, frequency, L1-specific, and cross-lingual semantic-similarity features. The same feature set is used in two settings: as inputs to an XGBoost regressor (§3), and as text tokens prepended to the mDeBERTa input (§4). The highest-impact single feature in both settings is a LaBSE cross-lingual cosine (`embed_cosine` in §3, rendered as the `esim` token in §4).
 
-### Track weighting (progression, not parallel)
+No "two tracks", no "cross-pollination", no novel-mechanism claim — the paper describes what we did, plainly.
 
-- §3 presents the **feature + XGBoost** track first as a *self-contained* result: minimal-resources system that beats the XLM-R closed baseline on average. Not a ranking contender; fit-to-intent.
-- §4 presents **mDeBERTa fine-tuning** as the next step that *absorbs* the best feature from §3 (`embed_cosine` → `esim`). This is the primary system and delivers the best test result (ES RMSE 1.094).
+### Section layout (progression)
+
+- §3 presents **feature engineering + XGBoost** as a self-contained minimal-resources baseline. The headline result: features + XGBoost beats the XLM-R-base closed dev baseline on average across ES/DE/CN. Not a ranking contender; fit-to-intent.
+- §4 presents **mDeBERTa fine-tuned with features prepended as input tokens** as the primary system. It delivers the best test result (ES RMSE 1.094).
 
 ### Research question
 
-Paraphrased: *Can a small multilingual encoder, enriched with handcrafted cross-lingual similarity features, match or beat a larger fine-tuned multilingual baseline on psychometric vocabulary difficulty prediction?*
+Paraphrased: *Can a small multilingual encoder, fine-tuned with handcrafted features prepended as input tokens, match or beat a larger fine-tuned multilingual baseline on psychometric vocabulary difficulty prediction?*
 
 ### Contribution preview (to state in §1)
 
 - Feature-only XGBoost (no neural fine-tuning) beats the XLM-R-base closed baseline on average across ES/DE/CN (1.273 vs 1.287 avg RMSE on dev).
-- mDeBERTa-v3-base (~86M params) fine-tuned with feature-enriched input beats the XLM-R-base closed baseline (278M params) by a wide margin on ES: 1.103 dev / 1.094 test RMSE vs 1.357 dev / 1.257 test baseline.
-- The LaBSE cross-lingual cosine feature is the single highest-impact signal in both tracks.
+- mDeBERTa-v3-base (~86M params) fine-tuned with features prepended as input tokens beats the XLM-R-base closed baseline (278M params) by a wide margin on ES: 1.103 dev / 1.094 test RMSE vs 1.357 dev / 1.257 test baseline.
+- Across both settings, the LaBSE cross-lingual cosine is the single highest-impact feature.
 
 ## 2. Section-by-section content plan
 
@@ -52,7 +53,7 @@ Paraphrased: *Can a small multilingual encoder, enriched with handcrafted cross-
 - Motivate vocabulary difficulty prediction as a core problem for L2 learning applications (one sentence, no deep lit review).
 - State the task briefly: GLMM psychometric difficulty regression, three L1s (ES/DE/CN), closed and open tracks.
 - Introduce the self-imposed lightweight constraint (reframed from scratch — no self-citation of 2025/2024/2023 RETUYT papers). Motivate by Global South compute realities and privacy-constrained downstream applications.
-- Preview the two-track architecture and the cross-pollination mechanism (`embed_cosine` → `esim`).
+- Preview the two systems: XGBoost over handcrafted features (§3), and mDeBERTa fine-tuned with those same features prepended as input tokens (§4).
 - State the three contributions listed above.
 
 ### §2 Dataset & Task (~0.4 page)
@@ -83,7 +84,7 @@ Paraphrased: *Can a small multilingual encoder, enriched with handcrafted cross-
 ### §4 mDeBERTa fine-tuning (~1.0 page)
 
 - Model: `microsoft/mdeberta-v3-base`, ~86M effective params, fine-tuned for regression (`num_labels=1`).
-- **Input format** (verbatim): `wlen={N} | nedit={N} | pos={POS} | clue={N} | esim={N} | L1_word [SEP] L1_context [SEP] clue [SEP] en_word`. Call out that `esim` is the **cross-pollinated feature from §3** — explicitly cross-reference the XGBoost track.
+- **Input format** (verbatim): `wlen={N} | nedit={N} | pos={POS} | clue={N} | esim={N} | L1_word [SEP] L1_context [SEP] clue [SEP] en_word`. The five prepended feature tokens (`wlen`, `nedit`, `pos`, `clue`, `esim`) are the same features used by XGBoost in §3, rendered as text. `esim` is the LaBSE cosine (called `embed_cosine` in §3).
 - **Target scaling:** GLMM scores normalised to zero-mean/unit-variance at training time; predictions denormalised before RMSE computation.
 - **Training config:** lr=2e-5, cosine schedule with 10% warmup, 10 epochs + early stopping (patience 3), batch=32, weight_decay=0.01, fp16, max_length=256. Training on Google Colab T4.
 - **3-seed ensemble:** seeds {10, 42, 123}, prediction = mean of seed outputs. Report per-seed and ensemble numbers (T1).
@@ -115,6 +116,7 @@ Paraphrased: *Can a small multilingual encoder, enriched with handcrafted cross-
 Columns: Model | Params | ES RMSE | DE RMSE | CN RMSE | Avg RMSE
 
 Rows (in this order):
+
 - XLM-RoBERTa-base (closed baseline, reference)
 - `full_xgb_v2_embed` (best XGBoost, our submitted XGBoost system)
 - mDeBERTa seed 10 (ES only, cells for DE/CN = "—")
@@ -131,6 +133,7 @@ Source: `results_log.md` exp #19 (XGBoost), #20 (mDeBERTa seeds and ensemble wit
 Columns: Feature set | Model | ES RMSE | DE RMSE | CN RMSE | Avg | Δ vs prev
 
 Rows:
+
 1. `word_len` | LR | 1.778 | 1.707 | 1.509 | 1.665 | —
 2. + edit distance | LR | 1.705 | 1.596 | 1.487 | 1.596 | −0.069
 3. + POS | LR | 1.663 | 1.536 | 1.493 | 1.564 | −0.032
@@ -149,6 +152,7 @@ Source: `results_log.md` experiments #1, #4, #12, #15, #16, #18, #19.
 Columns: Track | L1 | System | RMSE | Pearson | Rank | Total teams | Δ vs baseline
 
 Rows:
+
 - Closed | ES | mDeBERTa ensemble | 1.094 | 0.843 | (rank) | (total) | −13.0%
 - Closed | ES | XGBoost | 1.323 | 0.713 | (rank) | (total) | +5.3%
 - Closed | DE | XGBoost | 1.260 | 0.713 | (rank) | (total) | +0.2%
@@ -170,24 +174,24 @@ None. Page budget does not allow it, and three tables carry the numerical story.
 - LaTeX template: copy `acl.sty`, `acl_natbib.bst`, `anthology.bib`, `custom.bib` verbatim from `bea2025_chatbots/`.
 - Use `\citep` for parenthetical, `\citet` for textual (as in 2025's `main.tex`).
 - Numbers in tables: 3 decimal places for RMSE, 3 for Pearson. Use the `−` en-dash for negative values in prose, plain hyphen in math.
-- Use commas and parentheses for mid-sentence interruption rather than em-dashes. En-dashes (` – `) are acceptable for ranges and for the interrupter role if truly needed — match the sparing usage in `bea2025_chatbots/main.tex`.
+- Use commas and parentheses for mid-sentence interruption rather than em-dashes. En-dashes (`–`) are acceptable for ranges and for the interrupter role if truly needed — match the sparing usage in `bea2025_chatbots/main.tex`.
 
 ## 6. Data sources (reference index)
 
 Every number written in the paper comes from one of these files — do not recompute:
 
-| Number group | Source |
-|---|---|
-| Dev RMSE per L1 per experiment | `results_log.md`, experiments #1 through #20 |
-| Submitted XGBoost (test) | `results_log.md` submission table + `results_summary_test.md` |
-| Submitted mDeBERTa ensemble (test) | `results_log.md` exp #20 + `results_summary_test.md` |
-| XLM-R closed dev baseline | `BEA2026_COMPETITION.md` §3 / `results_log.md` baseline block |
-| XLM-R closed test baseline | `results_summary_test.md` baseline rows |
-| Feature progression rows | `results_log.md` experiments #1, #4, #12, #15, #16, #18, #19 |
-| Feature ablation (leave-one-out) | `results_log.md` ES ablation block |
-| Ensemble seed per-seed numbers | `results_log.md` exp #20 |
-| Qualitative word examples | `examples.md` |
-| Task dataset stats | `BEA2026_COMPETITION.md` §2 |
+| Number group                       | Source                                                             |
+| ---------------------------------- | ------------------------------------------------------------------ |
+| Dev RMSE per L1 per experiment     | `results_log.md`, experiments #1 through #20                     |
+| Submitted XGBoost (test)           | `results_log.md` submission table + `results_summary_test.md`  |
+| Submitted mDeBERTa ensemble (test) | `results_log.md` exp #20 + `results_summary_test.md`           |
+| XLM-R closed dev baseline          | `BEA2026_COMPETITION.md` §3 / `results_log.md` baseline block |
+| XLM-R closed test baseline         | `results_summary_test.md` baseline rows                          |
+| Feature progression rows           | `results_log.md` experiments #1, #4, #12, #15, #16, #18, #19     |
+| Feature ablation (leave-one-out)   | `results_log.md` ES ablation block                               |
+| Ensemble seed per-seed numbers     | `results_log.md` exp #20                                         |
+| Qualitative word examples          | `examples.md`                                                    |
+| Task dataset stats                 | `BEA2026_COMPETITION.md` §2                                     |
 
 If a number required by the plan is absent from these files, the plan step must flag it explicitly rather than inventing.
 
