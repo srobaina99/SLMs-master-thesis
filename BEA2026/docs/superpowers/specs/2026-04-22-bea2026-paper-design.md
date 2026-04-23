@@ -9,7 +9,7 @@
 
 ## Tentative title
 
-*RETUYT-INCO at BEA 2026 Shared Task: Feature-Enriched mDeBERTa for Cross-Lingual Word Difficulty Prediction*
+*RETUYT-INCO at BEA 2026 Shared Task: Feature-Enriched mDeBERTa for Word Difficulty Prediction*
 
 Alternate options to consider:
 
@@ -33,28 +33,32 @@ the paper describes what we did, plainly.
 
 ### Section layout (progression)
 
-- §3 presents **feature engineering + XGBoost** as a self-contained minimal-resources baseline. The headline result: features + XGBoost beats the XLM-R-base closed dev baseline on average across ES/DE/CN. Not a ranking contender; fit-to-intent.
+- §3 presents **feature engineering + XGBoost** as a self-contained minimal-resources baseline. The headline result: features + XGBoost beats the XLM-R-base closed dev baseline on average across ES/DE/CN. Not a ranking contender; fit-to-intent. Include comparison with the final test baseline (not always beats, but lands close)
 - §4 presents **mDeBERTa fine-tuned with features prepended as input tokens** as the primary system. It delivers the best test result (ES RMSE 1.094).
 
 ### Research question
 
-Paraphrased: *At equal parameter budget (~276M total), does fine-tuning a stronger multilingual encoder (mDeBERTa-v3-base) with handcrafted features prepended as input tokens beat the task's XLM-RoBERTa-base closed baseline? And separately: can an XGBoost regressor over those same handcrafted features — with no neural fine-tuning and no GPU — beat that same baseline?*
+Paraphrased: *Which handcrafted features carry the most signal for cross-lingual vocabulary difficulty prediction, and how far can a CPU-only regressor over those features go against a fine-tuned multilingual transformer baseline?*
+
+The research question intentionally centres the feature-engineering question (the real contribution) rather than the encoder-swap question (engineering). The mDeBERTa fine-tune is reported as the submitted best system but is not the subject of the research question.
 
 ### Contribution preview (to state in §1)
 
-- XGBoost over handcrafted features (no neural fine-tuning, CPU-only, ~tens of MB on disk) beats the XLM-R-base closed baseline on average across ES/DE/CN (1.273 vs 1.287 avg RMSE on dev).
-- A single fine-tune of mDeBERTa-v3-base (~276M total params, essentially the same size as XLM-R-base ~270M) with handcrafted features prepended as input tokens substantially beats the XLM-R-base closed baseline on ES: best single-seed 1.137 dev vs 1.357 baseline. This is an architectural-improvement result, not a size-reduction result.
-- Averaging three fine-tuned seeds adds a further ~0.02–0.03 dev RMSE gain on ES (ensemble 1.103 dev / 1.094 test), at the cost of 3× inference compute and memory.
-- Across both settings, the LaBSE cross-lingual cosine is the single highest-impact feature.
+Honest accounting of what this paper actually contributes. System description papers describe what was submitted; the two bullets below are the items a reader could reuse or cite.
 
-### Parameter-count honesty (anchor numbers for the paper)
+- **Main finding.** A LaBSE cross-lingual cosine between the L1 source word and the English target word is the single highest-impact feature for this task. Adding it reduces average dev RMSE by 0.091 across ES/DE/CN in a tree-based regressor (T2 row 6 vs 5), and adds a further 0.017 dev RMSE on ES when included as a prepended input token to a fine-tuned mDeBERTa-v3-base ensemble (`results_log.md` exp #17 vs #20).
+- **Practical finding.** XGBoost over our handcrafted feature set beats the XLM-R-base closed baseline on average dev RMSE across the three L1s (1.273 vs 1.287), with no neural fine-tuning and no GPU.
 
-| Model | Total params | Backbone | Embedding (250K × 768) | Source |
-|---|---|---|---|---|
-| XLM-RoBERTa-base (baseline) | ~270M | ~85M | ~192M | Conneau et al. 2020, model-config table |
-| mDeBERTa-v3-base (our per-seed model) | ~276M | 86M | ~190M | He et al. 2023 (arXiv:2111.09543), Table 5; HF card |
-| **3-seed mDeBERTa ensemble (our submitted ES system)** | **~828M** | 3 × 86M | 3 × ~190M | This work |
-| Feature-only XGBoost (our submitted XGBoost system) | ~0.1–1M booster weights | — | — | This work, via `xgboost` default tree ensemble |
+Everything else in §3/§4 — the fine-tuning recipe, the 3-seed ensemble, the specific feature families — is reported as "what we submitted," not claimed as a contribution. Swapping XLM-R for a stronger same-size encoder (mDeBERTa-v3-base) and seed-averaging are textbook engineering choices and are described but not sold.
+
+### Parameter-count (anchor numbers for the paper)
+
+| Model                                                        | Total params             | Backbone | Embedding (250K × 768) | Source                                              |
+| ------------------------------------------------------------ | ------------------------ | -------- | ----------------------- | --------------------------------------------------- |
+| XLM-RoBERTa-base (baseline)                                  | ~270M                    | ~85M     | ~192M                   | Conneau et al. 2020, model-config table             |
+| mDeBERTa-v3-base (our per-seed model)                        | ~276M                    | 86M      | ~190M                   | He et al. 2023 (arXiv:2111.09543), Table 5; HF card |
+| **3-seed mDeBERTa ensemble (our submitted ES system)** | **~828M**          | 3 × 86M | 3 × ~190M              | This work                                           |
+| Feature-only XGBoost (our submitted XGBoost system)          | ~0.1–1M booster weights | —       | —                      | This work, via `xgboost` default tree ensemble    |
 
 The paper must never write "86M vs 278M". The "86M" figure is the mDeBERTa backbone only, not the total, and XLM-R's backbone is about the same size. Total params are essentially equal (~276M vs ~270M). The 3-seed ensemble is ~3× the baseline at inference and should be named as such.
 
@@ -139,6 +143,7 @@ Rows (in this order), with explicit param counts:
 Source: `results_log.md` exp #19 (XGBoost), #20 (mDeBERTa seeds and ensemble with `esim`).
 
 **Notes:**
+
 - Use experiment #20 numbers (the submitted `mdeberta_embed_ensemble` with `esim`), not #17. Double-check per-seed Pearson values if reporting Pearson — currently only ES RMSE is listed in the log.
 - Param counts must be stated as totals (not backbone-only). See the "Parameter-count honesty" table in §1.
 - Consider whether the XGBoost row should report model size in MB (on-disk) in addition to or instead of parameter count, since the two are not directly comparable across a decision-tree ensemble and a transformer. One defensible choice: state XGBoost size as "on-disk size: ~X MB" in the table and move the parameter count to prose. Decide during paper writing.
