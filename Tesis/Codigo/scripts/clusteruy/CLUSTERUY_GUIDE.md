@@ -1,20 +1,55 @@
 # Running Experiments on ClusterUY
 
-Step-by-step guide to run the multi-weight experiment on ClusterUY.
+Step-by-step guide to run the multi-weight experiment on ClusterUY using
+Singularity containers.
 
 **Official documentation**: https://www.cluster.uy/ayuda/
+
+## Why Singularity?
+
+ClusterUY runs CentOS 7 (glibc 2.17), which is too old for most modern Python
+packages (PyTorch, llama-cpp-python, pandas). Singularity containers solve this
+by running a modern Linux (Ubuntu 22.04) inside the container while using the
+cluster's GPU drivers.
+
+Ref: [Contenedores de Linux (Singularity)](https://www.cluster.uy/ayuda/singularity/)
 
 ## Prerequisites
 
 - An active ClusterUY account ([register here](https://www.cluster.uy/registro/))
 - Your SSH key pair submitted during registration
 - UdelaR students need written endorsement from a faculty supervisor
+- Docker installed on your **local machine** (for building the image)
+- A Docker Hub account (https://hub.docker.com)
 
 Ref: [Política y costo de uso](https://www.cluster.uy/ayuda/politica_uso/)
 
 ---
 
-## Step 1: Connect to ClusterUY
+## Step 1: Build and push the Docker image (local machine)
+
+This builds a container with Ubuntu 22.04, CUDA 12.1, PyTorch, llama-cpp-python
+(compiled with CUDA), and all experiment dependencies. Run this on your local
+machine, not on ClusterUY.
+
+```bash
+cd Tesis/Codigo
+
+# Log in to Docker Hub
+docker login
+
+# Build and push (takes 10-20 min, compiles llama-cpp-python with CUDA)
+bash scripts/clusteruy/build_and_push.sh <your_dockerhub_username>
+```
+
+This creates and pushes `<your_dockerhub_username>/slm-thesis:latest`.
+
+The Dockerfile is at `scripts/clusteruy/Dockerfile` — it installs only what the
+experiment needs: torch, llama-cpp-python, pandas, tqdm, textstat, nltk.
+
+---
+
+## Step 2: Connect to ClusterUY
 
 No VPN required. Authentication is via SSH key pair only.
 
@@ -26,7 +61,7 @@ Ref: [Cómo conectarse](https://www.cluster.uy/ayuda/como_conectarse/)
 
 ---
 
-## Step 2: Clone the repository
+## Step 3: Clone the repository
 
 The login node can be used for file management tasks like cloning.
 
@@ -34,60 +69,29 @@ The login node can be used for file management tasks like cloning.
 git clone -b feature/refactor https://github.com/srobaina99/SLMs-master-thesis.git
 ```
 
-> **Note**: Use HTTPS for public repos. SSH (`git@github.com:...`) requires your
-> cluster SSH key to be added to your GitHub account.
+Use HTTPS for public repos. SSH (`git@github.com:...`) requires your cluster SSH
+key to be added to your GitHub account.
 
 Ref: [Utilización de repositorios GIT](https://www.cluster.uy/ayuda/git/)
 
 ---
 
-## Step 3: Set up the environment
+## Step 4: Pull the Singularity image
 
-Running installations on the login node is **prohibited**. Request an interactive
-session first. The default `interactivo` gives 30 minutes, which is not enough
-for the full setup. Request 1 hour instead.
-
-Ref: [Primeros pasos](https://www.cluster.uy/ayuda/primeros_pasos/),
-[Cómo ejecutar un trabajo](https://www.cluster.uy/ayuda/como_ejecutar/)
+From the login node (this is file management, not computation):
 
 ```bash
-srun --time=1:00:00 --partition=normal --qos=normal --pty bash -l
+singularity pull --name ~/slm-thesis.sif docker://<your_dockerhub_username>/slm-thesis:latest
 ```
 
-Then run the setup script:
+This converts the Docker image to a Singularity `.sif` file in your home
+directory. It only needs to be done once (~5-10 GB download).
 
-```bash
-cd ~/SLMs-master-thesis/Tesis/Codigo
-bash scripts/clusteruy/setup_env.sh
-```
-
-This script:
-
-1. **Installs Miniconda** (py310_23.1.0-1 — the last version compatible with
-   CentOS 7's glibc 2.17)
-2. **Creates a conda environment** `thesis` with Python 3.10
-3. **Installs PyTorch** with CUDA 12.1 support (plain `pip install torch`
-   installs CPU-only)
-4. **Installs llama-cpp-python** from a prebuilt CUDA wheel (compiling from
-   source requires C++17 / GCC 8+ and takes over 30 minutes)
-5. **Installs compiled packages** (pandas, numpy, matplotlib) via conda to avoid
-   CentOS 7 build toolchain issues
-6. **Installs remaining packages** (textstat, transformers, etc.) via pip
-7. **Verifies** all imports work
-
-### If the session times out
-
-Everything installed to `$HOME` persists between sessions (home directory is
-persistent NFS storage with 300 GB quota). Just get a new interactive session
-and pick up where you left off.
-
-Check quota with: `quota -gvs`
-
-Ref: [Tips y buenas prácticas](https://www.cluster.uy/ayuda/tips/)
+Ref: [Contenedores de Linux](https://www.cluster.uy/ayuda/singularity/)
 
 ---
 
-## Step 4: Interactive test
+## Step 5: Interactive test
 
 Before submitting a batch job, verify everything works with a quick interactive
 GPU session.
@@ -99,25 +103,29 @@ interactivo -gpun
 This gives a 30-minute session on the normal partition with GPU access.
 
 ```bash
-source ~/.bashrc
-conda activate thesis
 cd ~/SLMs-master-thesis/Tesis/Codigo
-python scripts/run_experiment.py \
-    --experiment multi_weight \
-    --weights "1.5,2.0,3.0,4.0,5.0" \
-    --prompts 3 \
-    --model Qwen3 \
-    --no-plots
+
+singularity exec --nv \
+    --bind $(pwd):/workspace \
+    ~/slm-thesis.sif \
+    python /workspace/scripts/run_experiment.py \
+        --experiment multi_weight \
+        --weights "1.5,2.0" \
+        --prompts 2 \
+        --model Qwen3 \
+        --no-plots
 ```
 
-This runs a minimal test: 1 model, 3 prompts, 5 weights (15 runs). If it
-completes without errors, the full experiment is ready.
+- `--nv`: exposes the host NVIDIA GPU drivers inside the container
+- `--bind`: mounts the project directory at `/workspace` inside the container
+
+If this completes without errors, the full experiment is ready.
 
 Ref: [Cómo ejecutar un trabajo](https://www.cluster.uy/ayuda/como_ejecutar/)
 
 ---
 
-## Step 5: Submit the full experiment
+## Step 6: Submit the full experiment
 
 First, edit `scripts/clusteruy/run_multiweight.sh` and set your email:
 
@@ -134,15 +142,15 @@ sbatch scripts/clusteruy/run_multiweight.sh
 
 ### Job configuration
 
-| Parameter        | Value          | Reason                                    |
-|-----------------|----------------|-------------------------------------------|
-| `--partition`   | normal         | Guaranteed resources (not preemptible)     |
-| `--qos`         | gpu            | Required for GPU jobs; max 4 GPUs, 3 days |
-| `--gres`        | gpu:1          | One GPU for inference                      |
-| `--cpus-per-task` | 8            | Enough for data loading and text eval      |
-| `--mem`         | 32768 (32 GB)  | Headroom for model loading                 |
-| `--time`        | 12:00:00       | 4 models x 5 weights x 25 prompts         |
-| `--no-plots`    | (flag)         | No display on cluster; generate locally    |
+| Parameter         | Value          | Reason                                    |
+|-------------------|----------------|-------------------------------------------|
+| `--partition`     | normal         | Guaranteed resources (not preemptible)     |
+| `--qos`           | gpu            | Required for GPU jobs; max 4 GPUs, 3 days |
+| `--gres`          | gpu:1          | One GPU for inference                      |
+| `--cpus-per-task` | 8              | Enough for data loading and text eval      |
+| `--mem`           | 32768 (32 GB)  | Headroom for model loading                 |
+| `--time`          | 12:00:00       | 4 models x 5 weights x 25 prompts         |
+| `--no-plots`      | (flag)         | No display on cluster; generate locally    |
 
 ### What it runs
 
@@ -155,7 +163,7 @@ Ref: [Recursos disponibles](https://www.cluster.uy/ayuda/recursos_disponibles/)
 
 ---
 
-## Step 6: Monitor the job
+## Step 7: Monitor the job
 
 ```bash
 squeue -u $USER --long           # check job status
@@ -168,10 +176,10 @@ Ref: [Comandos útiles](https://www.cluster.uy/ayuda/comandos_utiles/)
 
 ---
 
-## Step 7: Download results
+## Step 8: Download results
 
 Results are saved to `~/SLMs-master-thesis/Tesis/Codigo/results/`. From your
-local machine:
+local machine, use port 10022 to avoid consuming login node bandwidth:
 
 ```bash
 scp -P 10022 usuario@cluster.uy:~/SLMs-master-thesis/Tesis/Codigo/results/*.csv ./results/
@@ -185,8 +193,6 @@ rsync -arvz -e "ssh -p 10022" \
     ./Tesis/Codigo/results/
 ```
 
-Use port 10022 to avoid consuming login node bandwidth.
-
 Ref: [Tips y buenas prácticas](https://www.cluster.uy/ayuda/tips/)
 
 ---
@@ -194,11 +200,12 @@ Ref: [Tips y buenas prácticas](https://www.cluster.uy/ayuda/tips/)
 ## Important notes
 
 - **No backups**: The cluster does not back up any user data.
-  Ref: [Política de uso](https://www.cluster.uy/ayuda/politica_uso/)
 - **Inactivity policy**: After 4 months without running a SLURM job, your
   account is deactivated. After 6 months total, data is permanently deleted.
 - **Home directory**: 300 GB quota, persistent NFS storage. Check with `quota -gvs`.
-- **Scratch** (`/scratch/$USER`): 300 GB SSD per node, fast but node-local.
-  Clean up after jobs. Reserve with `--tmp=xxxG`.
+- **Containers are read-only**: You cannot modify a pulled image. If you need to
+  change dependencies, rebuild the Docker image locally and re-push/re-pull.
 - **Login node**: Only for file management and job submission. All computation
-  (including `pip install`, compilation) must go through interactive or batch jobs.
+  must go through interactive or batch jobs.
+
+Ref: [Política de uso](https://www.cluster.uy/ayuda/politica_uso/)

@@ -1,0 +1,89 @@
+{
+  "overall": {
+    "response_time_seconds": {
+      "mean": 0.625805139541626,
+      "std": NaN,
+      "min": 0.625805139541626,
+      "max": 0.625805139541626
+    },
+    "flesch_kincaid_grade": {
+      "mean": 14.4,
+      "std": NaN,
+      "min": 14.4,
+      "max": 14.4
+    },
+    "gunning_fog": {
+      "mean": 16.0,
+      "std": NaN,
+      "min": 16.0,
+      "max": 16.0
+    },
+    "spache_readability": {
+      "mean": 7.22,
+      "std": NaN,
+      "min": 7.22,
+      "max": 7.22
+    },
+    "word_count": {
+      "mean": 60.0,
+      "std": NaN,
+      "min": "60",
+      "max": "60"
+    },
+    "difficult_words": {
+      "mean": 15.0,
+      "std": NaN,
+      "min": "15",
+      "max": "15"
+    }
+  },
+  "by_config": {
+    "weighting_only": {
+      "count": 1,
+      "response_time_seconds": {
+        "mean": 0.625805139541626,
+        "std": NaN,
+        "min": 0.625805139541626,
+        "max": 0.625805139541626
+      },
+      "flesch_kincaid_grade": {
+        "mean": 14.4,
+        "std": NaN,
+        "min": 14.4,
+        "max": 14.4
+      },
+      "gunning_fog": {
+        "mean": 16.0,
+        "std": NaN,
+        "min": 16.0,
+        "max": 16.0
+      },
+      "spache_readability": {
+        "mean": 7.22,
+        "std": NaN,
+        "min": 7.22,
+        "max": 7.22
+      },
+      "word_count": {
+        "mean": 60.0,
+        "std": NaN,
+        "min": "60",
+        "max": "60"
+      },
+      "difficult_words": {
+        "mean": 15.0,
+        "std": NaN,
+        "min": "15",
+        "max": "15"
+      }
+    }
+  },
+  "metadata": {
+    "total_experiments": 1,
+    "unique_prompts": 1,
+    "configs_tested": 1,
+    "models_tested": [
+      "Qwen2"
+    ]
+  }
+}
