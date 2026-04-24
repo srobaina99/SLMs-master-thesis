@@ -1,5 +1,7 @@
 # Strategy for Improving Performance
 
+> **Status (2026-04-22):** pre-experiment planning doc, preserved as historical context. See `results_log.md` for what actually shipped. Items 1, 2, 3, 6, 7 shipped as described; item 8 partial (`zipf_freq` only — no MRC/AoA); items 4 (input reordering / dropping clue), 5 (L1 adapters), 9 (LLM distillation), and 10 (back-translation) were not pursued.
+
 ## High-Impact (try first)
 
 1. **Feature-augmented regression.** The baseline concatenates text fields and feeds them to a transformer. Add explicit numerical features before the regression head:

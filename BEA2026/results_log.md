@@ -1,12 +1,27 @@
 # Experiment Results Log
 
-**Current best:** `mdeberta_embed_ensemble` (ES RMSE 1.103, **beats XLM-R baseline by 18.7%**)
+**Current best (dev):** `mdeberta_embed_ensemble` (ES RMSE 1.103, **beats XLM-R dev baseline by 18.7%**)
 
-## Baseline to beat
+## Submission / Test-set results (official BEA 2026 leaderboard)
+
+Team **RETUYT-InCo**, closed track. Submission artifacts live in `submission/closed/`.
+
+| L1 | Submission file            | Source experiment             | Test RMSE | Test Pearson | XLM-R test baseline | Δ vs baseline |
+|----|----------------------------|-------------------------------|-----------|--------------|---------------------|---------------|
+| ES | `predictions_ensemble.csv` | #20 `mdeberta_embed_ensemble` | **1.094** | 0.843        | 1.257               | **−13.0%**    |
+| ES | `predictions_xgboost.csv`  | #19 `full_xgb_v2_embed`       | 1.323     | 0.713        | 1.257               | +5.3%         |
+| DE | `predictions_xgboost.csv`  | #19 `full_xgb_v2_embed`       | 1.260     | 0.713        | 1.258               | +0.2%         |
+| CN | `predictions_xgboost.csv`  | #19 `full_xgb_v2_embed`       | 1.106     | 0.754        | 1.140               | −3.0%         |
+
+mDeBERTa ensemble was submitted for **ES only**. XGBoost was submitted for all three L1s. The ES ensemble is produced by `finetune/train_final.py`, which trains on **train + dev combined** before predicting test — so the 1.094 test number is not directly comparable to the 1.103 dev number in experiment #20. Full leaderboard in `results_summary_test.md`.
+
+## Baseline to beat (dev split, from task README)
 
 | Model | ES RMSE | DE RMSE | CN RMSE | Avg RMSE |
 |-------|---------|---------|---------|----------|
 | XLM-RoBERTa-base (closed) | 1.357 | 1.328 | 1.175 | 1.287 |
+
+Note: these are the **dev-split** XLM-R numbers used throughout the experiments below. The official **test-split** XLM-R baselines in the leaderboard above (1.257 / 1.258 / 1.140) are lower.
 
 ## Experiments
 
@@ -114,7 +129,7 @@ All experiments use train split for fitting, evaluated on dev. Features are extr
 **ES RMSE:** 1.350 | **DE RMSE:** 1.339 | **CN RMSE:** 1.181 | **Avg:** 1.290 | **ES r:** 0.709 | **DE r:** 0.680 | **CN r:** 0.714
 **Notes:** Massive improvement from a single feature addition. `embed_cosine` captures cross-lingual semantic similarity that string-level features cannot — especially critical for CN where orthographic features are meaningless. Beats XLM-R closed baseline on average (1.290 vs 1.287).
 
-### #19 — full_xgb_v2_embed (**current best feature-only model**)
+### #19 — full_xgb_v2_embed (**submitted as `submission/closed/{es,de,cn}/predictions_xgboost.csv`; best feature-only model**)
 **Features:** All V2 features + `embed_cosine`
 **Model:** XGBoost (L1-tuned params)
 **ES RMSE:** 1.327 | **DE RMSE:** 1.334 | **CN RMSE:** 1.158 | **Avg:** 1.273 | **ES r:** 0.723 | **DE r:** 0.682 | **CN r:** 0.727
@@ -172,12 +187,12 @@ Syllable count was tested with linear regression and removed. It performed worse
 
 **Notes:** Massive improvement over all feature-based models. Beats XLM-R closed baseline (1.357) by **17.5%** and the open baseline (1.206) by **7.1%**. Key differences vs baseline: (1) mDeBERTa instead of XLM-R, (2) feature-enriched input with computed features as text tokens, (3) target scaling, (4) cosine LR schedule, (5) 3-seed ensemble. Each individual seed already beats the baseline. Ensemble reduces variance and gains ~0.02 RMSE over best single seed.
 
-### #20 — mdeberta_embed_ensemble (**current best, beats baseline by 18.7%**)
+### #20 — mdeberta_embed_ensemble (**submitted as `submission/closed/es/predictions_ensemble.csv`; beats dev baseline by 18.7%**)
 **Model:** `microsoft/mdeberta-v3-base` fine-tuned for regression (`num_labels=1`)
 **Input format:** `wlen={N} | nedit={N} | pos={POS} | clue={N} | esim={N} | L1_word [SEP] L1_context [SEP] clue [SEP] en_word`
 **New feature:** `esim` = cosine similarity between LaBSE embeddings of `en_target_word` and `L1_source_word`
 **Training config:** Same as #17
-**L1s:** ES (DE, CN pending)
+**L1s:** ES only. DE ensemble not attempted (time/compute); CN skipped — cognate/orthographic features do not transfer to non-Latin scripts.
 **Ensemble:** 3-seed average (seeds 10, 42, 123)
 
 | Experiment | ES RMSE | ES Pearson |
@@ -187,7 +202,7 @@ Syllable count was tested with linear regression and removed. It performed worse
 | mdeberta_seed123 | 1.172 | 0.826 |
 | **mdeberta_embed_ensemble** | **1.103** | **0.827** |
 
-**Notes:** Adding `esim` improved ES ensemble RMSE from 1.120 (#17) to **1.103** (1.5% improvement). Beats XLM-R closed baseline (1.357) by **18.7%** and the open baseline (1.206) by **8.5%**. DE and CN runs are pending — expect even larger gains for CN where the embedding feature had the most impact in XGBoost experiments.
+**Notes:** Adding `esim` improved ES ensemble RMSE from 1.120 (#17) to **1.103** (1.5% improvement). Beats XLM-R closed dev baseline (1.357) by **18.7%** and the open dev baseline (1.206) by **8.5%**. **Submitted model.** On the official test leaderboard: ES RMSE **1.094** / Pearson **0.843** (trained on train + dev combined via `finetune/train_final.py`).
 
 ## Key insights
 

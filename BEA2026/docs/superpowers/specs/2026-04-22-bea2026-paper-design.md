@@ -51,11 +51,11 @@ Everything else in §3/§4 — the fine-tuning recipe, the 3-seed ensemble, the 
 
 ### Parameter-count (anchor numbers for the paper)
 
-| Model                                                        | Total params             | Backbone | Embedding (250K × 768) | Source                                              |
-| ------------------------------------------------------------ | ------------------------ | -------- | ----------------------- | --------------------------------------------------- |
-| XLM-RoBERTa-base (baseline)                                  | ~270M                    | ~85M     | ~192M                   | Conneau et al. 2020, model-config table             |
-| mDeBERTa-v3-base (our per-seed model)                        | ~276M                    | 86M      | ~190M                   | He et al. 2023 (arXiv:2111.09543), Table 5; HF card |
-| **3-seed mDeBERTa ensemble (our submitted ES system)** | **~828M**          | 3 × 86M | 3 × ~190M              | This work                                           |
+| Model                                                        | Total params                            | Backbone | Embedding (250K × 768) | Source                                              |
+| ------------------------------------------------------------ | --------------------------------------- | -------- | ----------------------- | --------------------------------------------------- |
+| XLM-RoBERTa-base (baseline)                                  | ~270M                                   | ~85M     | ~192M                   | Conneau et al. 2020, model-config table             |
+| mDeBERTa-v3-base (our per-seed model)                        | ~276M                                   | 86M      | ~190M                   | He et al. 2023 (arXiv:2111.09543), Table 5; HF card |
+| **3-seed mDeBERTa ensemble (our submitted ES system)** | **~828M**                         | 3 × 86M | 3 × ~190M              | This work                                           |
 | Feature-only XGBoost (our submitted XGBoost system)          | tree booster, on-disk ~TBD MB (measure) | —       | —                      | This work, via `xgboost` tree ensemble            |
 
 The paper must never write "86M vs 278M". The "86M" figure is the mDeBERTa backbone only, not the total, and XLM-R's backbone is about the same size. Total params are essentially equal (~276M vs ~270M). The 3-seed ensemble is ~3× the baseline at inference and should be named as such.
@@ -81,7 +81,6 @@ The paper must never write "86M vs 278M". The "86M" figure is the mDeBERTa backb
 ### §3 Feature engineering and XGBoost (~1.2 pages)
 
 **Page-budget note:** the content below is likely ~1.2 pages, not 1.0, because of the feature-family enumeration. Two ways to compress if needed during writing: (a) collapse the feature families into 2–3 sentences grouping them by type, and let T2's row labels carry the rest; (b) move the full feature inventory to an appendix and reference it. Prefer (a) over (b). §4 is correspondingly smaller (~0.7 pages) so the overall budget still fits 4 pages.
-
 
 - Subsection structure:
   - **Feature families** (bulleted or short prose):
@@ -114,11 +113,10 @@ The paper must never write "86M vs 278M". The "86M" figure is the mDeBERTa backb
   1. Feature-only XGBoost matches or beats the XLM-R-base dev baseline on all three L1s, using an on-disk model orders of magnitude smaller than a transformer and no GPU — the `embed_cosine` feature makes the difference, especially for CN where orthographic features are meaningless.
   2. The submitted ES system (3-seed mDeBERTa ensemble with features prepended) reports 1.103 dev / 1.094 test. Since mDeBERTa-v3-base (~276M) and XLM-R-base (~270M) are the same size, this is not an efficiency result; it is reported as the submitted best system. Each individual seed already beats the XLM-R-base baseline on ES dev; the ensemble adds a ~0.02 RMSE refinement at 3× inference cost (~828M params loaded, 3× FLOPs).
   3. On the official test leaderboard, the ES 3-seed mDeBERTa ensemble (1.094) places RETUYT-InCo near the middle of the ES closed track, beating the XLM-R-base test baseline (1.257) by 13.0%. XGBoost on CN (1.106) also beats the test baseline (1.140); DE is within noise of the baseline (1.260 vs 1.258); XGBoost on ES is below baseline (1.323 vs 1.257) — honest discussion of dev/test gap.
-  4. Optional: 1–2 inline qualitative word examples from `examples.md` (hard vs easy words) if space permits, otherwise omit.
 
 ### §6 Conclusions and limitations (~0.3 page)
 
-- Restate the answer to the research question: the LaBSE cross-lingual cosine between the L1 source word and the English target word carries the most task-relevant signal among the features we tested, reducing avg dev RMSE by 0.091 in the XGBoost pipeline and an additional 0.017 when also included as an `esim` input token to mDeBERTa. A CPU-only XGBoost regressor over the full handcrafted feature set already beats the XLM-R-base closed baseline on average dev RMSE (1.273 vs 1.287). The submitted ES system, a 3-seed mDeBERTa ensemble, is reported as our best test result (1.094 ES test RMSE) but is not offered as a methodological contribution: mDeBERTa and XLM-R-base are the same size (~270–276M each), and the 3-seed ensemble triples inference cost.
+- Restate the answer to the research question: the LaBSE cross-lingual cosine between the L1 source word and the English target word carries the most task-relevant signal among the features we tested, reducing avg dev RMSE by 0.091 in the XGBoost pipeline and an additional 0.017 when also included as an `esim` input token to mDeBERTa. A CPU-only XGBoost regressor over the full handcrafted feature set already beats the XLM-R-base closed baseline on average dev RMSE (1.273 vs 1.287). The submitted ES system, a 3-seed mDeBERTa ensemble, is reported as our best test result (1.094 ES test RMSE)
 - Limitations:
   - ES-only for the neural ensemble (time/compute; no transfer of Latin-script features to CN).
   - **Inference cost of the ensemble:** the submitted ES system loads ~828M params (3 × ~276M) and runs 3× forward passes per prediction. This is ~3× the XLM-R-base baseline at inference — the ensemble is not efficient.
