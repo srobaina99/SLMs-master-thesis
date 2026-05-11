@@ -1,0 +1,121 @@
+experiment_id,timestamp,config_name,prompt,system_prompt,response,model,model_id,config_weighting,config_prompting,prompt_id,weighted_words_enabled,weight_factor,enable_thinking,temperature,response_time_seconds,flesch_kincaid_grade,gunning_fog,smog_index,spache_readability,word_count,token_count,difficult_words,cleaned_response,beam_selection_method,beam_a1_ratio,beam_a1_count,beam_content_word_count,beam_cumulative_logprob,beam_width,response_appropriateness,vocabulary_level,notes
+29a5490d-8085-42df-916e-9fb0e46206d3,2025-11-11T19:28:50.621204,Qwen3_beam_search_a1_ratio,What does the word 'library' mean?,You are a helpful English teacher for beginner students. Answer with a paragraph only with plain text,"What does the word ""library"" mean? It's a place where people read books. A library is like a school, but instead of school books, it has books for reading.",Qwen3,ggml-org/Qwen3-0.6B-GGUF,False,True,P1,False,1.5,False,0.7,6.411798000335693,2.83,3.87,7.79,2.2,29,37,0,"What does the word ""library"" mean? It's a place where people read books. A library is like a school, but instead of school books, it has books for reading.",a1_ratio,0.34615384615384615,27,117,60.278065525645786,4,,,
+80ababc6-1ced-4c34-9bfc-b551df6c1f8c,2025-11-11T19:28:56.776734,Qwen3_beam_search_max_probability,What does the word 'library' mean?,You are a helpful English teacher for beginner students. Answer with a paragraph only with plain text,"What does the word ""library"" mean? It's a place where books are kept. A library is like a classroom but for books. It could be a school library, a bookstore, or even a book club. So, a library is a place where books are stored, whether in a school, bookstore,",Qwen3,ggml-org/Qwen3-0.6B-GGUF,False,True,P1,False,1.5,False,0.7,6.153937816619873,3.18,4.0,8.24,2.76,50,63,2,"What does the word ""library"" mean? It's a place where books are kept. A library is like a classroom but for books. It could be a school library, a bookstore, or even a book club. So, a library is a place where books are stored, whether in a school, bookstore,",max_probability,0.32706766917293234,29,133,71.33498878774648,4,,,
+abdae826-6e9c-4fed-8533-5d4f265419e8,2025-11-11T19:29:03.608854,Qwen3_beam_search_a1_ratio,How do I introduce myself in English?,You are a helpful English teacher for beginner students. Answer with a paragraph only with plain text,"system
+You are a helpful English teacher for beginner students. Answer with a paragraph only with plain text
+user
+# Context
+Please respond using simple words that a young non-English speaking student can understand. 
+Use vocabulary from basic English learning materials. Keep sentences short and clear.
+Avoid complex grammar structures and difficult words.
+
+How do I introduce myself in English?
+assistant
+<think>
+Okay, the user wants me to introduce themselves in English. Let me start by breaking down the basic elements. First, I need to know the person's name, maybe. But since the user is asking for a simple introduction, maybe they just want to say ""Hi, my name is [name]."" But wait, the context says to respond using simple words, so maybe I should avoid using names for the user's own introduction. Hmm, maybe the user is a beginner, so I should focus on the structure.
+
+The user might be a student learning about how to introduce themselves. So, the introduction should include their name, maybe a short sentence. For a young non-English speaker, the sentence should be short and easy. So, ""Hi, my name is [name]."" But how to phrase that? Maybe ""Hi! My name is [name]."" That's simple. Then, maybe add a sentence about being friendly, like ""I am happy to meet you."" That",Qwen3,ggml-org/Qwen3-0.6B-GGUF,False,True,P2,False,1.5,False,0.7,6.8290088176727295,6.33,7.33,8.37,4.47,216,275,35,"system
+You are a helpful English teacher for beginner students. Answer with a paragraph only with plain text
+user
+# Context
+Please respond using simple words that a young non-English speaking student can understand. 
+Use vocabulary from basic English learning materials. Keep sentences short and clear.
+Avoid complex grammar structures and difficult words.
+
+How do I introduce myself in English?
+assistant
+<think>
+Okay, the user wants me to introduce themselves in English. Let me start by breaking down the basic elements. First, I need to know the person's name, maybe. But since the user is asking for a simple introduction, maybe they just want to say ""Hi, my name is [name]."" But wait, the context says to respond using simple words, so maybe I should avoid using names for the user's own introduction. Hmm, maybe the user is a beginner, so I should focus on the structure.
+
+The user might be a student learning about how to introduce themselves. So, the introduction should include their name, maybe a short sentence. For a young non-English speaker, the sentence should be short and easy. So, ""Hi, my name is [name]."" But how to phrase that? Maybe ""Hi! My name is [name]."" That's simple. Then, maybe add a sentence about being friendly, like ""I am happy to meet you."" That",a1_ratio,0.384,32,125,71.33498878774648,4,,,
+56bbcaa1-a433-4555-942a-8e1143c4bf3b,2025-11-11T19:29:09.993599,Qwen3_beam_search_max_probability,How do I introduce myself in English?,You are a helpful English teacher for beginner students. Answer with a paragraph only with plain text,"How do I introduce myself in English?  
+You can say, “Hi! My name is Sarah. I love science and music.” That way, you start with",Qwen3,ggml-org/Qwen3-0.6B-GGUF,False,True,P2,False,1.5,False,0.7,6.3836610317230225,1.46,3.6,5.68,2.58,25,33,3,"How do I introduce myself in English?  
+You can say, “Hi! My name is Sarah. I love science and music.” That way, you start with",max_probability,0.47244094488188976,40,127,71.33498878774648,4,,,
+5c7964a9-7b8a-422e-987e-426cd885d245,2025-11-11T19:29:16.049196,Qwen3_beam_search_a1_ratio,What is a dog?,You are a helpful English teacher for beginner students. Answer with a paragraph only with plain text,"system
+You are a helpful English teacher for beginner students. Answer with a paragraph only with plain text
+user
+# Context
+Please respond using simple words that a young non-English speaking student can understand. 
+Use vocabulary from basic English learning materials. Keep sentences short and clear.
+Avoid complex grammar structures and difficult words.
+
+What is a dog?
+assistant
+<think>
+Okay, so the user is asking, ""What is a dog?"" And they want a simple answer. Let me start by recalling that in basic English, a dog is a small animal. I need to make sure the answer is straightforward. Maybe say, ""A dog is a small animal that lives in houses or homes."" But wait, that's a bit generic. How can I make it more specific? Oh, right! Using ""a small dog"" instead of ""a small animal"" might sound a bit forced. Maybe ""A small animal called a dog"" is better. Or maybe just ""A dog is a small animal that lives in houses."" But maybe the user wants a more direct answer. Let me check examples. In basic education, they often use ""A dog is a small animal that lives in houses."" That's simple and clear. Alternatively, ""A dog is a small animal."" But that's too short. Let me go with that. So the answer is",Qwen3,ggml-org/Qwen3-0.6B-GGUF,False,True,P3,False,1.5,False,0.7,6.049577951431274,4.96,6.19,8.6,3.62,216,272,32,"system
+You are a helpful English teacher for beginner students. Answer with a paragraph only with plain text
+user
+# Context
+Please respond using simple words that a young non-English speaking student can understand. 
+Use vocabulary from basic English learning materials. Keep sentences short and clear.
+Avoid complex grammar structures and difficult words.
+
+What is a dog?
+assistant
+<think>
+Okay, so the user is asking, ""What is a dog?"" And they want a simple answer. Let me start by recalling that in basic English, a dog is a small animal. I need to make sure the answer is straightforward. Maybe say, ""A dog is a small animal that lives in houses or homes."" But wait, that's a bit generic. How can I make it more specific? Oh, right! Using ""a small dog"" instead of ""a small animal"" might sound a bit forced. Maybe ""A small animal called a dog"" is better. Or maybe just ""A dog is a small animal that lives in houses."" But maybe the user wants a more direct answer. Let me check examples. In basic education, they often use ""A dog is a small animal that lives in houses."" That's simple and clear. Alternatively, ""A dog is a small animal."" But that's too short. Let me go with that. So the answer is",a1_ratio,0.50390625,43,128,71.33498878774648,4,,,
+242c19e9-cfaf-4fda-bd61-abd5825f9d76,2025-11-11T19:29:24.241474,Qwen3_beam_search_max_probability,What is a dog?,You are a helpful English teacher for beginner students. Answer with a paragraph only with plain text,"system
+You are a helpful English teacher for beginner students. Answer with a paragraph only with plain text
+user
+# Context
+Please respond using simple words that a young non-English speaking student can understand. 
+Use vocabulary from basic English learning materials. Keep sentences short and clear.
+Avoid complex grammar structures and difficult words.
+
+What is a dog?
+assistant
+<think>
+Okay, the user is asking, ""What is a dog?"" and wants a simple answer for a young student. Let me think about the right approach.
+
+First, I need to make sure the answer is straightforward and easy to understand. In basic English, a dog is a small animal that lives on farms. But maybe that's too much. The user might be learning about animals, so a simple definition would be better. Maybe mention that a dog is a small animal that lives on farms. That's clear, short, and uses vocabulary like ""small animal"" and ""on farms.""
+
+I should check if there's a more accurate term. ""Small animal"" is correct. But maybe ""dog"" is the most common term. Let me make sure the answer is correct and simple. Using ""small animal"" and ""on farms"" sounds right. The user might be a beginner, so the answer should be as simple as possible. That way, even a young student can understand.",Qwen3,ggml-org/Qwen3-0.6B-GGUF,False,True,P3,False,1.5,False,0.7,8.183044195175171,5.72,6.33,8.84,3.86,216,272,32,"system
+You are a helpful English teacher for beginner students. Answer with a paragraph only with plain text
+user
+# Context
+Please respond using simple words that a young non-English speaking student can understand. 
+Use vocabulary from basic English learning materials. Keep sentences short and clear.
+Avoid complex grammar structures and difficult words.
+
+What is a dog?
+assistant
+<think>
+Okay, the user is asking, ""What is a dog?"" and wants a simple answer for a young student. Let me think about the right approach.
+
+First, I need to make sure the answer is straightforward and easy to understand. In basic English, a dog is a small animal that lives on farms. But maybe that's too much. The user might be learning about animals, so a simple definition would be better. Maybe mention that a dog is a small animal that lives on farms. That's clear, short, and uses vocabulary like ""small animal"" and ""on farms.""
+
+I should check if there's a more accurate term. ""Small animal"" is correct. But maybe ""dog"" is the most common term. Let me make sure the answer is correct and simple. Using ""small animal"" and ""on farms"" sounds right. The user might be a beginner, so the answer should be as simple as possible. That way, even a young student can understand.",max_probability,0.4431818181818182,39,132,71.33498878774648,4,,,
+d28b8c19-fe37-4aa2-8331-b08f3ceadb59,2025-11-11T19:29:35.750438,Qwen3_beam_search_a1_ratio,Can you explain what 'breakfast' is?,You are a helpful English teacher for beginner students. Answer with a paragraph only with plain text,Breakfast is the meal you eat in the morning. It's like a snack. You eat breakfast for the morning. Let me know if you need more help!,Qwen3,ggml-org/Qwen3-0.6B-GGUF,False,True,P4,False,1.5,False,0.7,11.505554914474487,0.59,2.7,3.13,1.79,27,33,0,Breakfast is the meal you eat in the morning. It's like a snack. You eat breakfast for the morning. Let me know if you need more help!,a1_ratio,0.44036697247706424,32,109,52.7878917029324,4,,,
+3bd15ed7-ee89-4690-90a8-91b47d56ce63,2025-11-11T19:29:43.606929,Qwen3_beam_search_max_probability,Can you explain what 'breakfast' is?,You are a helpful English teacher for beginner students. Answer with a paragraph only with plain text,Breakfast is the first meal of the day. It’s usually eaten at home or in a cafeteria,Qwen3,ggml-org/Qwen3-0.6B-GGUF,False,True,P4,False,1.5,False,0.7,7.8500940799713135,5.77,8.11,8.84,3.05,17,20,2,Breakfast is the first meal of the day. It’s usually eaten at home or in a cafeteria,max_probability,0.32954545454545453,29,132,71.33498878774648,4,,,
+2fc3eaf7-f853-482c-b435-775977b215eb,2025-11-11T19:29:51.239085,Qwen3_beam_search_a1_ratio,What is the difference between 'big' and 'large'?,You are a helpful English teacher for beginner students. Answer with a paragraph only with plain text,"Big means size, like a big ship or a big building. Large means how big it is, like a large tree. So, big is more about size, and large is about how big it is. For example, a big tree is taller than a small tree.",Qwen3,ggml-org/Qwen3-0.6B-GGUF,False,True,P5,False,1.5,False,0.7,7.623740911483765,2.23,5.47,5.99,2.83,46,55,2,"Big means size, like a big ship or a big building. Large means how big it is, like a large tree. So, big is more about size, and large is about how big it is. For example, a big tree is taller than a small tree.",a1_ratio,0.5583941605839416,51,137,67.76823934835916,4,,,
+01ad9ef5-b976-43de-90ba-c2fd83e552bd,2025-11-11T19:29:58.577949,Qwen3_beam_search_max_probability,What is the difference between 'big' and 'large'?,You are a helpful English teacher for beginner students. Answer with a paragraph only with plain text,"system
+You are a helpful English teacher for beginner students. Answer with a paragraph only with plain text
+user
+# Context
+Please respond using simple words that a young non-English speaking student can understand. 
+Use vocabulary from basic English learning materials. Keep sentences short and clear.
+Avoid complex grammar structures and difficult words.
+
+What is the difference between 'big' and 'large'?
+assistant
+<think>
+Okay, so the user is asking about the difference between 'big' and 'large'. Let me start by recalling the basic definitions. 'Big' usually means a lot of something, like a big dog or a big tree. 'Large' is a bit more general, like a large tree or a big house. The key difference is that 'large' can be more about the size of the object itself, while 'big' can be about its size in comparison to something else.
+
+For a young student, the answer should be straightforward. Maybe use simple examples. Like, if you have a big tree, it's big, but if it's a large tree, it's large. Or, if you have a big house, it's big, but if it's a large house, it's large. Then explain that 'big' can be a comparison, while 'large' is just about the size without comparing.
+
+Check if the example sentences work. For example, """,Qwen3,ggml-org/Qwen3-0.6B-GGUF,False,True,P5,False,1.5,False,0.7,7.334472894668579,6.31,8.38,9.77,4.14,212,280,32,"system
+You are a helpful English teacher for beginner students. Answer with a paragraph only with plain text
+user
+# Context
+Please respond using simple words that a young non-English speaking student can understand. 
+Use vocabulary from basic English learning materials. Keep sentences short and clear.
+Avoid complex grammar structures and difficult words.
+
+What is the difference between 'big' and 'large'?
+assistant
+<think>
+Okay, so the user is asking about the difference between 'big' and 'large'. Let me start by recalling the basic definitions. 'Big' usually means a lot of something, like a big dog or a big tree. 'Large' is a bit more general, like a large tree or a big house. The key difference is that 'large' can be more about the size of the object itself, while 'big' can be about its size in comparison to something else.
+
+For a young student, the answer should be straightforward. Maybe use simple examples. Like, if you have a big tree, it's big, but if it's a large tree, it's large. Or, if you have a big house, it's big, but if it's a large house, it's large. Then explain that 'big' can be a comparison, while 'large' is just about the size without comparing.
+
+Check if the example sentences work. For example, """,max_probability,0.4880952380952381,41,126,71.33498878774648,4,,,

@@ -1,0 +1,5 @@
+model,config_weighting,config_prompting,weight_factor,prompt_id,answer,time_spent,flesch_kincaid_grade,gunning_fog,smog_index,spache_readability,word_count,difficult_words
+Qwen3,False,False,"1,5",P1,,"0,0","0,0","0,0","0,0","0,0",0,0
+Qwen3,True,False,"1,5",P1,,"0,0","0,0","0,0","0,0","0,0",0,0
+Qwen3,False,True,"1,5",P1,,"0,0","0,0","0,0","0,0","0,0",0,0
+Qwen3,True,True,"1,5",P1,,"0,0","0,0","0,0","0,0","0,0",0,0

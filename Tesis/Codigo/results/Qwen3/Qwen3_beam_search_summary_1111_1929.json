@@ -1,0 +1,101 @@
+{
+  "overall": {
+    "response_time_seconds": {
+      "mean": 7.432489061355591,
+      "std": 1.6133798942695954,
+      "min": 6.049577951431274,
+      "max": 11.505554914474487
+    },
+    "flesch_kincaid_grade": {
+      "mean": 3.938,
+      "std": 2.1342019065162923,
+      "min": 0.59,
+      "max": 6.33
+    },
+    "gunning_fog": {
+      "mean": 5.598,
+      "std": 1.9967239835957964,
+      "min": 2.7,
+      "max": 8.38
+    },
+    "smog_index": {
+      "mean": 7.524999999999999,
+      "std": 2.0007179267008683,
+      "min": 3.13,
+      "max": 9.77
+    },
+    "spache_readability": {
+      "mean": 3.13,
+      "std": 0.8682677518420736,
+      "min": 1.79,
+      "max": 4.47
+    },
+    "word_count": {
+      "mean": 105.4,
+      "std": 94.82170403212312,
+      "min": "17",
+      "max": "216"
+    },
+    "difficult_words": {
+      "mean": 14.0,
+      "std": 16.186414056238647,
+      "min": "0",
+      "max": "35"
+    }
+  },
+  "by_config": {
+    "prompting_only": {
+      "count": 10,
+      "response_time_seconds": {
+        "mean": 7.432489061355591,
+        "std": 1.6133798942695954,
+        "min": 6.049577951431274,
+        "max": 11.505554914474487
+      },
+      "flesch_kincaid_grade": {
+        "mean": 3.938,
+        "std": 2.1342019065162923,
+        "min": 0.59,
+        "max": 6.33
+      },
+      "gunning_fog": {
+        "mean": 5.598,
+        "std": 1.9967239835957964,
+        "min": 2.7,
+        "max": 8.38
+      },
+      "smog_index": {
+        "mean": 7.524999999999999,
+        "std": 2.0007179267008683,
+        "min": 3.13,
+        "max": 9.77
+      },
+      "spache_readability": {
+        "mean": 3.13,
+        "std": 0.8682677518420736,
+        "min": 1.79,
+        "max": 4.47
+      },
+      "word_count": {
+        "mean": 105.4,
+        "std": 94.82170403212312,
+        "min": "17",
+        "max": "216"
+      },
+      "difficult_words": {
+        "mean": 14.0,
+        "std": 16.186414056238647,
+        "min": "0",
+        "max": "35"
+      }
+    }
+  },
+  "metadata": {
+    "total_experiments": 10,
+    "unique_prompts": 5,
+    "configs_tested": 2,
+    "models_tested": [
+      "Qwen3"
+    ]
+  }
+}

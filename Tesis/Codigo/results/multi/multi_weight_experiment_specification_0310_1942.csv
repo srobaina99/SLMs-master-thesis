@@ -1,0 +1,2 @@
+model,config_weighting,config_prompting,weight_factor,prompt_id,answer,time_spent,flesch_kincaid_grade,gunning_fog,smog_index,spache_readability,word_count,difficult_words
+Qwen2,True,False,"1,5",P1,"The word 'library' means a collection of books, records, and other printed or graphic works for the use of a specific person or a group of people for educational or recreational purposes.","0,5","16,8","19,05","17,12","7,5",32,8

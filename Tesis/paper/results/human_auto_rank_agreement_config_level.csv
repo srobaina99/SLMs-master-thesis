@@ -1,0 +1,5 @@
+config_name,avg_human_simplicity,rank_human_simplicity,avg_flesch_kincaid_grade,rank_flesch_kincaid_grade,avg_gunning_fog,rank_gunning_fog,avg_smog_index,rank_smog_index,avg_spache_readability,rank_spache_readability
+Qwen3_weighted_prompted,3.778,1,3.501,1,4.607,1,6.649,1,2.949,2
+Qwen3_prompted,3.554,2,3.786,2,4.706,2,7.263,3,2.84,1
+Phi3_weighted_prompted,3.377,3,3.883,3,5.687,4,6.87,2,2.985,3
+Phi3_prompted,3.179,4,4.236,4,5.598,3,7.509,5,3.007,4

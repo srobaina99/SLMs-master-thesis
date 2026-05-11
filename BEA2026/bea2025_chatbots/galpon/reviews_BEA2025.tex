@@ -1,0 +1,83 @@
+============================================================================ 
+BEA 2025 Reviews
+============================================================================
+Review 1
+
+Appropriateness (1-5):5
+Clarity (1-5):5
+Originality / Innovativeness (1-5):3
+Soundness / Correctness (1-5):5
+Meaningful Comparison (1-5):5
+Thoroughness (1-5):5
+Impact of Ideas or Results (1-5):4
+Recommendation (1-5):4
+Reviewer Confidence (1-5):4
+
+Detailed Comments
+
+This paper presents a well-executed and valuable contribution to the BEA 2025 Shared Task, detailing the RETUYT-INCO team's investigation into AI-powered tutor evaluation with a commendable focus on lightweight models (<1B parameters). The motivation for this approach, rooted in the practical challenges of resource constraints, particularly for researchers in the Global South, is clearly articulated and highly relevant. The manuscript successfully contextualizes its efforts within the shared task's objectives and the broader need for accessible NLP solutions in education.
+
+The methodology is described with exceptional clarity and is technically sound. The authors systematically walk through the various approaches explored ranging from classical machine learning techniques to fine-tuned DistilBERT and Qwen models making their experimental setup easy to follow and assess. The choice of models and evaluation strategies is appropriate for the different tracks of the shared task, demonstrating a thoughtful engagement with the problem space.
+
+Evaluation and the presentation of results are strong points. The paper transparently reports performance on both an internal development set and the official test set, including crucial comparisons against winning teams. This allows for a nuanced understanding of what these lightweight models can achieve (i.e., remaining competitive and achieving mid-table rankings) even when operating under significant self-imposed computational restrictions. The use of tables to summarize performance metrics is effective. The discussion of the performance gap to state-of-the-art models is insightful and offers an encouraging perspective on the utility of resource-efficient approaches.
+
+The paper is characterized by excellent clarity and structure throughout, making it highly readable. In terms of originality, while the core NLP techniques are established, the contribution lies in the principled and systematic application of these methods under the specific constraint of lightweight models. This focused investigation, driven by a practical and important research question, provides valuable insights, positioning the work as strong applied research rather than a source of novel algorithmic techniques. The thoroughness of the work is appropriate for a shared task paper, covering all five tracks with a diverse set of experiments.
+
+Overall, this is a strong paper that successfully combines a clear practical motivation with rigorous methodology and transparent empirical validation. It serves as a fine example of a shared task report and its findings on the efficacy of lightweight models will be of considerable interest and utility to the BEA community, particularly for those developing NLP applications in resource-constrained environments.
+
+Questions for Authors
+
+Clarifying Track Participation: In the introduction, you mention participating in the shared task but do not explicitly state the scope of your involvement. Did you participate in all five tracks (Mistake Identification, Mistake Location, Providing Guidance, Actionability, and Guess the Tutor Identity)? If so, could you add a clear statement like: "We participated in all five tracks of the BEA 2025 Shared Task" to avoid ambiguity?
+
+Detailing Threshold Selection in the BERT Approach: In Section 3.3.1, you mention using thresholds to classify the three classes (No, To some extent, Yes), but you don't explain how these thresholds were chosen. Could you elaborate on this process?
+
+Typos Corrections: On page 5, section 3.5, under Track 1, there's a small typo "Sentence Embedddings" has an extra 'd'. It should probably be "Sentence Embeddings and KNN".
+
+============================================================================
+
+
+Review 2
+
+Appropriateness (1-5):5
+Clarity (1-5):3
+Originality / Innovativeness (1-5):4
+Soundness / Correctness (1-5):5
+Meaningful Comparison (1-5):5
+Thoroughness (1-5):5
+Impact of Ideas or Results (1-5):5
+Recommendation (1-5):3
+Reviewer Confidence (1-5):3
+
+Detailed Comments
+
+This is an interesting take on the shared task. It's a valuable benchmark to have results from lightweight models. 
+
+The paper suffers from grammatical mistakes that hinder clarity. I've tried to find and document them, but please make sure you check thoroughly.
+
+Title is good
+
+Introduction Please explicitly state that you participated in all five tracks.
+
+2: Datasets "Each dialogue is composed of interactions between a teacher and math students." - It's just one math student or an LLM role-playing as a math student. "In the last interaction of each dialogue, the student makes evident that is confused about some concept, so the dataset also includes some responses to help the student." - I found this sentence confusing. Here's a sample replacement: "In the final turn of each dialogue, the student shows clear confusion about a concept, and the dataset includes potential tutor responses intended to help the student."
+
+3 Considered approaches "At the end of the section we will show the results we obtained when evaluating them on the dev set." - It's better to refer directly to where you will discuss this, a section number or table reference. "Then, we tried using a random classifier obtaining always accuracy values near 33\%." - grammatically odd. "Then, we tried using a random classifier, which consistently yielded accuracy values around 33\%." "Additionally, before delving on the use of lightweight models, we wanted to have an informed perception of how well bigger LLMs could perform in these tracks" - also grammatically strange. What is the meaning of delve in this case? Maybe you want a different word.
+
+You have k-NN, KNN, and kNN. Please choose one and use it consistently.
+
+"had a notoriously lower performance." - notoriously indicates that it's well known, which this is not. Maybe you meant notably or noticeably?
+
+"For the k-NN classifier, we selected the value of k based on performance on our dev set prior to submitting predictions for the competition's test set." - please specify the k
+
+Figure 1: increase the font size so the labels are legible .
+
+You have Llama 3 8B Instruct (page 2), Llama3.1 8B (page 5), and Llama 3 8B (page 5). Is this correct or a consistency error?
+
+"Track 1 (Mistake Identification) – Sentence Embedddings and KNN" - too many ds in "Embeddings", and be consistent about k-NN. 
+
+For this "Overall, the best models for each track were as follows:" can you be more specific about which models? For example, you say "fine-tuned Qwen" without specifying dimension-specific, multi-dimension or thresholds.
+
+Table 1: KNN (N=7) - did you mean k=7? Be consistent about naming. Why is this the only one where number of neighbors is specified? If it's the same throughout, make sure that's noted in the paper. N should be used for n-grams as in the text of the paper.
+
+Since you have a bit of extra space and you tried so many different configurations, it would be interesting to flesh out your discussion a bit with ideas about why certain approaches worked better in some Tracks than others. What did you observe or learn through your experiments?
+
+Overall this was very thorough! Great job!

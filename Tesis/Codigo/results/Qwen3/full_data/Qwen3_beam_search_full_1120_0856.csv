@@ -1,0 +1,79 @@
+experiment_id,timestamp,config_name,prompt,system_prompt,response,model,model_id,config_weighting,config_prompting,prompt_id,weighted_words_enabled,weight_factor,enable_thinking,temperature,response_time_seconds,flesch_kincaid_grade,gunning_fog,smog_index,spache_readability,word_count,token_count,difficult_words,cleaned_response,beam_selection_method,beam_a1_ratio,beam_a1_count,beam_content_word_count,beam_cumulative_logprob,beam_width,response_appropriateness,vocabulary_level,notes
+34902167-a3a1-4c37-b96c-3d29100bb8cb,2025-11-20T08:54:38.381741,Qwen3_beam_search_a1_ratio,What does the word 'library' mean?,You are a helpful English teacher for beginner students. Answer with a paragraph only with plain text,"A library is a place where people read books. It's like a room where you can read books for fun. It's a common place, so it's used in many different ways.",Qwen3,ggml-org/Qwen3-0.6B-GGUF,False,True,P1,False,1.5,False,0.7,18.454787015914917,2.9,4.13,7.79,2.57,31,38,1,"A library is a place where people read books. It's like a room where you can read books for fun. It's a common place, so it's used in many different ways.",a1_ratio,0.366412213740458,32,131,69.90828901199156,8,,,
+1ccb82b5-ecbb-4b72-b395-2c08f5d4cfe2,2025-11-20T08:54:55.740771,Qwen3_beam_search_max_probability,What does the word 'library' mean?,You are a helpful English teacher for beginner students. Answer with a paragraph only with plain text,"system
+You are a helpful English teacher for beginner students. Answer with a paragraph only with plain text
+user
+# Context
+Please respond using simple words that a young non-English speaking student can understand. 
+Use vocabulary from basic English learning materials. Keep sentences short and clear.
+Avoid complex grammar structures and difficult words.
+
+What does the word 'library' mean?
+assistant
+<think>
+Okay, the user is asking about the meaning of the word 'library'. Let me think about how to explain it simply.
+
+First, I need to make sure the definition is clear and straightforward. The library is a place where people gather, right? So maybe start by saying that a library is a place where you can read books. Then, since it's a place for reading, that's where people go to read. Wait, but sometimes libraries have books, so maybe mention that. But keeping it simple, just say a library is a place where you can read books. That's a good start.
+
+Let me check if there are other terms I can use. ""Library"" is a common word, so using that is perfect. Avoid complex structures, like using ""library"" directly. The user is a beginner, so no need for complicated words. Just a simple explanation with a definition and a sentence.
+
+So the answer should be: A library is a place where you can read",Qwen3,ggml-org/Qwen3-0.6B-GGUF,False,True,P1,False,1.5,False,0.7,17.35033917427063,6.01,6.95,9.24,4.07,224,276,36,"system
+You are a helpful English teacher for beginner students. Answer with a paragraph only with plain text
+user
+# Context
+Please respond using simple words that a young non-English speaking student can understand. 
+Use vocabulary from basic English learning materials. Keep sentences short and clear.
+Avoid complex grammar structures and difficult words.
+
+What does the word 'library' mean?
+assistant
+<think>
+Okay, the user is asking about the meaning of the word 'library'. Let me think about how to explain it simply.
+
+First, I need to make sure the definition is clear and straightforward. The library is a place where people gather, right? So maybe start by saying that a library is a place where you can read books. Then, since it's a place for reading, that's where people go to read. Wait, but sometimes libraries have books, so maybe mention that. But keeping it simple, just say a library is a place where you can read books. That's a good start.
+
+Let me check if there are other terms I can use. ""Library"" is a common word, so using that is perfect. Avoid complex structures, like using ""library"" directly. The user is a beginner, so no need for complicated words. Just a simple explanation with a definition and a sentence.
+
+So the answer should be: A library is a place where you can read",max_probability,0.33070866141732286,28,127,71.33498878774648,8,,,
+7f158e7c-98be-4d74-80aa-a7e4ed7f335e,2025-11-20T08:55:10.572379,Qwen3_beam_search_a1_ratio,How do I introduce myself in English?,You are a helpful English teacher for beginner students. Answer with a paragraph only with plain text,"How do you introduce yourself in English?  
+You can say, “Hi! How are you?” Then say, “My name is [Your Name]!” If you like something, say, “I like [Hobby/interest]!”",Qwen3,ggml-org/Qwen3-0.6B-GGUF,False,True,P2,False,1.5,False,0.7,14.822207927703857,2.13,5.08,6.74,2.25,29,49,2,"How do you introduce yourself in English?  
+You can say, “Hi! How are you?” Then say, “My name is [Your Name]!” If you like something, say, “I like [Hobby/interest]!”",a1_ratio,0.4375,35,120,71.33498878774648,8,,,
+efc55bb6-bd16-4dd6-ab42-af8c051ac1b7,2025-11-20T08:55:27.161666,Qwen3_beam_search_max_probability,How do I introduce myself in English?,You are a helpful English teacher for beginner students. Answer with a paragraph only with plain text,"How do I introduce myself in English?  
+Start with a friendly greeting, like",Qwen3,ggml-org/Qwen3-0.6B-GGUF,False,True,P2,False,1.5,False,0.7,16.586294889450073,4.19,5.68,7.17,3.08,13,16,2,"How do I introduce myself in English?  
+Start with a friendly greeting, like",max_probability,0.3609022556390977,32,133,71.33498878774648,8,,,
+641621e4-c76c-44b2-a28b-3ad8232ec790,2025-11-20T08:55:37.270671,Qwen3_beam_search_a1_ratio,What is a dog?,You are a helpful English teacher for beginner students. Answer with a paragraph only with plain text,A dog is a kind of animal! 🐾 A dog is like a friend who can play with you! 🐾,Qwen3,ggml-org/Qwen3-0.6B-GGUF,False,True,P3,False,1.5,False,0.7,10.106240034103394,1.03,3.6,7.17,2.11,18,26,0,A dog is a kind of animal! 🐾 A dog is like a friend who can play with you! 🐾,a1_ratio,0.5,31,93,43.87101810446409,8,,,
+bed3cda8-59e8-4f61-874c-233633f785d7,2025-11-20T08:55:49.561871,Qwen3_beam_search_max_probability,What is a dog?,You are a helpful English teacher for beginner students. Answer with a paragraph only with plain text,"system
+You are a helpful English teacher for beginner students. Answer with a paragraph only with plain text
+user
+# Context
+Please respond using simple words that a young non-English speaking student can understand. 
+Use vocabulary from basic English learning materials. Keep sentences short and clear.
+Avoid complex grammar structures and difficult words.
+
+What is a dog?
+assistant
+<think>
+Okay, so the user wants me to answer ""What is a dog?"" using simple words. Let me start by understanding the context. The user is a beginner, so I need to make sure the answer is straightforward and easy to understand.
+
+First, ""What is a dog?"" is a simple question. The answer should be clear. In basic English learning materials, the answer is often something like ""A dog is a kind of animal."" But maybe the user wants a more engaging or creative answer? Let me think. If I use a common definition, that's probably okay. But maybe the user is looking for something more interesting. Hmm.
+
+Alternatively, maybe using a more playful way: ""A dog is a pet."" But that might be too simple. Or maybe ""A dog is a small animal."" But the main point is to answer the question in simple terms. Let me confirm: ""A dog is a small animal."" That's simple and clear. Or ""A dog is",Qwen3,ggml-org/Qwen3-0.6B-GGUF,False,True,P3,False,1.5,False,0.7,12.278604984283447,5.54,6.43,8.49,3.84,220,272,35,"system
+You are a helpful English teacher for beginner students. Answer with a paragraph only with plain text
+user
+# Context
+Please respond using simple words that a young non-English speaking student can understand. 
+Use vocabulary from basic English learning materials. Keep sentences short and clear.
+Avoid complex grammar structures and difficult words.
+
+What is a dog?
+assistant
+<think>
+Okay, so the user wants me to answer ""What is a dog?"" using simple words. Let me start by understanding the context. The user is a beginner, so I need to make sure the answer is straightforward and easy to understand.
+
+First, ""What is a dog?"" is a simple question. The answer should be clear. In basic English learning materials, the answer is often something like ""A dog is a kind of animal."" But maybe the user wants a more engaging or creative answer? Let me think. If I use a common definition, that's probably okay. But maybe the user is looking for something more interesting. Hmm.
+
+Alternatively, maybe using a more playful way: ""A dog is a pet."" But that might be too simple. Or maybe ""A dog is a small animal."" But the main point is to answer the question in simple terms. Let me confirm: ""A dog is a small animal."" That's simple and clear. Or ""A dog is",max_probability,0.38076923076923075,33,130,71.33498878774648,8,,,
+7aa941ff-2ab7-4f23-a1b8-63b961086214,2025-11-20T08:56:03.913795,Qwen3_beam_search_a1_ratio,Can you explain what 'breakfast' is?,You are a helpful English teacher for beginner students. Answer with a paragraph only with plain text,Breakfast is the time you eat something in the morning. It's a meal you have to eat in the morning. It's important to eat a little at breakfast!,Qwen3,ggml-org/Qwen3-0.6B-GGUF,False,True,P4,False,1.5,False,0.7,14.348316192626953,3.22,3.73,6.43,2.16,28,34,0,Breakfast is the time you eat something in the morning. It's a meal you have to eat in the morning. It's important to eat a little at breakfast!,a1_ratio,0.4722222222222222,34,108,52.7878917029324,8,,,
+08c180ab-cc91-47bb-b148-842c993814f5,2025-11-20T08:56:18.379345,Qwen3_beam_search_max_probability,Can you explain what 'breakfast' is?,You are a helpful English teacher for beginner students. Answer with a paragraph only with plain text,"Breakfast is the first meal of the day, usually eaten before dinner. It's something",Qwen3,ggml-org/Qwen3-0.6B-GGUF,False,True,P4,False,1.5,False,0.7,14.462039947509766,8.41,8.46,8.84,3.43,14,18,1,"Breakfast is the first meal of the day, usually eaten before dinner. It's something",max_probability,0.41911764705882354,38,136,71.33498878774648,8,,,
+ab1c13e0-5bea-437a-8f2f-dfe38f9d14a4,2025-11-20T08:56:31.800545,Qwen3_beam_search_a1_ratio,What is the difference between 'big' and 'large'?,You are a helpful English teacher for beginner students. Answer with a paragraph only with plain text,"Big and large are both words for how big something is. ""Big"" means it's large in size, like a big dog or a big tree. ""Large"" is about the size, like a large tree or a large building. So, when someone is big, they're large. Like, a big tree is large, and a large tree is big. That's how you tell the difference.",Qwen3,ggml-org/Qwen3-0.6B-GGUF,False,True,P5,False,1.5,False,0.7,13.414138078689575,1.43,4.2,5.46,2.32,63,82,0,"Big and large are both words for how big something is. ""Big"" means it's large in size, like a big dog or a big tree. ""Large"" is about the size, like a large tree or a large building. So, when someone is big, they're large. Like, a big tree is large, and a large tree is big. That's how you tell the difference.",a1_ratio,0.5597014925373134,50,134,70.62163889986903,8,,,
+9cb6a48d-19bd-4a79-aa5e-bf7dee682289,2025-11-20T08:56:45.401980,Qwen3_beam_search_max_probability,What is the difference between 'big' and 'large'?,You are a helpful English teacher for beginner students. Answer with a paragraph only with plain text,The difference between *big*,Qwen3,ggml-org/Qwen3-0.6B-GGUF,False,True,P5,False,1.5,False,0.7,13.597977876663208,6.62,1.6,8.84,1.4,4,6,0,The difference between *big*,max_probability,0.42857142857142855,38,133,71.33498878774648,8,,,

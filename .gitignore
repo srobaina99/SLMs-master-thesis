@@ -1,0 +1,22 @@
+# OS
+.DS_Store
+
+# Python
+__pycache__/
+*.pyc
+*.pyo
+
+# Binary/archive
+*.zip
+
+# External repos (should be submodule if needed)
+BEA2026/vocab-difficulty/
+
+# Reproducible experiment outputs
+Tesis/Codigo/results/*/full_data/
+Tesis/Codigo/results/multi/plots/
+Tesis/Codigo/results/Qwen2/
+
+# Claude Code local settings
+.claude/settings.local.json
+.claude/scheduled_tasks.lock
