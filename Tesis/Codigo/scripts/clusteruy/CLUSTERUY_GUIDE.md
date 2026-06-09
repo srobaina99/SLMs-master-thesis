@@ -1,6 +1,14 @@
 # Running Experiments on ClusterUY
 
-Step-by-step guide to run the multi-weight experiment on ClusterUY using
+> **Deprecated workflow.** This guide documents the legacy `Tesis/Codigo/` experiment
+> runner (`scripts/run_experiment.py`). For current Phase 1/2 experiments, use
+> **[SLMs-experiments/docs/clusteruy.md](https://github.com/srobaina99/SLMs-experiments/blob/main/docs/clusteruy.md)**
+> and the sbatch scripts in `SLMs-experiments/scripts/clusteruy/`.
+>
+> **Still maintained here:** `Dockerfile`, `pull_image.sh`, `download_models.sh`
+> (container build and one-time cluster setup).
+
+Step-by-step guide to run the **legacy** multi-weight experiment on ClusterUY using
 Singularity containers.
 
 **Official documentation**: https://www.cluster.uy/ayuda/
@@ -28,9 +36,9 @@ Ref: [Política y costo de uso](https://www.cluster.uy/ayuda/politica_uso/)
 
 ## Step 1: Build and push the Docker image (local machine)
 
-This builds a container with Ubuntu 22.04, CUDA 12.1, PyTorch, llama-cpp-python
-(compiled with CUDA), and all experiment dependencies. Run this on your local
-machine, not on ClusterUY.
+This builds a lean container with Ubuntu 22.04, CUDA 12.1, llama-cpp-python
+(compiled for P100 / sm_60), and minimal runtime deps (pandas, tqdm, textstat,
+nltk). Run this on your local machine, not on ClusterUY.
 
 ```bash
 cd Tesis/Codigo
@@ -45,7 +53,7 @@ bash scripts/clusteruy/build_and_push.sh <your_dockerhub_username>
 This creates and pushes `<your_dockerhub_username>/slm-thesis:latest`.
 
 The Dockerfile is at `scripts/clusteruy/Dockerfile` — it installs only what the
-experiment needs: torch, llama-cpp-python, pandas, tqdm, textstat, nltk.
+experiment needs: llama-cpp-python (CUDA), pandas, tqdm, textstat, nltk.
 
 ---
 
@@ -54,7 +62,7 @@ experiment needs: torch, llama-cpp-python, pandas, tqdm, textstat, nltk.
 No VPN required. Authentication is via SSH key pair only.
 
 ```bash
-ssh usuario@login.cluster.uy
+ssh santiago.robaina@login.cluster.uy
 ```
 
 Ref: [Cómo conectarse](https://www.cluster.uy/ayuda/como_conectarse/)
@@ -78,14 +86,15 @@ Ref: [Utilización de repositorios GIT](https://www.cluster.uy/ayuda/git/)
 
 ## Step 4: Pull the Singularity image
 
-From the login node (this is file management, not computation):
+Submit as a batch job (the login node kills long-running pulls):
 
 ```bash
-singularity pull --name ~/slm-thesis.sif docker://<your_dockerhub_username>/slm-thesis:latest
+cd ~/SLMs-master-thesis
+sbatch Tesis/Codigo/scripts/clusteruy/pull_image.sh <your_dockerhub_username>/slm-thesis:latest
 ```
 
 This converts the Docker image to a Singularity `.sif` file in your home
-directory. It only needs to be done once (~5-10 GB download).
+directory. It only needs to be done once (~1.5 GB for the lean image).
 
 Ref: [Contenedores de Linux](https://www.cluster.uy/ayuda/singularity/)
 
@@ -182,14 +191,14 @@ Results are saved to `~/SLMs-master-thesis/Tesis/Codigo/results/`. From your
 local machine, use port 10022 to avoid consuming login node bandwidth:
 
 ```bash
-scp -P 10022 usuario@cluster.uy:~/SLMs-master-thesis/Tesis/Codigo/results/*.csv ./results/
+scp -P 10022 santiago.robaina@cluster.uy:~/SLMs-master-thesis/Tesis/Codigo/results/*.csv ./results/
 ```
 
 Or with rsync:
 
 ```bash
 rsync -arvz -e "ssh -p 10022" \
-    usuario@cluster.uy:~/SLMs-master-thesis/Tesis/Codigo/results/ \
+    santiago.robaina@cluster.uy:~/SLMs-master-thesis/Tesis/Codigo/results/ \
     ./Tesis/Codigo/results/
 ```
 

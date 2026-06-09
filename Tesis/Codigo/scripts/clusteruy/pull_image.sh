@@ -13,10 +13,10 @@
 # Pull the Singularity image on a compute node (login node kills
 # long-running pulls, and interactive sessions die with SSH drops).
 # Submit with: sbatch pull_image.sh <dockerhub_user/image:tag>
-# Default image: srobaina99/experiment-cuda:v1
+# Default image: srobaina99/slm-thesis:latest
 # ============================================================
 
-IMAGE_REF="${1:-srobaina99/experiment-cuda:v1}"
+IMAGE_REF="${1:-srobaina99/slm-thesis:latest}"
 SIF_PATH="$HOME/slm-thesis.sif"
 
 mkdir -p "$HOME/singularity_tmp"

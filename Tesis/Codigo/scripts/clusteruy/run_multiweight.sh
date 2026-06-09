@@ -14,6 +14,10 @@
 #SBATCH --mail-user=srobaina99@gmail.com
 
 # ============================================================
+# DEPRECATED — legacy multi-weight experiment (Tesis/Codigo).
+# Use SLMs-experiments/scripts/clusteruy/run_phase2_weights.sh instead.
+# See: https://github.com/srobaina99/SLMs-experiments/blob/main/docs/clusteruy.md
+#
 # Multi-weight experiment on ClusterUY (Singularity)
 # Tests weight factors [1.5, 2.0, 3.0, 4.0, 5.0] across all 4 models
 #

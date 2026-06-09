@@ -2,8 +2,11 @@
 # ============================================================
 # ClusterUY setup — pull Singularity image
 #
-# Run this on the LOGIN NODE (it's just a file download).
-# See CLUSTERUY_GUIDE.md for the full workflow.
+# Prefer sbatch pull_image.sh for long pulls (login node kills them).
+# This script is a quick helper for small images only.
+#
+# Current workflow: SLMs-experiments/docs/clusteruy.md
+# Legacy guide:     CLUSTERUY_GUIDE.md (deprecated)
 #
 # Prerequisites:
 #   - Docker image already pushed to Docker Hub
@@ -40,7 +43,7 @@ echo "Setup complete!"
 echo "============================================"
 echo "Image saved to: $SIF_PATH"
 echo ""
-echo "Test with:"
-echo "  interactivo -gpun"
-echo "  cd ~/SLMs-master-thesis/Tesis/Codigo"
-echo "  singularity exec --nv --bind \$(pwd):/workspace ~/slm-thesis.sif python /workspace/scripts/run_experiment.py --experiment multi_weight --weights '1.5,2.0' --prompts 2 --model Qwen3 --no-plots"
+echo "Smoke test (current framework):"
+echo "  cd ~/SLMs-experiments && sbatch scripts/clusteruy/smoke_test.sh"
+echo ""
+echo "See: https://github.com/srobaina99/SLMs-experiments/blob/main/docs/clusteruy.md"
